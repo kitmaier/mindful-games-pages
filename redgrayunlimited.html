@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<!-- TODO: display rolling window percentage correct (eg past 20 attempts) -->
+	</head>
+    <script>
+		var data = [];
+		var colors = ["#FF0000", "#999999"];
+		var colorIndex = -1;
+		function changeColor() {
+			var col = document.getElementById("body");
+			colorIndex = Math.floor(Math.random()*2);
+			col.style.backgroundColor = colors[colorIndex];
+		}
+		function myFunction(event) {
+			var x = event.key;
+			if (x == "a" || x == "A") {
+				data.push([(new Date).getTime(),colorIndex,"A"]);
+			} else if (x == "d" || x == "D") {
+				data.push([(new Date).getTime(),colorIndex,"D"]);
+			} else {
+				return;
+			}
+			document.getElementById("data").textContent = JSON.stringify(data);
+			var index = Math.max(0,data.length-20);
+			var duration = data[data.length-1][0]-data[index][0];
+			var speed = (duration*0.001/(data.length-1-index)).toFixed(3);
+			document.getElementById("speed").textContent = "Speed: " + speed + "s";
+			index = Math.max(1,data.length-20);
+			var countValid = 0;
+			for(var k=index; k<data.length; k++) {
+				if((data[k][1]==0&&data[k][2]=="A")||(data[k][1]==1&&data[k][2]=="D")) {
+					countValid += 1;
+				}
+			}
+			var accuracy = (countValid*100.0/(data.length-index)).toFixed(0);
+			document.getElementById("accuracy").textContent = "Accuracy: " + accuracy + "%";
+			changeColor();
+		}
+	</script>
+    <body id='body' onkeyup="myFunction(event)">
+		<h1 id='accuracy'>Accuracy: NaN%</h1>
+		<h1 id='speed'>Speed: NaNs</h1>
+		<p>Tap the "A" key if you see red and the "D" key if you see gray</p>
+		<p>Tap the "A" key to start</p>
+		<p id='data'></p>
+		<!--button onclick="changeColor(); getTimestamp();">Change color</button-->
+		<!--input type="text" size="40" onkeydown="myFunction(event)" id="textbox"/-->
+    </body>
+</html>
