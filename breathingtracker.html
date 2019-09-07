@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	</head>
+	<!-- TODO: this onkeydown event responds repeatedly when button is held, find out how to disable that -->
+	<body id='body' onkeydown="myFunction(event)">
+		<h1>Breathing Tracker</h1>
+		<p>Let yourself breathe naturally.
+		<br/>Hit "A" as you start breathing in.
+		<br/>Hit "S" as you finish breathing in.
+		<br/>Hit "D" as you start breathing out.
+		<br/>Hit "F" as you finish breathing out.
+		<br/>If you get confused or make a mistake, just reload the page.</p>
+		<!-- TODO: create a graph of the timing data -->
+		<!-- svg height="200" width="200">
+			<circle id='circle' cx="100" cy="100" r="50" stroke="#7799DD" stroke-width="3" fill="#DDEEFF"/>
+			Sorry, your browser does not support inline SVG.
+		</svg -->
+		<p>
+		<div id='in_breath_data'></div>
+		<div id='in_pause_data'></div>
+		<div id='out_breath_data'></div>
+		<div id='out_pause_data'></div>
+		<div id='duration_data'></div>
+		</p>
+		<p id='summary_data'></p>
+		<p id='raw_data'></p>
+		<script>
+			var startTime = (new Date).getTime();
+			var lastTime = startTime;
+			var data = []
+			var inBreathData = []
+			var inPauseData = []
+			var outBreathData = []
+			var outPauseData = []
+			var durationData = []
+			var expectedInput = "A"
+			var cycleCount = -1
+			function myFunction(event) {
+				try {
+					var x = event.key;
+					if (x == "a" || x == "A") {
+						x = "A";
+					} else if (x == "s" || x == "S") {
+						x = "S";
+					} else if (x == "d" || x == "D") {
+						x = "D";
+					} else if (x == "f" || x == "F") {
+						x = "F";
+					} else {
+						return;
+					}
+					if(cycleCount==-1) {
+						if(x!="A") return;
+						startTime = (new Date).getTime();
+						lastTime = startTime;
+						expectedInput = "S";
+						data.push([startTime])
+						cycleCount++;
+						return;
+					}
+					var now = (new Date).getTime();
+					var timeOffset = now-startTime;
+					var stepTime = now-lastTime;
+					data.push([timeOffset,stepTime,x]);
+					lastTime = now;
+					if(x!=expectedInput) cycleCount++;
+					if(x=="A") expectedInput = "Q";
+					else if(x=="S") expectedInput = "D";
+					else if(x=="D") expectedInput = "F";
+					else if(x=="F") expectedInput = "A";
+					while(inBreathData.length<cycleCount) inBreathData.push("-/-")
+					while(inPauseData.length<cycleCount) inPauseData.push("-/-")
+					while(outBreathData.length<cycleCount) outBreathData.push("-/-")
+					while(outPauseData.length<cycleCount) outPauseData.push("-/-")
+					if(x=="S") inBreathData.push(stepTime)
+					if(x=="D") inPauseData.push(stepTime)
+					if(x=="F") outBreathData.push(stepTime)
+					if(x=="A") outPauseData.push(stepTime)
+					while(durationData.length<Math.min(inBreathData.length,inPauseData.length,outBreathData.length,outPauseData.length)) {
+						var val1 = inBreathData[durationData.length];
+						var val2 = inPauseData[durationData.length];
+						var val3 = outBreathData[durationData.length];
+						var val4 = outPauseData[durationData.length];
+						if(val1=="-/-"||val2=="-/-"||val3=="-/-"||val4=="-/-") {
+							durationData.push("-/-");
+						} else {
+							durationData.push(val1+val2+val3+val4);
+						}
+					}
+					document.getElementById("in_breath_data").textContent = "In-Breath Timing: "+JSON.stringify(inBreathData);
+					document.getElementById("in_pause_data").textContent = "In-Pause Timing: "+JSON.stringify(inPauseData);
+					document.getElementById("out_breath_data").textContent = "Out-Breath Timing: "+JSON.stringify(outBreathData);
+					document.getElementById("out_pause_data").textContent = "Out-Pause Timing: "+JSON.stringify(outPauseData);
+					document.getElementById("duration_data").textContent = "Cycle Duration: "+JSON.stringify(durationData);
+					document.getElementById("summary_data").textContent = "Averages: " + avg(inBreathData).toFixed(0) + " + " + avg(inPauseData).toFixed(0) + " + " + avg(outBreathData).toFixed(0) + " + " + avg(outPauseData).toFixed(0) + " = " + avg(durationData).toFixed(0)
+					document.getElementById("raw_data").textContent = "Raw data: "+JSON.stringify(data);
+				} catch(error) {
+					alert(error.message)
+				}
+			}
+			function avg(list) {
+				var sum = 0;
+				var count = 0;
+				for(var k=0; k<list.length; k++) {
+					if(list[k]!="-/-") {
+						sum += list[k];
+						count += 1;
+					}
+				}
+				return sum/count;
+			}
+		</script>
+	</body>
+</html>
