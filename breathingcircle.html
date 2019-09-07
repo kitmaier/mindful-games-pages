@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	</head>
+	<body id='body'>
+		<h1>Pulsing Circle</h1>
+		<p>Breathe along with the circle</p>
+		<svg height="200" width="200">
+			<circle id='circle' cx="100" cy="100" r="50" stroke="#7799DD" stroke-width="3" fill="#DDEEFF">
+				<animate 
+					attributeName="r"
+					from="50"
+					to="50" 
+					dur="7s"
+					begin="2s"
+					values="50; 75; 75; 50; 50"
+					keyTimes="0; 0.3; 0.45; 0.8; 1" 
+					repeatCount="indefinite"
+					fill="freeze" 
+					id="circle-animation" /> <!-- 30 15 35 20 -->
+			</circle>
+			<!-- DONE: allow the user to adjust the timing parameters to match their natural breathing rhythm -->
+			<!-- TODO: allow the user to click a button at each point in their breath cycle to set the rhythm -->
+			<!-- TODO: interrupt periodically to check if the user's breathing is still matching the circle -->
+			<!-- TODO: is there some way to measure the user's breathing rhythm automatically? -->
+			Sorry, your browser does not support inline SVG.
+		</svg> 
+		
+		<div class="slidecontainer">
+			<input type="range" min="1" max="100" value="50" class="slider" id="myRange1" oninput="updateSlider(1)">
+			&emsp; Duration: <span id="demo1">5</span>s
+		</div>
+		<div class="slidecontainer">
+			<input type="range" min="1" max="100" value="30" class="slider" id="myRange2" oninput="updateSlider(2)">
+			&emsp; In-breath: <span id="demo2">1.5</span>s
+		</div>
+		<div class="slidecontainer">
+			<input type="range" min="1" max="100" value="45" class="slider" id="myRange3" oninput="updateSlider(3)">
+			&emsp; In-pause: <span id="demo3">0.75</span>s
+		</div>
+		<div class="slidecontainer">
+			<input type="range" min="1" max="100" value="80" class="slider" id="myRange4" oninput="updateSlider(4)">
+			&emsp; Out-breath: <span id="demo4">1.75</span>s
+		</div>
+		<div class="slidecontainer">
+			<input type="range" min="1" max="100" value="100" class="slider" id="myRange5" oninput="updateSlider(5)" disabled="true">
+			&emsp; Out-pause: <span id="demo5">1</span>s
+		</div>
+		<script>
+			function updateSlider(sliderId) {
+				try {
+					duration = document.getElementById("myRange1").value/10
+					document.getElementById("demo1").innerHTML = duration;
+					val2 = document.getElementById("myRange2").value
+					val3 = document.getElementById("myRange3").value
+					val4 = document.getElementById("myRange4").value
+					val5 = document.getElementById("myRange5").value
+					// TODO: one slider pushing another around seems a little buggy
+					/*
+					if(sliderId==2) {
+						if(val3 < val2) val3 = val2
+						if(val4 < val2) val4 = val2
+					}
+					if(sliderId==3) {
+						if(val2 > val3) val2 = val3
+						if(val4 < val3) val4 = val3
+					}
+					if(sliderId==4) {
+						if(val2 > val4) val2 = val4
+						if(val3 > val4) val3 = val4
+					}
+					if(sliderId!=2) document.getElementById("myRange2").value = val2
+					if(sliderId!=3) document.getElementById("myRange3").value = val3
+					if(sliderId!=4) document.getElementById("myRange4").value = val4
+					*/
+					document.getElementById("demo2").innerHTML = duration*val2/100.0
+					document.getElementById("demo3").innerHTML = duration*(val3-val2)/100.0
+					document.getElementById("demo4").innerHTML = duration*(val4-val3)/100.0
+					document.getElementById("demo5").innerHTML = duration*(val5-val4)/100.0
+					document.getElementById("circle-animation").setAttribute("dur",duration+"s")
+					document.getElementById("circle-animation").setAttribute("keyTimes","0; " + val2/100 + "; " + val3/100 + "; " + val4/100 + "; 1")
+				} catch(error) {
+					alert(error.message)
+				}
+			}
+		</script>
+	</body>
+</html>
