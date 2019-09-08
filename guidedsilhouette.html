@@ -437,6 +437,7 @@
 			   [6,16],[7,16],[8,16],       [10,16],[11,16],[12,16],
 			   [6,17],[7,17],[8,17],       [10,17],[11,17],[12,17]]
 				setColorOnPixels("black",pixels)
+				// TODO: make this more detailed and better-looking
 			}
 			darkenSilhouette()
 			var pixelsLookup = {
@@ -452,20 +453,24 @@
 				"RightLeg":[[10,12],[11,12],[10,13],[11,13],[10,14],[11,14],[10,15],[11,15]],
 				"LeftFoot":[[6,16],[7,16],[8,16],[6,17],[7,17],[8,17]],
 				"RightFoot":[[10,16],[11,16],[12,16],[10,17],[11,17],[12,17]]
+				// TODO: create more detailed body parts, including front/back (eg chest vs back)
 			}
 			function brightenBodyPart(bodyPart) {
 				setColorOnPixels("yellow",pixelsLookup[bodyPart])
+				// TODO: display name of body part as it lights up
 			}
 			function brightenRandomBodyPart() {
 				darkenSilhouette()
 				var index = Math.floor(Math.random()*12)
 				var bodyParts = ["LeftHand","RightHand","LeftArm","RightArm","Head","Neck","Chest","Pelvis","LeftLeg","RightLeg","LeftFoot","RightFoot"]
-				setColorOnPixels("yellow",pixelsLookup[bodyParts[index]])
+				brightenBodyPart(bodyParts[index])
 			}
 			function brightenOnRandomSchedule() {
 				brightenRandomBodyPart()
-				var timeoutValue = 10+Math.floor(Math.random()*20)
+				// TODO: allow timing parameters to be set by user
+				var timeoutValue = 5+Math.floor(Math.random()*25)
 				setTimeout(brightenOnRandomSchedule, timeoutValue*1000)
+				// TODO: break in with other random events sometimes, such as instructions, questions, and reminders
 			}
 			brightenOnRandomSchedule()
 		</script>
