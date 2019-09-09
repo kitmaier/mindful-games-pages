@@ -409,6 +409,7 @@
 			<rect id="pixel_19_19" x="190" y="190" width="10" height="10" style="fill:white;stroke:white;stroke-width:1" />
 			Sorry, your browser does not support inline SVG.
 		</svg> 
+		<p id="bodypart"></p>
 		<script>
 			function setColorOnPixels(color,pixels) {
 				try {
@@ -441,28 +442,31 @@
 			}
 			darkenSilhouette()
 			var pixelsLookup = {
-				"LeftHand":[[3,10],[4,10],[3,11],[4,11]],
-				"RightHand":[[14,10],[15,10],[14,11],[15,11]],
-				"LeftArm":[[4,9],[5,9],[5,8],[6,8],[6,7]],
-				"RightArm":[[12,7],[12,8],[13,8],[13,9],[14,9]],
-				"Head":[[8,2],[9,2],[10,2],[8,3],[9,3],[10,3],[8,4],[9,4],[10,4]],
-				"Neck":[[9,5],[7,6],[8,6],[9,6],[10,6],[11,6]],
-				"Chest":[[7,7],[8,7],[9,7],[10,7],[11,7],[7,8],[8,8],[9,8],[10,8],[11,8],[7,9],[8,9],[9,9],[10,9],[11,9]],
-				"Pelvis":[[7,10],[8,10],[9,10],[10,10],[11,10],[7,11],[8,11],[9,11],[10,11],[11,11]],
-				"LeftLeg":[[7,12],[8,12],[7,13],[8,13],[7,14],[8,14],[7,15],[8,15]],
-				"RightLeg":[[10,12],[11,12],[10,13],[11,13],[10,14],[11,14],[10,15],[11,15]],
-				"LeftFoot":[[6,16],[7,16],[8,16],[6,17],[7,17],[8,17]],
-				"RightFoot":[[10,16],[11,16],[12,16],[10,17],[11,17],[12,17]]
+				"Left Hand":[[3,10],[4,10],[3,11],[4,11]],
+				"Right Hand":[[14,10],[15,10],[14,11],[15,11]],
+				"Left Arm":[[4,9],[5,9],[5,8],[6,8],[6,7]],
+				"Right Arm":[[12,7],[12,8],[13,8],[13,9],[14,9]],
+				"Head & Face":[[8,2],[9,2],[10,2],[8,3],[9,3],[10,3],[8,4],[9,4],[10,4]],
+				"Neck & Shoulders":[[9,5],[7,6],[8,6],[9,6],[10,6],[11,6]],
+				"Chest & Back":[[7,7],[8,7],[9,7],[10,7],[11,7],[7,8],[8,8],[9,8],[10,8],[11,8],[7,9],[8,9],[9,9],[10,9],[11,9]],
+				"Pelvis & Belly":[[7,10],[8,10],[9,10],[10,10],[11,10],[7,11],[8,11],[9,11],[10,11],[11,11]],
+				"Left Leg":[[7,12],[8,12],[7,13],[8,13],[7,14],[8,14],[7,15],[8,15]],
+				"Right Leg":[[10,12],[11,12],[10,13],[11,13],[10,14],[11,14],[10,15],[11,15]],
+				"Left Foot":[[6,16],[7,16],[8,16],[6,17],[7,17],[8,17]],
+				"Right Foot":[[10,16],[11,16],[12,16],[10,17],[11,17],[12,17]]
 				// TODO: create more detailed body parts, including front/back (eg chest vs back)
+			}
+			function displayBodyPartName(bodyPart) {
+				document.getElementById("bodypart").textContent = "Focus on your "+bodyPart
 			}
 			function brightenBodyPart(bodyPart) {
 				setColorOnPixels("yellow",pixelsLookup[bodyPart])
-				// TODO: display name of body part as it lights up
+				displayBodyPartName(bodyPart)
 			}
 			function brightenRandomBodyPart() {
 				darkenSilhouette()
 				var index = Math.floor(Math.random()*12)
-				var bodyParts = ["LeftHand","RightHand","LeftArm","RightArm","Head","Neck","Chest","Pelvis","LeftLeg","RightLeg","LeftFoot","RightFoot"]
+				var bodyParts = ["Left Hand","Right Hand","Left Arm","Right Arm","Head & Face","Neck & Shoulders","Chest & Back","Pelvis & Belly","Left Leg","Right Leg","Left Foot","Right Foot"]
 				brightenBodyPart(bodyParts[index])
 			}
 			function brightenOnRandomSchedule() {
