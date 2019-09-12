@@ -5,7 +5,8 @@
 	<body id='body'>
 		<p><a href="index.html">Return to games index</a></p>
 		<h1>Shell game</h1>
-		<p>There are 3 cards in front of you, with three different pictures (Ant, Snake, Dog).
+		<p>Imagine that there are 3 cards in front of you, 
+		<br/>with three different pictures (Ant, Snake, Dog).
 		<br/>You will rearrange them based on the instructions below,
 		<br/>and then enter the order they end up in into the box below.
 		<br/>For instance, if they end up in the same order as they started,
@@ -16,7 +17,7 @@
 		<!-- TODO: break this down into components and add microtests -->
 		<div class="slidecontainer">
 			<input type="range" min="1" max="10" value="5" class="slider" id="num_swaps_slider" oninput="updateSlider()">
-			&emsp; Number of switches: <span id="num_swaps_text">5</span>
+			&emsp; Number of steps: <span id="num_swaps_text">5</span>
 		</div>
 		<p id="swaps">Switch: 1 and 2
 		<br/>Switch: 2 and 3
