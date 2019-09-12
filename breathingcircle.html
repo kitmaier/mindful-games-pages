@@ -5,7 +5,7 @@
 	<body id='body'>
 		<p><a href="index.html">Return to games index</a></p>
 		<h1>Pulsing Circle</h1>
-		<p>Breathe along with the circle</p>
+		<p>Breathe along with the circle.</p>
 		<svg height="200" width="200">
 			<circle id='circle' cx="100" cy="100" r="50" stroke="#7799DD" stroke-width="3" fill="#DDEEFF">
 				<animate 
@@ -20,13 +20,14 @@
 					fill="freeze" 
 					id="circle-animation" /> <!-- 30 15 35 20 -->
 			</circle>
-			<!-- DONE: allow the user to adjust the timing parameters to match their natural breathing rhythm -->
+			<!-- TODO: get all the sliders into one slider -->
 			<!-- TODO: allow the user to click a button at each point in their breath cycle to set the rhythm -->
 			<!-- TODO: interrupt periodically to check if the user's breathing is still matching the circle -->
 			<!-- TODO: is there some way to measure the user's breathing rhythm automatically? -->
 			Sorry, your browser does not support inline SVG.
 		</svg> 
-		
+		<p>You can adjust the sliders to match
+		<br/>your comfortable breathing rhythm.</p>
 		<div class="slidecontainer">
 			<input type="range" min="1" max="100" value="50" class="slider" id="myRange1" oninput="updateSlider(1)">
 			&emsp; Duration: <span id="demo1">5</span>s
