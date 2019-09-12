@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+		<style>
+			#slider-range1 {
+				max-width: 130px
+			}
+			#slider-range2 {
+				max-width: 130px
+			}
+			.ui-slider .ui-slider-handle{
+				width:5px
+			}
+		</style>
+		<!-- TODO: modifying the width of the slider handle seems to cause them to float a bit to the left of the cursor while dragging --> 
 	</head>
 	<body id='body'>
 		<p><a href="index.html">Return to games index</a></p>
@@ -20,7 +35,6 @@
 					fill="freeze" 
 					id="circle-animation" /> <!-- 30 15 35 20 -->
 			</circle>
-			<!-- TODO: get all the sliders into one slider -->
 			<!-- TODO: allow the user to click a button at each point in their breath cycle to set the rhythm -->
 			<!-- TODO: interrupt periodically to check if the user's breathing is still matching the circle -->
 			<!-- TODO: is there some way to measure the user's breathing rhythm automatically? -->
@@ -28,63 +42,54 @@
 		</svg> 
 		<p>You can adjust the sliders to match
 		<br/>your comfortable breathing rhythm.</p>
-		<div class="slidecontainer">
-			<input type="range" min="1" max="100" value="50" class="slider" id="myRange1" oninput="updateSlider(1)">
-			&emsp; Duration: <span id="demo1">5</span>s
-		</div>
-		<div class="slidecontainer">
-			<input type="range" min="1" max="100" value="30" class="slider" id="myRange2" oninput="updateSlider(2)">
-			&emsp; In-breath: <span id="demo2">1.5</span>s
-		</div>
-		<div class="slidecontainer">
-			<input type="range" min="1" max="100" value="45" class="slider" id="myRange3" oninput="updateSlider(3)">
-			&emsp; In-pause: <span id="demo3">0.75</span>s
-		</div>
-		<div class="slidecontainer">
-			<input type="range" min="1" max="100" value="80" class="slider" id="myRange4" oninput="updateSlider(4)">
-			&emsp; Out-breath: <span id="demo4">1.75</span>s
-		</div>
-		<div class="slidecontainer">
-			<input type="range" min="1" max="100" value="100" class="slider" id="myRange5" oninput="updateSlider(5)" disabled="true">
-			&emsp; Out-pause: <span id="demo5">1</span>s
-		</div>
+		<p>Duration: <span id="duration">5</span>s</p>
+		<div id="slider-range1"></div>
+		<p><div>
+				In-breath: <span id="inbreath">1.5</span>s
+				<br/>In-pause: <span id="inpause">0.75</span>s
+				<br/>Out-breath: <span id="outbreath">1.75</span>s
+				<br/>Out-pause: <span id="outpause">1</span>s
+		</div></p>
+		<div id="slider-range2"></div>
 		<script>
-			function updateSlider(sliderId) {
+			function updateValues(duration,sections) {
 				try {
-					duration = document.getElementById("myRange1").value/10
-					document.getElementById("demo1").innerHTML = duration;
-					val2 = document.getElementById("myRange2").value
-					val3 = document.getElementById("myRange3").value
-					val4 = document.getElementById("myRange4").value
-					val5 = document.getElementById("myRange5").value
-					// TODO: one slider pushing another around seems a little buggy
-					/*
-					if(sliderId==2) {
-						if(val3 < val2) val3 = val2
-						if(val4 < val2) val4 = val2
-					}
-					if(sliderId==3) {
-						if(val2 > val3) val2 = val3
-						if(val4 < val3) val4 = val3
-					}
-					if(sliderId==4) {
-						if(val2 > val4) val2 = val4
-						if(val3 > val4) val3 = val4
-					}
-					if(sliderId!=2) document.getElementById("myRange2").value = val2
-					if(sliderId!=3) document.getElementById("myRange3").value = val3
-					if(sliderId!=4) document.getElementById("myRange4").value = val4
-					*/
-					document.getElementById("demo2").innerHTML = duration*val2/100.0
-					document.getElementById("demo3").innerHTML = duration*(val3-val2)/100.0
-					document.getElementById("demo4").innerHTML = duration*(val4-val3)/100.0
-					document.getElementById("demo5").innerHTML = duration*(val5-val4)/100.0
+					// TODO: limit the number of decimal places in these numbers
+					document.getElementById("duration").innerHTML = duration;
+					document.getElementById("inbreath").innerHTML = duration*sections[0]/100.0
+					document.getElementById("inpause").innerHTML = duration*(sections[1]-sections[0])/100.0
+					document.getElementById("outbreath").innerHTML = duration*(sections[2]-sections[1])/100.0
+					document.getElementById("outpause").innerHTML = duration*(100-sections[2])/100.0
 					document.getElementById("circle-animation").setAttribute("dur",duration+"s")
-					document.getElementById("circle-animation").setAttribute("keyTimes","0; " + val2/100 + "; " + val3/100 + "; " + val4/100 + "; 1")
+					document.getElementById("circle-animation").setAttribute("keyTimes","0; " + sections[0]/100 + "; " + sections[1]/100 + "; " + sections[2]/100 + "; 1")
 				} catch(error) {
 					alert(error.message)
 				}
 			}
+			$( function() {
+				$( "#slider-range1" ).slider({
+					min: 0,
+					max: 100,
+					values: [50],
+					slide: function( event, ui ) {
+						duration = ui.values[0]/10.0
+						valClone = $("#slider-range2").slider("values").slice(0)
+						valClone.sort(function(a, b){return a-b})
+						updateValues(duration,valClone)
+					}
+				});
+				$( "#slider-range2" ).slider({
+					min: 0,
+					max: 100,
+					values: [ 30, 45, 80],
+					slide: function( event, ui ) {
+						duration = $("#slider-range1").slider("values")[0]/10.0
+						valClone = ui.values.slice(0)
+						valClone.sort(function(a, b){return a-b})
+						updateValues(duration,valClone)
+					}
+				});
+			} );
 		</script>
 	</body>
 </html>
