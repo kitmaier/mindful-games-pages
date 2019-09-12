@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	</head>
+	<body id='body'>
+		<p><a href="index.html">Return to games index</a></p>
+		<h1>Shell game</h1>
+		<p>There are 3 cards in front of you, with three different pictures (Ant, Snake, Dog).
+		<br/>You will switch pairs of them based on the instructions below,
+		<br/>and then enter the order they end up in into the box below.
+		<br/>For instance, if they end up in the same order as they started,
+		<br/>you would enter the text ASD in the box.</p>
+		<!-- TODO: make this animated instead of text, or flash the text one instruction at a time -->
+		<!-- TODO: add speed and accuracy ratings -->
+		<!-- TODO: make the number of cards a user-defined variable -->
+		<!-- TODO: add in left and right rotations, as well as reversals for larger numbers of cards, in order to overcom even/odd permutation parity problem -->
+		<div class="slidecontainer">
+			<input type="range" min="1" max="10" value="5" class="slider" id="num_swaps_slider" oninput="updateSlider()">
+			&emsp; Number of switches: <span id="num_swaps_text">5</span>
+		</div>
+		<p id="swaps">Switch: 1 and 2
+		<br/>Switch: 2 and 3
+		<br/>Switch: 1 and 3
+		<br/>Switch: 2 and 3
+		<br/>Switch: 1 and 2</p>
+		<p>What order are they in?</p>
+		<input type="text" id="color_order" value="" onKeyUp="submissionClick(event)">
+		<button onclick="receiveSubmission()">Submit</button>
+		<p id="response"></p>
+		<p id="accuracy"></p>
+		<p id="speed"></p>
+		<p id="data"></p>
+		<script>
+			var data = []
+			var number_of_swaps = 5
+			var swapOptions = [[1,2],[1,3],[2,3]]
+			var swaps = [[1,2],[2,3],[1,3],[2,3],[1,2]]
+			var result = "SAD"
+			var startTime = 0
+			var lastTime = 0
+			function receiveSubmission() {
+				if(startTime==0) {
+					startTime = (new Date).getTime()
+					data.push([startTime])
+					lastTime = startTime
+				}
+				submission = document.getElementById("color_order").value
+				isCorrect = (submission==result)
+				now = (new Date).getTime()
+				data.push([(now-startTime),(now-lastTime),swaps,result,submission,isCorrect])
+				lastTime = now
+				document.getElementById("data").textContent = "Raw data: "+JSON.stringify(data)
+				if(isCorrect) {
+					document.getElementById("response").textContent = "Correct! Try another"
+				} else {
+					document.getElementById("response").textContent = "Incorrect, the order was "+result+". Try another"
+				}
+				var duration = data[data.length-1][0];
+				var speed = (duration*0.001/(data.length-2)).toFixed(3);
+				document.getElementById("speed").textContent = "Speed: " + speed + "s";
+				var countValid = 0;
+				for(var k=2; k<data.length; k++) {
+					if(data[k][5]) {
+						countValid += 1;
+					}
+				}
+				var accuracy = (countValid*100.0/(data.length-2)).toFixed(0);
+				document.getElementById("accuracy").textContent = "Accuracy: " + accuracy + "%";
+				generateSwaps()
+			}
+			function submissionClick(event) {
+				document.getElementById("color_order").value = document.getElementById("color_order").value.toUpperCase()
+				if(event.keyCode==13) {
+					receiveSubmission()
+					document.getElementById("color_order").value = ""
+				}
+			}
+			function updateSlider() {
+				number_of_swaps = document.getElementById("num_swaps_slider").value
+				document.getElementById("num_swaps_text").innerHTML = number_of_swaps;
+				generateSwaps()
+			}
+			function generateSwaps() {
+				swaps = []
+				tmpResult = ["A","S","D"]
+				swapText = ""
+				lastSwapOption = Math.floor(Math.random()*swapOptions.length)
+				for(var k=0; k<number_of_swaps; k++) { 
+					optionIndex = (lastSwapOption + 1 + Math.floor(Math.random()*(swapOptions.length-1)))%swapOptions.length
+					swaps.push(swapOptions[optionIndex])
+					swapText += "Switch: "+swapOptions[optionIndex][0]+" and "+swapOptions[optionIndex][1]+"<br/>"
+					
+					tmpChar1 = tmpResult[swapOptions[optionIndex][0]-1]
+					tmpChar2 = tmpResult[swapOptions[optionIndex][1]-1]
+					tmpResult[swapOptions[optionIndex][0]-1] = tmpChar2
+					tmpResult[swapOptions[optionIndex][1]-1] = tmpChar1
+					lastSwapOption = optionIndex
+				}
+				result = tmpResult.join("")
+				document.getElementById("swaps").innerHTML = swapText
+			}
+		</script>
+	</body>
+</html>
