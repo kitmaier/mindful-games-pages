@@ -6,7 +6,7 @@
 		<p><a href="index.html">Return to games index</a></p>
 		<h1>Guided Body Scan</h1>
 		<p>Direct your attention to sensations <br/>in the lightened part of the body below, <br/>looking at it as though it was in a mirror.</p>
-		<svg id="svgId" height="200" width="200">
+		<svg id="svgId" height="200" width="200" onClick="clickPixel(event)">
 			Sorry, your browser does not support inline SVG.
 		</svg> 
 		<p id="bodypart"></p>
@@ -27,9 +27,27 @@
 				}
 			}
 			createPixels()
+			var state = "randomized"
+			function clickPixel(event) {
+				// TODO: track how long it takes to respond
+				var x = Math.floor(event.offsetX/10)
+				var y = Math.floor(event.offsetY/10)
+				if(state!="awaiting_click") {
+					return
+				}
+				var bodyPart = pixelsReverseLookup[[x,y]]
+				if(bodyPart===undefined) {
+					return
+				}
+				brightenBodyPart(bodyPart)
+				state = "randomized"
+				var timeoutValue = 5+Math.floor(Math.random()*25)
+				setTimeout(brightenOnRandomSchedule, timeoutValue*1000)
+			}
 			function setColorOnPixels(color,pixels) {
 				try {
 					for(var k=0; k<pixels.length; k++) {
+
 						document.getElementById("pixel_"+pixels[k][0]+"_"+pixels[k][1]).setAttribute("style","fill:"+color+";stroke:"+color+";stroke-width:1")
 					}
 				} catch(error) {
@@ -54,9 +72,10 @@
 			   [6,16],[7,16],[8,16],       [10,16],[11,16],[12,16],
 			   [6,17],[7,17],[8,17],       [10,17],[11,17],[12,17]]
 				setColorOnPixels("black",pixels)
-				// TODO: make this more detailed and better-looking
+				// TODO: make this graphic more detailed and better-looking
 			}
 			darkenSilhouette()
+			// TODO: create more detailed body parts, including front/back (eg chest vs back)
 			var pixelsLookup = {
 				"Left Hand":[[3,10],[4,10],[3,11],[4,11]],
 				"Right Hand":[[14,10],[15,10],[14,11],[15,11]],
@@ -70,8 +89,18 @@
 				"Right Leg":[[10,12],[11,12],[10,13],[11,13],[10,14],[11,14],[10,15],[11,15]],
 				"Left Foot":[[6,16],[7,16],[8,16],[6,17],[7,17],[8,17]],
 				"Right Foot":[[10,16],[11,16],[12,16],[10,17],[11,17],[12,17]]
-				// TODO: create more detailed body parts, including front/back (eg chest vs back)
 			}
+			var pixelsReverseLookup = {}
+			function createPixelsReverseLookup() {
+				for(var bodyPart in pixelsLookup) {
+					var pixelList = pixelsLookup[bodyPart]
+					for(var k=0; k<pixelList.length; k++) {
+						var pixelLoc = pixelList[k]
+						pixelsReverseLookup[pixelLoc] = bodyPart
+					}
+				}
+			}
+			createPixelsReverseLookup()
 			function displayBodyPartName(bodyPart) {
 				document.getElementById("bodypart").textContent = "Focus on your "+bodyPart
 			}
@@ -86,10 +115,16 @@
 				brightenBodyPart(bodyParts[index])
 			}
 			function brightenOnRandomSchedule() {
-				brightenRandomBodyPart()
-				// TODO: allow timing parameters to be set by user
-				var timeoutValue = 5+Math.floor(Math.random()*25)
-				setTimeout(brightenOnRandomSchedule, timeoutValue*1000)
+				if(Math.random()*13>1) {
+					// TODO: allow timing parameters to be set by user
+					brightenRandomBodyPart()
+					var timeoutValue = 5+Math.floor(Math.random()*25)
+					setTimeout(brightenOnRandomSchedule, timeoutValue*1000)
+				} else {
+					darkenSilhouette()
+					document.getElementById("bodypart").textContent = "Click somewhere on the body"
+					state = "awaiting_click"
+				}
 				// TODO: break in with other random events sometimes, such as instructions, questions, and reminders
 			}
 			brightenOnRandomSchedule()
