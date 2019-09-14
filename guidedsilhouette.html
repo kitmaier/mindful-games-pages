@@ -10,7 +10,41 @@
 			Sorry, your browser does not support inline SVG.
 		</svg> 
 		<p id="bodypart"></p>
+		<button id="toggleAudio" type="button" onclick="toggleAudio()">Audio Disabled</button>
 		<script>
+			var audioStatus = "disabled"
+			function toggleAudio() {
+				if(audioStatus=="disabled") {
+					audioStatus = "enabled"
+					document.getElementById("toggleAudio").textContent = "Audio Enabled"
+				} else {
+					audioStatus = "disabled"
+					document.getElementById("toggleAudio").textContent = "Audio Disabled"
+				}
+			}
+			var audioFiles = {}
+			function setupAudio() {
+				audioFiles["Left Hand"] = new Audio("audio/left-hand.mp3")
+				audioFiles["Right Hand"] = new Audio("audio/right-hand.mp3")
+				audioFiles["Left Arm"] = new Audio("audio/left-arm.mp3")
+				audioFiles["Right Arm"] = new Audio("audio/right-arm.mp3")
+				audioFiles["Head & Face"] = new Audio("audio/head-and-face.mp3")
+				audioFiles["Neck & Shoulders"] = new Audio("audio/neck-and-shoulders.mp3")
+				audioFiles["Chest & Back"] = new Audio("audio/chest-and-back.mp3")
+				audioFiles["Pelvis & Belly"] = new Audio("audio/pelvis-and-belly.mp3")
+				audioFiles["Left Leg"] = new Audio("audio/left-leg.mp3")
+				audioFiles["Right Leg"] = new Audio("audio/right-leg.mp3")
+				audioFiles["Left Foot"] = new Audio("audio/left-foot.mp3")
+				audioFiles["Right Foot"] = new Audio("audio/right-foot.mp3")
+				audioFiles["Click Somewhere"] = new Audio("audio/click-somewhere.mp3")
+			}
+			setupAudio()
+			function playAudio(bodyPart) {
+				if(audioStatus=="enabled") {
+					var audioFile = audioFiles[bodyPart]
+					audioFile.play()
+				}
+			}
 			function createPixels() {
 				var svg = document.getElementById("svgId")
 				for(var x=0; x<20; x++) {
@@ -102,7 +136,12 @@
 			}
 			createPixelsReverseLookup()
 			function displayBodyPartName(bodyPart) {
-				document.getElementById("bodypart").textContent = "Focus on your "+bodyPart
+				if(bodyPart=="Click Somewhere") {
+					document.getElementById("bodypart").textContent = "Click somewhere on the body"
+				} else {
+					document.getElementById("bodypart").textContent = "Focus on your "+bodyPart
+				}
+				playAudio(bodyPart)
 			}
 			function brightenBodyPart(bodyPart) {
 				setColorOnPixels("yellow",pixelsLookup[bodyPart])
@@ -122,7 +161,7 @@
 					setTimeout(brightenOnRandomSchedule, timeoutValue*1000)
 				} else {
 					darkenSilhouette()
-					document.getElementById("bodypart").textContent = "Click somewhere on the body"
+					displayBodyPartName("Click Somewhere")
 					state = "awaiting_click"
 				}
 				// TODO: break in with other random events sometimes, such as instructions, questions, and reminders
