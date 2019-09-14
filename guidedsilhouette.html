@@ -6,13 +6,35 @@
 		<p><a href="index.html">Return to games index</a></p>
 		<h1>Guided Body Scan</h1>
 		<p>Direct your attention to sensations <br/>in the lightened part of the body below, <br/>looking at it as though it was in a mirror.</p>
+		<p><button id="toggleActive" type="button" onclick="toggleActive()">Push to Start</button></p>
 		<svg id="svgId" height="200" width="200" onClick="clickPixel(event)">
 			Sorry, your browser does not support inline SVG.
 		</svg> 
 		<p id="bodypart"></p>
 		<button id="toggleAudio" type="button" onclick="toggleAudio()">Audio Disabled</button>
+		<script src="NoSleep.min.js"></script>
 		<script>
+			var timerId = null
+			var noSleep = new NoSleep()
+			var sleepStatus = "asleep"
+			function toggleActive() {
+				if(sleepStatus=="asleep") {
+					sleepStatus = "awake"
+					noSleep.enable()
+					document.getElementById("toggleActive").textContent = "Push to Stop"
+					brightenOnRandomSchedule()
+				} else {
+					sleepStatus = "asleep"
+					noSleep.disable()
+					document.getElementById("toggleActive").textContent = "Push to Start"
+					clearTimeout(timerId)
+					darkenSilhouette()
+					displayBodyPartName("Paused")
+					stopAudio()
+				}
+			}
 			var audioStatus = "disabled"
+			var activeRecording = null
 			function toggleAudio() {
 				if(audioStatus=="disabled") {
 					audioStatus = "enabled"
@@ -41,8 +63,17 @@
 			setupAudio()
 			function playAudio(bodyPart) {
 				if(audioStatus=="enabled") {
+					stopAudio()
 					var audioFile = audioFiles[bodyPart]
 					audioFile.play()
+					activeRecording = audioFile
+				}
+			}
+			function stopAudio() {
+				if(activeRecording!=null) {
+					activeRecording.pause();
+					activeRecording.currentTime = 0;
+					activeRecording = null
 				}
 			}
 			function createPixels() {
@@ -76,12 +107,11 @@
 				brightenBodyPart(bodyPart)
 				state = "randomized"
 				var timeoutValue = 5+Math.floor(Math.random()*25)
-				setTimeout(brightenOnRandomSchedule, timeoutValue*1000)
+				timerId = setTimeout(brightenOnRandomSchedule, timeoutValue*1000)
 			}
 			function setColorOnPixels(color,pixels) {
 				try {
 					for(var k=0; k<pixels.length; k++) {
-
 						document.getElementById("pixel_"+pixels[k][0]+"_"+pixels[k][1]).setAttribute("style","fill:"+color+";stroke:"+color+";stroke-width:1")
 					}
 				} catch(error) {
@@ -138,6 +168,9 @@
 			function displayBodyPartName(bodyPart) {
 				if(bodyPart=="Click Somewhere") {
 					document.getElementById("bodypart").textContent = "Click somewhere on the body"
+				} else if(bodyPart=="Paused") {
+					document.getElementById("bodypart").textContent = "The game is paused"
+					return
 				} else {
 					document.getElementById("bodypart").textContent = "Focus on your "+bodyPart
 				}
@@ -158,7 +191,7 @@
 					// TODO: allow timing parameters to be set by user
 					brightenRandomBodyPart()
 					var timeoutValue = 5+Math.floor(Math.random()*25)
-					setTimeout(brightenOnRandomSchedule, timeoutValue*1000)
+					timerId = setTimeout(brightenOnRandomSchedule, timeoutValue*1000)
 				} else {
 					darkenSilhouette()
 					displayBodyPartName("Click Somewhere")
@@ -166,7 +199,6 @@
 				}
 				// TODO: break in with other random events sometimes, such as instructions, questions, and reminders
 			}
-			brightenOnRandomSchedule()
 		</script>
 	</body>
 </html>
