@@ -32,6 +32,12 @@
 			<rect id="mouse" x="90" y="90" width="10" height="10" stroke="#000000" stroke-width="1" fill="#A0A0A0"/>
 			Sorry, your browser does not support inline SVG.
 		</svg>
+		<p>
+			<button id="leftArrow" type="button" onclick="arrowClick('L')">&#x2B9C;</button>
+			<button id="upArrow" type="button" onclick="arrowClick('U')">&#x2B9D;</button>
+			<button id="rightArrow" type="button" onclick="arrowClick('R')">&#x2B9E;</button>
+			<button id="downArrow" type="button" onclick="arrowClick('D')">&#x2B9F;</button>
+		</p>
 		<p id="advice">Try to keep track of where the mouse is in the maze.</p>
 		<p id="accuracy">Accuracy: </p>
 		<!-- TODO: setup wakelock and pause button -->
@@ -44,6 +50,7 @@
 		<!-- TODO: store maps in separate file -->
 		<!-- TODO: select map name from dropdown -->
 		<!-- TODO: accumulate/average scores, add some explanatory text about how scores are calculated, add raw data text element -->
+		<!-- TODO: allow user to select exploration strategy from dropdown - random, reduced backtracking, exploratory, periodic -->
 		<script>
 			var state = "random"
 			var position = [2,2]
@@ -104,7 +111,7 @@
 				}
 				if(state=="random"&&(Math.random()*30)<1) {
 					state = "directed-waiting"
-					document.getElementById("advice").textContent = "Use the arrow keys to find your way back to the cheese."
+					document.getElementById("advice").innerHTML = "Use the arrow keys or the buttons <br/>to find your way back to the cheese."
 					// TODO: why doesn't this update correctly when I set the list variable directly, why do I have to set individual elements?
 					directedPathStart[0] = position[0]
 					directedPathStart[1] = position[1]
@@ -112,7 +119,7 @@
 				}
 				if((state=="directed-waiting"||state=="directed-moving")&&map[position[0]][position[1]]["C"]==1) {
 					state = "random"
-					document.getElementById("advice").textContent = "Well done! Try to keep track of where the mouse is in the maze."
+					document.getElementById("advice").innerHTML = "Well done! Try to keep track of where the mouse is in the maze."
 					if(directedPathLength>0) {
 						var par = mapPars[directedPathStart[0]][directedPathStart[1]]
 						var score = par/directedPathLength
@@ -218,31 +225,34 @@
 				}
 			}
 			function bodyClick(event) {
-				// TODO: make sure that multiple of these events don't fire at once
-				if(state!="directed-waiting") return;
-				state = "directed-moving"
-				directedPathLength = directedPathLength+1
 				var x = event.keyCode;
 				if (x == '37') {
-					// left arrow
+					arrowClick("L")
+				} else if (x == '39') {
+					arrowClick("R")
+				} else if (x == '38') {
+					arrowClick("U")
+				} else if (x == '40') {
+					arrowClick("D")
+				}
+			}
+			function arrowClick(optionChar) {
+				if(state!="directed-waiting") return;
+				if(map[position[0]][position[1]][optionChar]==0) return;
+				state = "directed-moving"
+				directedPathLength = directedPathLength+1
+				if (optionChar=="L") {
 					animateLeftToRight()
 					position[1] = position[1]-1
-					return
-				} else if (x == '39') {
-					// right arrow
+				} else if(optionChar=="R") {
 					animateRightToLeft()
 					position[1] = position[1]+1
-					return
-				} else if (x == '38') {
-					// up arrow
+				} else if(optionChar=="U") {
 					animateTopToBottom()
 					position[0] = position[0]-1
-					return
-				} else if (x == '40') {
-					// down arrow
+				} else if(optionChar=="D") {
 					animateBottomToTop()
 					position[0] = position[0]+1
-					return
 				}
 			}
 		</script>
