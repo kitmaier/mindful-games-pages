@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	</head>
+	<body id='body' onkeydown="bodyClick(event)">
+		<p><a href="index.html">Return to games index</a></p>
+		<h1>Maze Runner</h1>
+		<p>Pay attention to the animation below.
+		<br/>You are a mouse, randomly exploring a maze.
+		<br/>Try to keep track of your position in the maze,
+		<br/>as well as the position of the cheese.
+		<br/>When the animation stops, use the arrow keys
+		<br/>to find your way back to the cheese.</p>
+		<!-- TODO: start at the cheese, wander randomly except keep track of where you have been and bias towards exploring under-explored areas, and also a bias to come back to the cheese periodically to check in -->
+		<!-- TODO: allow the user to control the speed of the animation -->
+		<!-- TODO: generate the entire map in the svg and just move a viewing window over it -->
+		<!--p><button id="toggleActive" type="button" onclick="toggleActive()">Push to Start</button></p-->
+		<svg id="svgId" height="200" width="200">
+			<rect id="leftHall" x="40" y="90" width="50" height="10" stroke="#000000" stroke-width="1" fill="#000000" visibility="hidden">
+				<animate id="leftToRight" attributeName="x" from="40" to="100" dur="1s" begin="indefinite" fill="remove" />
+			</rect>
+			<rect id="rightHall" x="100" y="90" width="50" height="10" stroke="#000000" stroke-width="1" fill="#000000" visibility="hidden">
+				<animate id="rightToLeft" attributeName="x" from="100" to="40" dur="1s" begin="indefinite" fill="remove" />
+			</rect>
+			<rect id="topHall" x="90" y="40" width="10" height="50" stroke="#000000" stroke-width="1" fill="#000000" visibility="hidden">
+				<animate id="topToBottom" attributeName="y" from="40" to="100" dur="1s" begin="indefinite" fill="remove" />
+			</rect>
+			<rect id="bottomHall" x="90" y="100" width="10" height="50" stroke="#000000" stroke-width="1" fill="#000000" visibility="hidden">
+				<animate id="bottomToTop" attributeName="y" from="100" to="40" dur="1s" begin="indefinite" fill="remove" />
+			</rect>
+			<rect id="cheese" x="80" y="80" width="30" height="30" stroke="#000000" stroke-width="1" fill="#FFC000" visibility="hidden"/>
+			<rect id="mouse" x="90" y="90" width="10" height="10" stroke="#000000" stroke-width="1" fill="#A0A0A0"/>
+			Sorry, your browser does not support inline SVG.
+		</svg>
+		<p id="advice">Try to keep track of where the mouse is in the maze.</p>
+		<!-- TODO: setup wakelock and pause button -->
+		<script src="NoSleep.min.js"></script>
+		<!-- TODO: ideas for maps - grid where cheese is in top left corner, grid where cheese is in middle, randomized densely packed tree where cheese is at root, randomized densely packed tree with small number of random cross-connections, various sizes -->
+		<!-- TODO: name each map, maybe allow user to see map before/after game -->
+		<!-- TODO: track timing metrics -->
+		<script>
+			var state = "random"
+			var position = [2,2]
+			var lastMotion = "X"
+			var map = [[{"C":0,"L":0,"R":1,"U":0,"D":1},
+							{"C":0,"L":1,"R":1,"U":0,"D":1},
+								{"C":0,"L":1,"R":1,"U":0,"D":1},
+									{"C":0,"L":1,"R":1,"U":0,"D":1},
+										{"C":0,"L":1,"R":0,"U":0,"D":1}],
+						[{"C":0,"L":0,"R":1,"U":1,"D":1},
+							{"C":0,"L":1,"R":1,"U":1,"D":1},
+								{"C":0,"L":1,"R":1,"U":1,"D":1},
+									{"C":0,"L":1,"R":1,"U":1,"D":1},
+										{"C":0,"L":1,"R":0,"U":1,"D":1}],
+						[{"C":0,"L":0,"R":1,"U":1,"D":1},
+							{"C":0,"L":1,"R":1,"U":1,"D":1},
+								{"C":1,"L":1,"R":1,"U":1,"D":1},
+									{"C":0,"L":1,"R":1,"U":1,"D":1},
+										{"C":0,"L":1,"R":0,"U":1,"D":1}],
+						[{"C":0,"L":0,"R":1,"U":1,"D":1},
+							{"C":0,"L":1,"R":1,"U":1,"D":1},
+								{"C":0,"L":1,"R":1,"U":1,"D":1},
+									{"C":0,"L":1,"R":1,"U":1,"D":1},
+										{"C":0,"L":1,"R":0,"U":1,"D":1}],
+						[{"C":0,"L":0,"R":1,"U":1,"D":0},
+							{"C":0,"L":1,"R":1,"U":1,"D":0},
+								{"C":0,"L":1,"R":1,"U":1,"D":0},
+									{"C":0,"L":1,"R":1,"U":1,"D":0},
+										{"C":0,"L":1,"R":0,"U":1,"D":0}]]
+			function resetImage() {
+			// TODO: figure out how to get SVG event timings to work properly so that rect does not reset to initial position while still visible
+			//alert(document.getElementById("svgId").getCurrentTime())
+			//alert(document.getElementById("leftToRight").getAttribute("begin"))
+			//document.getElementById("leftToRight").endElement()
+			//document.getElementById("leftToLeft").beginElement()
+				document.getElementById("cheese").style.visibility = "hidden"
+				document.getElementById("leftHall").style.visibility = "hidden"
+				document.getElementById("rightHall").style.visibility = "hidden"
+				document.getElementById("topHall").style.visibility = "hidden"
+				document.getElementById("bottomHall").style.visibility = "hidden"
+				if(map[position[0]][position[1]]["C"]==1) {
+					document.getElementById("cheese").style.visibility = "visible"
+				}
+				if(map[position[0]][position[1]]["L"]==1) {
+					document.getElementById("leftHall").style.visibility = "visible"
+				}
+				if(map[position[0]][position[1]]["R"]==1) {
+					document.getElementById("rightHall").style.visibility = "visible"
+				}
+				if(map[position[0]][position[1]]["U"]==1) {
+					document.getElementById("topHall").style.visibility = "visible"
+				}
+				if(map[position[0]][position[1]]["D"]==1) {
+					document.getElementById("bottomHall").style.visibility = "visible"
+				}
+				if(state=="random"&&(Math.random()*30)<1) {
+					state = "directed-waiting"
+					document.getElementById("advice").textContent = "Use the arrow keys to find your way back to the cheese."
+				}
+				if((state=="directed-waiting"||state=="directed-moving")&&map[position[0]][position[1]]["C"]==1) {
+					state = "random"
+					document.getElementById("advice").textContent = "Well done! Try to keep track of where the mouse is in the maze."
+				}
+				if(state=="random") {
+					setTimeout(moveRandom,1000)
+				} else {
+					state="directed-waiting"
+					// wait for bodyClick event
+				}
+			}
+			resetImage()
+			function animateLeftToRight() {
+				document.getElementById("cheese").style.visibility = "hidden"
+				document.getElementById("rightHall").style.visibility = "hidden"
+				document.getElementById("topHall").style.visibility = "hidden"
+				document.getElementById("bottomHall").style.visibility = "hidden"
+				document.getElementById("leftToRight").beginElement()
+				setTimeout(resetImage,1000)
+			}
+			function animateRightToLeft() {
+				document.getElementById("cheese").style.visibility = "hidden"
+				document.getElementById("leftHall").style.visibility = "hidden"
+				document.getElementById("topHall").style.visibility = "hidden"
+				document.getElementById("bottomHall").style.visibility = "hidden"
+				document.getElementById("rightToLeft").beginElement()
+				setTimeout(resetImage,1000)
+			}
+			function animateTopToBottom() {
+				document.getElementById("cheese").style.visibility = "hidden"
+				document.getElementById("leftHall").style.visibility = "hidden"
+				document.getElementById("rightHall").style.visibility = "hidden"
+				document.getElementById("bottomHall").style.visibility = "hidden"
+				document.getElementById("topToBottom").beginElement()
+				setTimeout(resetImage,1000)
+			}
+			function animateBottomToTop() {
+				document.getElementById("cheese").style.visibility = "hidden"
+				document.getElementById("leftHall").style.visibility = "hidden"
+				document.getElementById("rightHall").style.visibility = "hidden"
+				document.getElementById("topHall").style.visibility = "hidden"
+				document.getElementById("bottomToTop").beginElement()
+				setTimeout(resetImage,1000)
+			}
+			function moveRandom() {
+				if(state!="random") return;
+				var options = []
+				if(map[position[0]][position[1]]["L"]==1) {
+					options.push("L")
+					if(lastMotion!="R") {
+						options.push("L")
+						options.push("L")
+						options.push("L")
+					}
+				}
+				if(map[position[0]][position[1]]["R"]==1) {
+					options.push("R")
+					if(lastMotion!="L") {
+						options.push("R")
+						options.push("R")
+						options.push("R")
+					}
+				}
+				if(map[position[0]][position[1]]["U"]==1) {
+					options.push("U")
+					if(lastMotion!="D") {
+						options.push("U")
+						options.push("U")
+						options.push("U")
+					}
+				}
+				if(map[position[0]][position[1]]["D"]==1) {
+					options.push("D")
+					if(lastMotion!="U") {
+						options.push("D")
+						options.push("D")
+						options.push("D")
+					}
+				}
+				var option = options[Math.floor(Math.random()*options.length)]
+				lastMotion = option
+				if(option=="L") {
+					animateLeftToRight()
+					position[1] = position[1]-1
+					return
+				}
+				if(option=="R") {
+					animateRightToLeft()
+					position[1] = position[1]+1
+					return
+				}
+				if(option=="U") {
+					animateTopToBottom()
+					position[0] = position[0]-1
+					return
+				}
+				if(option=="D") {
+					animateBottomToTop()
+					position[0] = position[0]+1
+					return
+				}
+			}
+			function bodyClick(event) {
+				// TODO: make sure that multiple of these events don't fire at once
+				if(state!="directed-waiting") return;
+				state = "directed-moving"
+				var x = event.keyCode;
+				if (x == '37') {
+					// left arrow
+					animateLeftToRight()
+					position[1] = position[1]-1
+					return
+				} else if (x == '39') {
+					// right arrow
+					animateRightToLeft()
+					position[1] = position[1]+1
+					return
+				} else if (x == '38') {
+					// up arrow
+					animateTopToBottom()
+					position[0] = position[0]-1
+					return
+				} else if (x == '40') {
+					// down arrow
+					animateBottomToTop()
+					position[0] = position[0]+1
+					return
+				}
+			}
+		</script>
+	</body>
+</html>
