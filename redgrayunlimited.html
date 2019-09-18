@@ -43,7 +43,10 @@
 			changeColor();
 		}
 	</script>
-    <body id='body' onkeyup="keyboardClick(event)">
+	<style>
+		html { touch-action: manipulation }
+	</style>
+	<body id='body' onkeyup="keyboardClick(event)">
 		<p><a href="index.html">Return to games index</a></p>
 		<h1 id='accuracy'>Accuracy: NaN%</h1>
 		<h1 id='speed'>Speed: NaNs</h1>
