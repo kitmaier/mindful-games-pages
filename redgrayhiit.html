@@ -12,16 +12,20 @@
 			colorIndex = Math.floor(Math.random()*2);
 			col.style.backgroundColor = colors[colorIndex];
 		}
-		function myFunction(event) {
+		function keyboardClick(event) {
 			if(state=="Wait") return;
 			var x = event.key;
 			if (x == "a" || x == "A") {
-				data.push([(new Date).getTime(),colorIndex,"A"]);
+				handleClick("A")
 			} else if (x == "d" || x == "D") {
-				data.push([(new Date).getTime(),colorIndex,"D"]);
+				handleClick("D")
 			} else {
 				return;
 			}
+		}
+		function handleClick(clickOption) {
+			if(state=="Wait") return;
+			data.push([(new Date).getTime(),colorIndex,clickOption]);
 			document.getElementById("data").textContent = JSON.stringify(data);
 			var index = 0;
 			var duration = data[data.length-1][0]-data[index][0];
@@ -56,7 +60,7 @@
 		setWait()
 	</script>
 	<style> body { background-color: #DDDD00} </style>
-	<body id='body' onkeyup="myFunction(event)">
+	<body id='body' onkeyup="keyboardClick(event)">
 		<p><a href="index.html">Return to games index</a></p>
 		<h1 id='accuracy'>Accuracy: NaN%</h1>
 		<h1 id='speed'>Speed: NaNs</h1>
@@ -65,8 +69,13 @@
 		<br/>The color cannot be predicted ahead of time, because it is completely random.
 		<br/>Focus on recognizing and suppressing that reaction, and trying to just go with what you see in front of you. 
 		<br/>This game will go in intervals of 20 seconds off / 20 seconds on. 
-		<br/>Tap the "A" key if you see red and the "D" key if you see gray.</p>
+		<br/>Tap the "A" key if you see red and the "D" key if you see gray,
+		<br/>or use the Red and Gray buttons below.</p>
 		<p id='waitMessage'><b>Wait for this to say GO...</b></p>
+		<p>
+			<button id="redButton" type="button" onclick="handleClick('A')">Red</button>
+			<button id="grayButton" type="button" onclick="handleClick('D')">Gray</button>
+		</p>
 		<p id='data'></p>
 		<!--button onclick="changeColor(); getTimestamp();">Change color</button-->
 		<!--input type="text" size="40" onkeydown="myFunction(event)" id="textbox"/-->
