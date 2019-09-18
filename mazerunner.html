@@ -3,7 +3,7 @@
 	<head>
 	</head>
 	<style>
-		html { max-width: 500px }
+		html { max-width: 1000px }
 	</style>
 	<body id='body' onkeydown="bodyClick(event)">
 		<p><a href="index.html">Return to games index</a></p>
@@ -14,13 +14,13 @@
 		as well as the position of the cheese.
 		When the animation stops, use the arrow keys
 		to find your way back to the cheese.</p>
-		<p id="advice">Try to keep track of where the mouse is in the maze.</p>
+		<b><p id="advice">Try to keep track of where the mouse is in the maze.</p></b>
 		<p id="accuracy">Accuracy: </p>
 		<p>
-			<image id="leftArrow" src="images/button_left.png" onclick="arrowClick('L')"></image>
-			<image id="upArrow" src="images/button_up.png" onclick="arrowClick('U')"></image>
-			<image id="rightArrow" src="images/button_right.png" onclick="arrowClick('R')"></image>
-			<image id="downArrow" src="images/button_down.png" onclick="arrowClick('D')"></image>
+			<image id="leftArrow" src="images/button_left.PNG" onclick="arrowClick('L')"></image>
+			<image id="upArrow" src="images/button_up.PNG" onclick="arrowClick('U')"></image>
+			<image id="rightArrow" src="images/button_right.PNG" onclick="arrowClick('R')"></image>
+			<image id="downArrow" src="images/button_down.PNG" onclick="arrowClick('D')"></image>
 		</p>
 		<!-- TODO: start at the cheese, wander randomly except keep track of where you have been and bias towards exploring under-explored areas, and also a bias to come back to the cheese periodically to check in -->
 		<!-- TODO: allow the user to control the speed of the animation -->
@@ -114,7 +114,7 @@
 				}
 				if(state=="random"&&(Math.random()*30)<1) {
 					state = "directed-waiting"
-					document.getElementById("advice").innerHTML = "Use the arrow keys or the buttons <br/>to find your way back to the cheese."
+					document.getElementById("advice").innerHTML = "Use the arrow keys or the buttons to find your way back to the cheese."
 					// TODO: why doesn't this update correctly when I set the list variable directly, why do I have to set individual elements?
 					directedPathStart[0] = position[0]
 					directedPathStart[1] = position[1]
