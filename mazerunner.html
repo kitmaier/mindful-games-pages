@@ -2,44 +2,47 @@
 <html>
 	<head>
 	</head>
+	<style>
+		html { max-width: 500px }
+	</style>
 	<body id='body' onkeydown="bodyClick(event)">
 		<p><a href="index.html">Return to games index</a></p>
 		<h1>Maze Runner</h1>
 		<p>Pay attention to the animation below.
-		<br/>You are a mouse, randomly exploring a maze.
-		<br/>Try to keep track of your position in the maze,
-		<br/>as well as the position of the cheese.
-		<br/>When the animation stops, use the arrow keys
-		<br/>to find your way back to the cheese.</p>
+		You are a mouse, randomly exploring a maze.
+		Try to keep track of your position in the maze,
+		as well as the position of the cheese.
+		When the animation stops, use the arrow keys
+		to find your way back to the cheese.</p>
+		<p id="advice">Try to keep track of where the mouse is in the maze.</p>
+		<p id="accuracy">Accuracy: </p>
+		<p>
+			<image id="leftArrow" src="images/button_left.png" onclick="arrowClick('L')"></image>
+			<image id="upArrow" src="images/button_up.png" onclick="arrowClick('U')"></image>
+			<image id="rightArrow" src="images/button_right.png" onclick="arrowClick('R')"></image>
+			<image id="downArrow" src="images/button_down.png" onclick="arrowClick('D')"></image>
+		</p>
 		<!-- TODO: start at the cheese, wander randomly except keep track of where you have been and bias towards exploring under-explored areas, and also a bias to come back to the cheese periodically to check in -->
 		<!-- TODO: allow the user to control the speed of the animation -->
 		<!-- TODO: generate the entire map in the svg and just move a viewing window over it -->
 		<!--p><button id="toggleActive" type="button" onclick="toggleActive()">Push to Start</button></p-->
-		<svg id="svgId" height="200" width="200">
-			<rect id="leftHall" x="40" y="90" width="50" height="10" stroke="#000000" stroke-width="1" fill="#000000" visibility="hidden">
-				<animate id="leftToRight" attributeName="x" from="40" to="100" dur="1s" begin="indefinite" fill="remove" />
+		<svg id="svgId" height="480" width="480">
+			<rect id="leftHall" x="0" y="200" width="200" height="40" stroke="#000000" stroke-width="1" fill="#000000" visibility="hidden">
+				<animate id="leftToRight" attributeName="x" from="0" to="240" dur="1s" begin="indefinite" fill="remove" />
 			</rect>
-			<rect id="rightHall" x="100" y="90" width="50" height="10" stroke="#000000" stroke-width="1" fill="#000000" visibility="hidden">
-				<animate id="rightToLeft" attributeName="x" from="100" to="40" dur="1s" begin="indefinite" fill="remove" />
+			<rect id="rightHall" x="240" y="200" width="200" height="40" stroke="#000000" stroke-width="1" fill="#000000" visibility="hidden">
+				<animate id="rightToLeft" attributeName="x" from="240" to="0" dur="1s" begin="indefinite" fill="remove" />
 			</rect>
-			<rect id="topHall" x="90" y="40" width="10" height="50" stroke="#000000" stroke-width="1" fill="#000000" visibility="hidden">
-				<animate id="topToBottom" attributeName="y" from="40" to="100" dur="1s" begin="indefinite" fill="remove" />
+			<rect id="topHall" x="200" y="0" width="40" height="200" stroke="#000000" stroke-width="1" fill="#000000" visibility="hidden">
+				<animate id="topToBottom" attributeName="y" from="0" to="240" dur="1s" begin="indefinite" fill="remove" />
 			</rect>
-			<rect id="bottomHall" x="90" y="100" width="10" height="50" stroke="#000000" stroke-width="1" fill="#000000" visibility="hidden">
-				<animate id="bottomToTop" attributeName="y" from="100" to="40" dur="1s" begin="indefinite" fill="remove" />
+			<rect id="bottomHall" x="200" y="240" width="40" height="200" stroke="#000000" stroke-width="1" fill="#000000" visibility="hidden">
+				<animate id="bottomToTop" attributeName="y" from="240" to="0" dur="1s" begin="indefinite" fill="remove" />
 			</rect>
-			<rect id="cheese" x="80" y="80" width="30" height="30" stroke="#000000" stroke-width="1" fill="#FFC000" visibility="hidden"/>
-			<rect id="mouse" x="90" y="90" width="10" height="10" stroke="#000000" stroke-width="1" fill="#A0A0A0"/>
+			<rect id="cheese" x="160" y="160" width="120" height="120" stroke="#000000" stroke-width="1" fill="#FFC000" visibility="hidden"/>
+			<rect id="mouse" x="200" y="200" width="40" height="40" stroke="#000000" stroke-width="1" fill="#A0A0A0"/>
 			Sorry, your browser does not support inline SVG.
 		</svg>
-		<p>
-			<button id="leftArrow" type="button" onclick="arrowClick('L')">&lt;</button>
-			<button id="upArrow" type="button" onclick="arrowClick('U')">^</button>
-			<button id="rightArrow" type="button" onclick="arrowClick('R')">&gt;</button>
-			<button id="downArrow" type="button" onclick="arrowClick('D')">v</button>
-		</p>
-		<p id="advice">Try to keep track of where the mouse is in the maze.</p>
-		<p id="accuracy">Accuracy: </p>
 		<!-- TODO: setup wakelock and pause button -->
 		<script src="NoSleep.min.js"></script>
 		<!-- TODO: ideas for maps - grid where cheese is in top left corner, grid where cheese is in middle, randomized densely packed tree where cheese is at root, randomized densely packed tree with small number of random cross-connections, various sizes -->
