@@ -56,6 +56,7 @@
 		<!-- TODO: allow user to select exploration strategy from dropdown - random, reduced backtracking, exploratory, periodic -->
 		<script>
 			var state = "random"
+			var randomStepsLeft = 10
 			var position = [2,2]
 			var lastMotion = "X"
 			var map = [[{"C":0,"L":0,"R":1,"U":0,"D":1},
@@ -112,7 +113,7 @@
 				if(map[position[0]][position[1]]["D"]==1) {
 					document.getElementById("bottomHall").style.visibility = "visible"
 				}
-				if(state=="random"&&(Math.random()*30)<1) {
+				if(state=="random"&&randomStepsLeft<=0) {
 					state = "directed-waiting"
 					document.getElementById("advice").innerHTML = "Use the arrow keys or the buttons to find your way back to the cheese."
 					// TODO: why doesn't this update correctly when I set the list variable directly, why do I have to set individual elements?
@@ -122,6 +123,7 @@
 				}
 				if((state=="directed-waiting"||state=="directed-moving")&&map[position[0]][position[1]]["C"]==1) {
 					state = "random"
+					randomStepsLeft = Math.floor(Math.random()*20)
 					document.getElementById("advice").innerHTML = "Well done! Try to keep track of where the mouse is in the maze."
 					if(directedPathLength>0) {
 						var par = mapPars[directedPathStart[0]][directedPathStart[1]]
@@ -130,6 +132,7 @@
 					}
 				}
 				if(state=="random") {
+					randomStepsLeft = randomStepsLeft-1
 					setTimeout(moveRandom,1000)
 				} else {
 					state="directed-waiting"
