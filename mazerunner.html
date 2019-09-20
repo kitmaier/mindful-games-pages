@@ -14,6 +14,7 @@
 		as well as the position of the cheese.
 		When the animation stops, use the arrow keys
 		to find your way back to the cheese.</p>
+		<p><button id="toggleActive" type="button" onclick="toggleActive()">Push to Start</button></p>
 		<b><p id="advice">Try to keep track of where the mouse is in the maze.</p></b>
 		<p id="accuracy">Accuracy: </p>
 		<p>
@@ -43,7 +44,6 @@
 			<rect id="mouse" x="200" y="200" width="40" height="40" stroke="#000000" stroke-width="1" fill="#A0A0A0"/>
 			Sorry, your browser does not support inline SVG.
 		</svg>
-		<!-- TODO: setup wakelock and pause button -->
 		<script src="NoSleep.min.js"></script>
 		<!-- TODO: ideas for maps - grid where cheese is in top left corner, grid where cheese is in middle, randomized densely packed tree where cheese is at root, randomized densely packed tree with small number of random cross-connections, various sizes -->
 		<!-- TODO: name each map, maybe allow user to see map before/after game -->
@@ -55,7 +55,7 @@
 		<!-- TODO: accumulate/average scores, add some explanatory text about how scores are calculated, add raw data text element -->
 		<!-- TODO: allow user to select exploration strategy from dropdown - random, reduced backtracking, exploratory, periodic -->
 		<script>
-			var state = "random"
+			var state = "none"
 			var randomStepsLeft = 10
 			var position = [2,2]
 			var lastMotion = "X"
@@ -87,6 +87,29 @@
 			var mapPars = [[4,3,2,3,4],[3,2,1,2,3],[2,1,0,1,2],[3,2,1,2,3],[4,3,2,3,4]]
 			var directedPathStart = [2,2]
 			var directedPathLength = 0
+			var noSleep = new NoSleep()
+			var sleepStatus = "asleep"
+			function toggleActive() {
+				if(sleepStatus=="asleep") {
+					sleepStatus = "awake"
+					noSleep.enable()
+					document.getElementById("toggleActive").textContent = "Push to Stop"
+					state = "random"
+					randomStepsLeft = Math.floor(Math.random()*20)
+					position = [2,2]
+					lastMotion = "X"
+					resetImage()
+				} else {
+					sleepStatus = "asleep"
+					noSleep.disable()
+					document.getElementById("toggleActive").textContent = "Push to Start"
+					state = "none"
+					randomStepsLeft = Math.floor(Math.random()*20)
+					position = [2,2]
+					lastMotion = "X"
+					resetImage()
+				}
+			}
 			function resetImage() {
 			// TODO: figure out how to get SVG event timings to work properly so that rect does not reset to initial position while still visible
 			//alert(document.getElementById("svgId").getCurrentTime())
@@ -134,7 +157,7 @@
 				if(state=="random") {
 					randomStepsLeft = randomStepsLeft-1
 					setTimeout(moveRandom,1000)
-				} else {
+				} else if(state=="directed-moving") {
 					state="directed-waiting"
 					// wait for bodyClick event
 				}
