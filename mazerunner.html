@@ -2,9 +2,9 @@
 <html>
 	<head>
 		<script type="text/javascript" src="redirection-mobile.js"></script><script type="text/javascript">// <![CDATA[
-		 SA.redirection_mobile ({
-		 mobile_url : "mazerunner_mobile.html",
-		 });
+			SA.redirection_mobile ({
+				mobile_url : window.location.href.replace(/\/[^\/]*$/,'/mazerunner_mobile.html')
+			});
 		// ]]></script>
 	</head>
 	<style>

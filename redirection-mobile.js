@@ -164,9 +164,11 @@ SA.redirection_mobile = function(configuration) {
 		}
 		
 		if (isUATablet){
-			document.location.href = mobile_protocol + "//" + tablet_host + path_query;
+			//document.location.href = mobile_protocol + "//" + tablet_host + path_query;
+			document.location.href = mobile_url
 		} else if (isUAMobile) {
-			document.location.href = mobile_protocol + "//" + mobile_host + path_query;
+			//document.location.href = mobile_protocol + "//" + mobile_host + path_query;
+			document.location.href = mobile_url
 		}
 		
 	} 
