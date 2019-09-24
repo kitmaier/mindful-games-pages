@@ -29,6 +29,7 @@
 			if(state=="Wait") return;
 			data.push([(new Date).getTime(),colorIndex,clickOption]);
 			document.getElementById("data").textContent = JSON.stringify(data);
+			document.getElementById("clicks").textContent = data.length-1;
 			var index = 0;
 			var duration = data[data.length-1][0]-data[index][0];
 			var speed = (duration*0.001/(data.length-1-index)).toFixed(3);
@@ -50,6 +51,7 @@
 			setTimeout(setWait, 20*1000);
 			document.getElementById("waitMessage").textContent = "GO!!!";
 			data = [[(new Date).getTime()]];
+			document.getElementById("clicks").textContent = 0;
 			changeColor();
 		}
 		function setWait() {
@@ -72,6 +74,7 @@
 		<p><a href="index.html">Return to games index</a></p>
 		<h1 id='accuracy'>Accuracy: NaN%</h1>
 		<h1 id='speed'>Speed: NaNs</h1>
+		<h1>Clicks: <span id='clicks'>0</span></h1>
 		<p>The goal of this game is to go as fast as possible without making too many mistakes. 
 		As you get comfortable, notice that your hand starts trying to predict the color ahead of time, leading to mistakes. 
 		The color cannot be predicted ahead of time, because it is completely random.
