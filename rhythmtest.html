@@ -1,0 +1,41 @@
+<html>
+	<head>
+	</head>
+	<body id='body'>
+		<p><a href="index.html">Return to games index</a></p>
+		<h1>Rhythm Timing Test</h1>
+		<!-- TODO: have it occur when the button is hit, not when it is released -->
+		<!-- TODO: make this mobile compatible -->
+		<!-- TODO: include standard deviation of times to encourage decreases in variability -->
+		<!-- TODO: base averages on rolling window instead of all history -->
+		<p>Try to click the button on a steady rhythm, such as once every <span id="num">3</span> seconds.</p>
+		<p><button type="button" onclick="buttonClick()">Push</button></p>
+		<p>Time between last two clicks: <span id="duration">0</span> s</p>
+		<p>Average time between clicks: <span id="speed">0</span> s</p>
+		<p>Instantaneous clicks per minute: <span id="dbpm">0</span> bpm</p>
+		<p>Average clicks per minute: <span id="bpm">0</span> bpm</p>
+		<p>Number of clicks: <span id="clickCount">0</span></p>
+		<script>
+			var cadences = ["0.5","1","2","3","4","5","6","10","12","15"]
+			document.getElementById("num").innerHTML = cadences[Math.floor(Math.random()*cadences.length)]
+			var firstTime = (new Date).getTime()
+			var lastTime = firstTime
+			var clickCount = 0
+			function buttonClick(duration,sections) {
+				try {
+					var nowTime = (new Date).getTime()
+					var duration = ((nowTime-lastTime)*0.001)
+					lastTime = nowTime
+					document.getElementById("duration").innerHTML = duration.toFixed(3)
+					document.getElementById("dbpm").innerHTML = (60.0/duration).toFixed(3)
+					clickCount = clickCount + 1
+					document.getElementById("clickCount").innerHTML = clickCount
+					document.getElementById("speed").innerHTML = ((nowTime-firstTime)*0.001/clickCount).toFixed(3)
+					document.getElementById("bpm").innerHTML = (60.0/((nowTime-firstTime)*0.001/clickCount)).toFixed(3)
+				} catch(error) {
+					alert(error.message)
+				}
+			}
+		</script>
+	</body>
+</html>
