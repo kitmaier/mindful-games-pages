@@ -35,6 +35,11 @@
 				as well as the position of the cheese.
 				When the animation stops, use the arrow keys
 				to find your way back to the cheese.</p>
+				<select id="selectMap" onchange="updateSelectMap()">
+					<option value="Basic 5x5">Basic 5x5</option>
+					<option value="Basic 7x7">Basic 7x7</option>
+					<option value="Basic 9x9">Basic 9x9</option>
+				</select>
 				<p><button id="toggleActive" type="button" onclick="toggleActive()" style="font-size:50px">Push to Start</button></p>
 				<b><p id="advice">Try to keep track of where the mouse is in the maze.</p></b>
 				<p id="accuracy">Accuracy: </p>
@@ -84,7 +89,12 @@
 			var randomStepsLeft = 10
 			var position = [2,2]
 			var lastMotion = "X"
-			var map = [[{"C":0,"L":0,"R":1,"U":0,"D":1},
+			var mapId = "Basic 5x5"
+			document.getElementById("selectMap").value = mapId
+			var mapData = {}
+			var mapParsData = {}
+			var mapStart = {}
+			mapData["Basic 5x5"] = [[{"C":0,"L":0,"R":1,"U":0,"D":1},
 							{"C":0,"L":1,"R":1,"U":0,"D":1},
 								{"C":0,"L":1,"R":1,"U":0,"D":1},
 									{"C":0,"L":1,"R":1,"U":0,"D":1},
@@ -109,7 +119,142 @@
 								{"C":0,"L":1,"R":1,"U":1,"D":0},
 									{"C":0,"L":1,"R":1,"U":1,"D":0},
 										{"C":0,"L":1,"R":0,"U":1,"D":0}]]
-			var mapPars = [[4,3,2,3,4],[3,2,1,2,3],[2,1,0,1,2],[3,2,1,2,3],[4,3,2,3,4]]
+			mapParsData["Basic 5x5"] = [[4,3,2,3,4],[3,2,1,2,3],[2,1,0,1,2],[3,2,1,2,3],[4,3,2,3,4]]
+			mapStart["Basic 5x5"] = [2,2]
+			mapData["Basic 7x7"] = [[{"C":0,"L":0,"R":1,"U":0,"D":1},
+							{"C":0,"L":1,"R":1,"U":0,"D":1},
+								{"C":0,"L":1,"R":1,"U":0,"D":1},
+									{"C":0,"L":1,"R":1,"U":0,"D":1},
+										{"C":0,"L":1,"R":1,"U":0,"D":1},
+											{"C":0,"L":1,"R":1,"U":0,"D":1},
+												{"C":0,"L":1,"R":0,"U":0,"D":1}],
+						[{"C":0,"L":0,"R":1,"U":1,"D":1},
+							{"C":0,"L":1,"R":1,"U":1,"D":1},
+								{"C":0,"L":1,"R":1,"U":1,"D":1},
+									{"C":0,"L":1,"R":1,"U":1,"D":1},
+										{"C":0,"L":1,"R":1,"U":1,"D":1},
+											{"C":0,"L":1,"R":1,"U":1,"D":1},
+												{"C":0,"L":1,"R":0,"U":1,"D":1}],
+						[{"C":0,"L":0,"R":1,"U":1,"D":1},
+							{"C":0,"L":1,"R":1,"U":1,"D":1},
+								{"C":0,"L":1,"R":1,"U":1,"D":1},
+									{"C":0,"L":1,"R":1,"U":1,"D":1},
+										{"C":0,"L":1,"R":1,"U":1,"D":1},
+											{"C":0,"L":1,"R":1,"U":1,"D":1},
+												{"C":0,"L":1,"R":0,"U":1,"D":1}],
+						[{"C":0,"L":0,"R":1,"U":1,"D":1},
+							{"C":0,"L":1,"R":1,"U":1,"D":1},
+								{"C":0,"L":1,"R":1,"U":1,"D":1},
+									{"C":1,"L":1,"R":1,"U":1,"D":1},
+										{"C":0,"L":1,"R":1,"U":1,"D":1},
+											{"C":0,"L":1,"R":1,"U":1,"D":1},
+												{"C":0,"L":1,"R":0,"U":1,"D":1}],
+						[{"C":0,"L":0,"R":1,"U":1,"D":1},
+							{"C":0,"L":1,"R":1,"U":1,"D":1},
+								{"C":0,"L":1,"R":1,"U":1,"D":1},
+									{"C":0,"L":1,"R":1,"U":1,"D":1},
+										{"C":0,"L":1,"R":1,"U":1,"D":1},
+											{"C":0,"L":1,"R":1,"U":1,"D":1},
+												{"C":0,"L":1,"R":0,"U":1,"D":1}],
+						[{"C":0,"L":0,"R":1,"U":1,"D":1},
+							{"C":0,"L":1,"R":1,"U":1,"D":1},
+								{"C":0,"L":1,"R":1,"U":1,"D":1},
+									{"C":0,"L":1,"R":1,"U":1,"D":1},
+										{"C":0,"L":1,"R":1,"U":1,"D":1},
+											{"C":0,"L":1,"R":1,"U":1,"D":1},
+												{"C":0,"L":1,"R":0,"U":1,"D":1}],
+						[{"C":0,"L":0,"R":1,"U":1,"D":0},
+							{"C":0,"L":1,"R":1,"U":1,"D":0},
+								{"C":0,"L":1,"R":1,"U":1,"D":0},
+									{"C":0,"L":1,"R":1,"U":1,"D":0},
+										{"C":0,"L":1,"R":1,"U":1,"D":0},
+											{"C":0,"L":1,"R":1,"U":1,"D":0},
+												{"C":0,"L":1,"R":0,"U":1,"D":0}]]
+			mapParsData["Basic 7x7"] = [[6,5,4,3,4,5,6],[5,4,3,2,3,4,5],[4,3,2,1,2,3,4],[3,2,1,0,1,2,3],[4,3,2,1,2,3,4],[5,4,3,2,3,4,5],[6,5,4,3,4,5,6]]
+			mapStart["Basic 7x7"] = [3,3]
+			mapData["Basic 9x9"] = [[{"C":0,"L":0,"R":1,"U":0,"D":1},
+							{"C":0,"L":1,"R":1,"U":0,"D":1},
+								{"C":0,"L":1,"R":1,"U":0,"D":1},
+									{"C":0,"L":1,"R":1,"U":0,"D":1},
+										{"C":0,"L":1,"R":1,"U":0,"D":1},
+											{"C":0,"L":1,"R":1,"U":0,"D":1},
+												{"C":0,"L":1,"R":1,"U":0,"D":1},
+													{"C":0,"L":1,"R":1,"U":0,"D":1},
+														{"C":0,"L":1,"R":0,"U":0,"D":1}],
+						[{"C":0,"L":0,"R":1,"U":1,"D":1},
+							{"C":0,"L":1,"R":1,"U":1,"D":1},
+								{"C":0,"L":1,"R":1,"U":1,"D":1},
+									{"C":0,"L":1,"R":1,"U":1,"D":1},
+										{"C":0,"L":1,"R":1,"U":1,"D":1},
+											{"C":0,"L":1,"R":1,"U":1,"D":1},
+												{"C":0,"L":1,"R":1,"U":1,"D":1},
+													{"C":0,"L":1,"R":1,"U":1,"D":1},
+														{"C":0,"L":1,"R":0,"U":1,"D":1}],
+						[{"C":0,"L":0,"R":1,"U":1,"D":1},
+							{"C":0,"L":1,"R":1,"U":1,"D":1},
+								{"C":0,"L":1,"R":1,"U":1,"D":1},
+									{"C":0,"L":1,"R":1,"U":1,"D":1},
+										{"C":0,"L":1,"R":1,"U":1,"D":1},
+											{"C":0,"L":1,"R":1,"U":1,"D":1},
+												{"C":0,"L":1,"R":1,"U":1,"D":1},
+													{"C":0,"L":1,"R":1,"U":1,"D":1},
+														{"C":0,"L":1,"R":0,"U":1,"D":1}],
+						[{"C":0,"L":0,"R":1,"U":1,"D":1},
+							{"C":0,"L":1,"R":1,"U":1,"D":1},
+								{"C":0,"L":1,"R":1,"U":1,"D":1},
+									{"C":0,"L":1,"R":1,"U":1,"D":1},
+										{"C":0,"L":1,"R":1,"U":1,"D":1},
+											{"C":0,"L":1,"R":1,"U":1,"D":1},
+												{"C":0,"L":1,"R":1,"U":1,"D":1},
+													{"C":0,"L":1,"R":1,"U":1,"D":1},
+														{"C":0,"L":1,"R":0,"U":1,"D":1}],
+						[{"C":0,"L":0,"R":1,"U":1,"D":1},
+							{"C":0,"L":1,"R":1,"U":1,"D":1},
+								{"C":0,"L":1,"R":1,"U":1,"D":1},
+									{"C":0,"L":1,"R":1,"U":1,"D":1},
+										{"C":1,"L":1,"R":1,"U":1,"D":1},
+											{"C":0,"L":1,"R":1,"U":1,"D":1},
+												{"C":0,"L":1,"R":1,"U":1,"D":1},
+													{"C":0,"L":1,"R":1,"U":1,"D":1},
+														{"C":0,"L":1,"R":0,"U":1,"D":1}],
+						[{"C":0,"L":0,"R":1,"U":1,"D":1},
+							{"C":0,"L":1,"R":1,"U":1,"D":1},
+								{"C":0,"L":1,"R":1,"U":1,"D":1},
+									{"C":0,"L":1,"R":1,"U":1,"D":1},
+										{"C":0,"L":1,"R":1,"U":1,"D":1},
+											{"C":0,"L":1,"R":1,"U":1,"D":1},
+												{"C":0,"L":1,"R":1,"U":1,"D":1},
+													{"C":0,"L":1,"R":1,"U":1,"D":1},
+														{"C":0,"L":1,"R":0,"U":1,"D":1}],
+						[{"C":0,"L":0,"R":1,"U":1,"D":1},
+							{"C":0,"L":1,"R":1,"U":1,"D":1},
+								{"C":0,"L":1,"R":1,"U":1,"D":1},
+									{"C":0,"L":1,"R":1,"U":1,"D":1},
+										{"C":0,"L":1,"R":1,"U":1,"D":1},
+											{"C":0,"L":1,"R":1,"U":1,"D":1},
+												{"C":0,"L":1,"R":1,"U":1,"D":1},
+													{"C":0,"L":1,"R":1,"U":1,"D":1},
+														{"C":0,"L":1,"R":0,"U":1,"D":1}],
+						[{"C":0,"L":0,"R":1,"U":1,"D":1},
+							{"C":0,"L":1,"R":1,"U":1,"D":1},
+								{"C":0,"L":1,"R":1,"U":1,"D":1},
+									{"C":0,"L":1,"R":1,"U":1,"D":1},
+										{"C":0,"L":1,"R":1,"U":1,"D":1},
+											{"C":0,"L":1,"R":1,"U":1,"D":1},
+												{"C":0,"L":1,"R":1,"U":1,"D":1},
+													{"C":0,"L":1,"R":1,"U":1,"D":1},
+														{"C":0,"L":1,"R":0,"U":1,"D":1}],
+						[{"C":0,"L":0,"R":1,"U":1,"D":0},
+							{"C":0,"L":1,"R":1,"U":1,"D":0},
+								{"C":0,"L":1,"R":1,"U":1,"D":0},
+									{"C":0,"L":1,"R":1,"U":1,"D":0},
+										{"C":0,"L":1,"R":1,"U":1,"D":0},
+											{"C":0,"L":1,"R":1,"U":1,"D":0},
+												{"C":0,"L":1,"R":1,"U":1,"D":0},
+													{"C":0,"L":1,"R":1,"U":1,"D":0},
+														{"C":0,"L":1,"R":0,"U":1,"D":0}]]
+			mapParsData["Basic 9x9"] = [[8,7,6,5,4,5,6,7,8],[7,6,5,4,3,4,5,6,7],[6,5,4,3,2,3,4,5,6],[5,4,3,2,1,2,3,4,5],[4,3,2,1,0,1,2,3,4],[5,4,3,2,1,2,3,4,5],[6,5,4,3,2,3,4,5,6],[7,6,5,4,3,4,5,6,7],[8,7,6,5,4,5,6,7,8]]
+			mapStart["Basic 9x9"] = [4,4]
 			var directedPathStart = [2,2]
 			var directedPathLength = 0
 			var noSleep = new NoSleep()
@@ -121,7 +266,7 @@
 					document.getElementById("toggleActive").textContent = "Push to Stop"
 					state = "random"
 					randomStepsLeft = Math.floor(Math.random()*20)
-					position = [2,2]
+					position = mapStart[mapId]
 					lastMotion = "X"
 					resetImage()
 				} else {
@@ -130,7 +275,7 @@
 					document.getElementById("toggleActive").textContent = "Push to Start"
 					state = "none"
 					randomStepsLeft = Math.floor(Math.random()*20)
-					position = [2,2]
+					position = mapStart[mapId]
 					lastMotion = "X"
 					resetImage()
 				}
@@ -146,19 +291,19 @@
 				document.getElementById("rightHall").style.visibility = "hidden"
 				document.getElementById("topHall").style.visibility = "hidden"
 				document.getElementById("bottomHall").style.visibility = "hidden"
-				if(map[position[0]][position[1]]["C"]==1) {
+				if(mapData[mapId][position[0]][position[1]]["C"]==1) {
 					document.getElementById("cheese").style.visibility = "visible"
 				}
-				if(map[position[0]][position[1]]["L"]==1) {
+				if(mapData[mapId][position[0]][position[1]]["L"]==1) {
 					document.getElementById("leftHall").style.visibility = "visible"
 				}
-				if(map[position[0]][position[1]]["R"]==1) {
+				if(mapData[mapId][position[0]][position[1]]["R"]==1) {
 					document.getElementById("rightHall").style.visibility = "visible"
 				}
-				if(map[position[0]][position[1]]["U"]==1) {
+				if(mapData[mapId][position[0]][position[1]]["U"]==1) {
 					document.getElementById("topHall").style.visibility = "visible"
 				}
-				if(map[position[0]][position[1]]["D"]==1) {
+				if(mapData[mapId][position[0]][position[1]]["D"]==1) {
 					document.getElementById("bottomHall").style.visibility = "visible"
 				}
 				if(state=="random"&&randomStepsLeft<=0) {
@@ -169,12 +314,12 @@
 					directedPathStart[1] = position[1]
 					directedPathLength = 0
 				}
-				if((state=="directed-waiting"||state=="directed-moving")&&map[position[0]][position[1]]["C"]==1) {
+				if((state=="directed-waiting"||state=="directed-moving")&&mapData[mapId][position[0]][position[1]]["C"]==1) {
 					state = "random"
 					randomStepsLeft = Math.floor(Math.random()*20)
 					document.getElementById("advice").innerHTML = "Well done! Try to keep track of where the mouse is in the maze."
 					if(directedPathLength>0) {
-						var par = mapPars[directedPathStart[0]][directedPathStart[1]]
+						var par = mapParsData[mapId][directedPathStart[0]][directedPathStart[1]]
 						var score = par/directedPathLength
 						document.getElementById("accuracy").textContent = "Accuracy: "+Math.floor(score*100)+"% ("+directedPathLength+" steps on par "+par+")"
 					}
@@ -223,7 +368,7 @@
 			function moveRandom() {
 				if(state!="random") return;
 				var options = []
-				if(map[position[0]][position[1]]["L"]==1) {
+				if(mapData[mapId][position[0]][position[1]]["L"]==1) {
 					options.push("L")
 					if(lastMotion!="R") {
 						options.push("L")
@@ -231,7 +376,7 @@
 						options.push("L")
 					}
 				}
-				if(map[position[0]][position[1]]["R"]==1) {
+				if(mapData[mapId][position[0]][position[1]]["R"]==1) {
 					options.push("R")
 					if(lastMotion!="L") {
 						options.push("R")
@@ -239,7 +384,7 @@
 						options.push("R")
 					}
 				}
-				if(map[position[0]][position[1]]["U"]==1) {
+				if(mapData[mapId][position[0]][position[1]]["U"]==1) {
 					options.push("U")
 					if(lastMotion!="D") {
 						options.push("U")
@@ -247,7 +392,7 @@
 						options.push("U")
 					}
 				}
-				if(map[position[0]][position[1]]["D"]==1) {
+				if(mapData[mapId][position[0]][position[1]]["D"]==1) {
 					options.push("D")
 					if(lastMotion!="U") {
 						options.push("D")
@@ -292,7 +437,7 @@
 			}
 			function arrowClick(optionChar) {
 				if(state!="directed-waiting") return;
-				if(map[position[0]][position[1]][optionChar]==0) return;
+				if(mapData[mapId][position[0]][position[1]][optionChar]==0) return;
 				state = "directed-moving"
 				directedPathLength = directedPathLength+1
 				if (optionChar=="L") {
@@ -308,6 +453,15 @@
 					animateBottomToTop()
 					position[0] = position[0]+1
 				}
+			}
+			function updateSelectMap() {
+				mapId = document.getElementById("selectMap").value
+				if(sleepStatus=="awake") {
+					toggleActive()
+				}
+				position = mapStart[mapId]
+				state = "none"
+				resetImage()
 			}
 		</script>
 	</body>
