@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Reaction Speed Test</title>
+		<meta name=”viewport” content=”width=device-width, initial-scale=1″>
+	</head>
+    <script>
+		// TODO: display rolling window percentage correct (eg past 20 attempts)
+		var data = [];
+		var colors = ["#FF9999", "#99FF99", "#BBBBFF","#FFFF66","#FF99FF","#FFBB00","#D2B48C"];
+		var numColors = 3;
+		var colorIndex = -1;
+		var lastColorIndex = -1;
+		function changeColor() {
+			var col = document.getElementById("body");
+			colorIndex = Math.floor(Math.random()*(numColors-1));
+			if(colorIndex>=lastColorIndex) {
+				colorIndex++
+			}
+			col.style.backgroundColor = colors[colorIndex];
+			lastColorIndex = colorIndex
+		}
+		function keyboardClick(event) {
+			var x = event.key;
+			if (x == "a" || x == "A") {
+				handleClick("A")
+			} else if (x == "s" || x == "S") {
+				handleClick("S")
+			} else if (x == "d" || x == "D") {
+				handleClick("D")
+			} else if (x == "f" || x == "F") {
+				handleClick("F")
+			} else if (x == "j" || x == "J") {
+				handleClick("J")
+			} else if (x == "k" || x == "K") {
+				handleClick("K")
+			} else if (x == "l" || x == "L") {
+				handleClick("L")
+			} else {
+				return;
+			}
+		}
+		function handleClick(clickOption) {
+			data.push([(new Date).getTime(),colorIndex,clickOption]);
+			document.getElementById("data").textContent = JSON.stringify(data);
+			document.getElementById("clicks").textContent = data.length-1;
+			var index = Math.max(0,data.length-20);
+			var duration = data[data.length-1][0]-data[index][0];
+			var speed = (duration*0.001/(data.length-1-index)).toFixed(3);
+			document.getElementById("speed").textContent = "Speed: " + speed + "s";
+			index = Math.max(1,data.length-20);
+			var countValid = 0;
+			for(var k=index; k<data.length; k++) {
+				if((data[k][1]==0&&data[k][2]=="A")
+						||(data[k][1]==1&&data[k][2]=="S")
+						||(data[k][1]==2&&data[k][2]=="D")
+						||(data[k][1]==3&&data[k][2]=="F")
+						||(data[k][1]==4&&data[k][2]=="J")
+						||(data[k][1]==5&&data[k][2]=="K")
+						||(data[k][1]==6&&data[k][2]=="L")) {
+					countValid += 1;
+				}
+			}
+			var accuracy = (countValid*100.0/(data.length-index)).toFixed(0);
+			document.getElementById("accuracy").textContent = "Accuracy: " + accuracy + "%";
+			changeColor();
+		}
+		function changeNumColors() {
+			numColors = parseInt(document.getElementById("selectNumColors").value.charAt(8))
+			document.getElementById("yellowButton").style.display = (numColors>=4?"inline":"none")
+			document.getElementById("purpleButton").style.display = (numColors>=5?"inline":"none")
+			document.getElementById("orangeButton").style.display = (numColors>=6?"inline":"none")
+			document.getElementById("brownButton").style.display = (numColors>=7?"inline":"none")
+		}
+	</script>
+	<style>
+		html {
+			touch-action: manipulation;
+			max-width: 850px;
+		}
+	</style>
+	<body id='body' onkeyup="keyboardClick(event)">
+		<p><a href="index.html">Return to games index</a></p>
+		<h1 id='accuracy'>Accuracy: NaN%</h1>
+		<h1 id='speed'>Speed: NaNs</h1>
+		<h1>Clicks: <span id='clicks'>0</span></h1>
+		<p>The goal of this game is to recognize what color is showing and respond to it
+		as quickly as possible without making too many mistakes. 
+		Tap the "A" key if you see red, the "S" key for green, and the "D" key for blue,
+		or use the Red, Green, and Blue buttons below.
+		As you get comfortable, notice that your hand starts trying to predict the color ahead of time, leading to mistakes. 
+		The color cannot be predicted ahead of time, because it is completely random.
+		Focus on recognizing and suppressing that reaction, and trying to just go with what you see in front of you. 
+		Scores will be a running calculation based on the last 20 events.</p>
+		<select id="selectNumColors" style="font-size:50px" onchange="changeNumColors()">
+			<option value="Colors: 3">Colors: 3</option>
+			<option value="Colors: 4">Colors: 4</option>
+			<option value="Colors: 5">Colors: 5</option>
+			<option value="Colors: 6">Colors: 6</option>
+			<option value="Colors: 7">Colors: 7</option>
+		</select>
+		<p>Tap any key to start.</p>
+		<p>
+			<image id="redButton" src="images/button_red.png" onclick="handleClick('A')" style="display:inline"/>
+			<image id="greenButton" src="images/button_green.png" onclick="handleClick('S')" style="display:inline"/>
+			<image id="blueButton" src="images/button_blue.png" onclick="handleClick('D')" style="display:inline"/>
+			<image id="yellowButton" src="images/button_yellow.png" onclick="handleClick('F')" style="display:none"/>
+			<image id="purpleButton" src="images/button_purple.png" onclick="handleClick('J')" style="display:none"/>
+			<image id="orangeButton" src="images/button_orange.png" onclick="handleClick('K')" style="display:none"/>
+			<image id="brownButton" src="images/button_brown.png" onclick="handleClick('L')" style="display:none"/>
+		</p>
+		<p id='data'></p>
+		<!--button onclick="changeColor(); getTimestamp();">Change color</button-->
+		<!--input type="text" size="40" onkeydown="myFunction(event)" id="textbox"/-->
+    </body>
+</html>
