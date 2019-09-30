@@ -8,6 +8,17 @@ window.addEventListener("load", function() {
 	var mapData = {}
 	var mapParsData = {}
 	var mapStart = {}
+	mapData["Basic 3x3"] = [[{"C":0,"L":0,"R":1,"U":0,"D":1},
+					{"C":0,"L":1,"R":1,"U":0,"D":1},
+						{"C":0,"L":1,"R":0,"U":0,"D":1}],
+				[{"C":0,"L":0,"R":1,"U":1,"D":1},
+					{"C":1,"L":1,"R":1,"U":1,"D":1},
+						{"C":0,"L":1,"R":0,"U":1,"D":1}],
+				[{"C":0,"L":0,"R":1,"U":1,"D":0},
+					{"C":0,"L":1,"R":1,"U":1,"D":0},
+						{"C":0,"L":1,"R":0,"U":1,"D":0}]]
+	mapParsData["Basic 3x3"] = [[2,1,2],[1,0,1],[2,1,2]]
+	mapStart["Basic 3x3"] = [1,1]
 	mapData["Basic 5x5"] = [[{"C":0,"L":0,"R":1,"U":0,"D":1},
 					{"C":0,"L":1,"R":1,"U":0,"D":1},
 						{"C":0,"L":1,"R":1,"U":0,"D":1},
