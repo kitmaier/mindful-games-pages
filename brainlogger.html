@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<!-- TODO: start/stop wakelock -->
+	<!-- TODO: store results to database or local file -->
+	<!-- TODO: add extra columns like duration of quiet time, and summary metrics like average quiet time between notes -->
+	<!-- TODO: specify better formatting for the table -->
+	<!-- TODO: add a final note for the end of the session? allow submitting the last note to end the session? -->
+	<!-- TODO: handle crossing date boundary during a record -->
+	</head>
+	<body id='body'>
+		<p><a href="index.html">Return to games index</a></p>
+		<h1>Daydream Logging Tool</h1>
+		<p>Press the Start Session button, 
+		then try to pay attention to your breath. 
+		(Alternatively, open up a second window and play one of the 
+		other games on this site, such as the guided body scan game.)
+		Most likely, you will be able to pay attention easily 
+		for a short time, such as between 10 and 30 seconds. 
+		Then, your mind will wander off without you realizing it.
+		A while later, such as between 2 and 5 minutes, you will
+		notice that your mind has wandered off. At that point, 
+		open up a new note below and briefly write down what you
+		are thinking about, then close the note and go back to paying
+		attention to your breath. When you are done, end the session, 
+		and copy and paste the results into another file, 
+		such as a Notepad file or an Excel spreadsheet.
+		When you have gathered up results from a few sessions, 
+		go back and read over them to learn about yourself.</p>
+		<table id="notesTable" border="1">
+		</table>
+		<p>
+		<button id="startButton" onclick="startSession()" style="display:inline;font-size:50px">Start Session</button>
+		<button id="newNoteButton" onclick="openInputBox()" style="display:none;font-size:50px">Start Writing Note</button>
+		<textarea id="noteTextBox" style="display:none;font-size:30px" rows="5" cols="60"></textarea>
+		<button id="submitNoteButton" onclick="receiveSubmission()" style="display:none;font-size:50px">Submit Note</button>
+		<button id="stopButton" onclick="endSession()" style="display:none;font-size:50px">End Session</button>
+		</p>
+		<script>
+			function pad(num,width) {
+				return ("0".repeat(width)+num).slice(-width)
+			}
+			function addItemToRow(row,item) {
+				var th = document.createElement("th")
+				var text = document.createTextNode(item)
+				th.appendChild(text)
+				row.appendChild(th)
+			}
+			function createTableHead() {
+				var headRow = document.getElementById("notesTable").createTHead().insertRow()
+				addItemToRow(headRow,"Record Date")
+				addItemToRow(headRow,"Start Quiet")
+				addItemToRow(headRow,"Start Note")
+				addItemToRow(headRow,"End Note")
+				addItemToRow(headRow,"Note Text")
+			}
+			createTableHead()
+			var startQuietTime = 0
+			var startNoteTime = 0
+			var endNoteTime = 0
+			function startSession() {
+				document.getElementById("startButton").style.display = "none"
+				document.getElementById("newNoteButton").style.display = "inline"
+				document.getElementById("noteTextBox").style.display = "none"
+				document.getElementById("submitNoteButton").style.display = "none"
+				document.getElementById("stopButton").style.display = "inline"
+				startQuietTime = new Date()
+			}
+			function openInputBox() {
+				document.getElementById("startButton").style.display = "none"
+				document.getElementById("newNoteButton").style.display = "none"
+				document.getElementById("noteTextBox").style.display = "inline"
+				document.getElementById("submitNoteButton").style.display = "inline"
+				document.getElementById("stopButton").style.display = "none"
+				startNoteTime = new Date()
+			}
+			function endSession() {
+				document.getElementById("startButton").style.display = "none"
+				document.getElementById("newNoteButton").style.display = "none"
+				document.getElementById("noteTextBox").style.display = "none"
+				document.getElementById("submitNoteButton").style.display = "none"
+				document.getElementById("stopButton").style.display = "none"
+			}
+			function receiveSubmission() {
+				document.getElementById("startButton").style.display = "none"
+				document.getElementById("newNoteButton").style.display = "inline"
+				document.getElementById("noteTextBox").style.display = "none"
+				document.getElementById("submitNoteButton").style.display = "none"
+				document.getElementById("stopButton").style.display = "inline"
+				var noteText = document.getElementById("noteTextBox").value
+				document.getElementById("noteTextBox").value = ""
+				endNoteTime = new Date()
+				var row = document.getElementById("notesTable").insertRow()
+				var recordDateString = startQuietTime.getFullYear()+"-"+pad(startQuietTime.getMonth()+1,2)+'-'+pad(startQuietTime.getDate(),2)
+				var startQuietString = pad(startQuietTime.getHours(),2)+':'+pad(startQuietTime.getMinutes(),2)+":"+pad(startQuietTime.getSeconds(),2)
+				var startNoteString = pad(startNoteTime.getHours(),2)+':'+pad(startNoteTime.getMinutes(),2)+":"+pad(startNoteTime.getSeconds(),2)
+				var endNoteString = pad(endNoteTime.getHours(),2)+':'+pad(endNoteTime.getMinutes(),2)+":"+pad(endNoteTime.getSeconds(),2)
+				addItemToRow(row,recordDateString)
+				addItemToRow(row,startQuietString)
+				addItemToRow(row,startNoteString)
+				addItemToRow(row,endNoteString)
+				addItemToRow(row,noteText)
+				startQuietTime = endNoteTime
+				startNoteTime = 0
+				endNoteTime = 0
+			}
+		</script>
+	</body>
+</html>
