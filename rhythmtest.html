@@ -1,5 +1,7 @@
 <html>
 	<head>
+		<title>Rhythm Timing Test</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 	</head>
 	<body id='body'>
 		<p><a href="index.html">Return to games index</a></p>
@@ -9,7 +11,7 @@
 		<!-- TODO: include standard deviation of times to encourage decreases in variability -->
 		<!-- TODO: base averages on rolling window instead of all history -->
 		<p>Try to click the button on a steady rhythm, such as once every <span id="num">3</span> seconds.</p>
-		<p><button type="button" onclick="buttonClick()">Push</button></p>
+		<p><image id="pushButton" src="images/button_push.PNG" onclick="buttonClick()"/></p>
 		<p>Time between last two clicks: <span id="duration">0</span> s</p>
 		<p>Average time between clicks: <span id="speed">0</span> s</p>
 		<p>Instantaneous clicks per minute: <span id="dbpm">0</span> bpm</p>
