@@ -7,20 +7,13 @@
 		<p><a href="index.html">Return to games index</a></p>
 		<h1>Breathing Tracker</h1>
 		<!-- TODO: allow the user to pick 1, 2, 4, or more keypresses per cycle -->
+		<!-- TODO: could user put phone on chest and use accelerometers to measure breathing? -->
 		<p>Let yourself breathe naturally. Hit "A" as you start breathing in, and hit "S" as you start breathing out. Go through a few dozen breaths, then finish on the "A". If you get confused or make a mistake, just reload the page.</p>
 		<!-- TODO: create a graph of the timing data -->
-		<!-- svg height="200" width="200">
-			<circle id='circle' cx="100" cy="100" r="50" stroke="#7799DD" stroke-width="3" fill="#DDEEFF"/>
+		<svg id="svgId" height="10" width="1000">
 			Sorry, your browser does not support inline SVG.
-		</svg -->
+		</svg> 
 		<p>
-		<!-- What I'm going to do: 
-				capture "A" and "S" keypresses, store the data
-				if "A" and "S" do not alternate, insert a dummy event between repetitions
-				display averages of duration of inbreath, outbreath, and full breath
-				display raw data of inbreath, outbreath, and full breath
-				show graph of breath durations
-		-->
 		<div id='in_breath_data'></div>
 		<div id='out_breath_data'></div>
 		<div id='duration_data'></div>
@@ -75,6 +68,25 @@
 						} else {
 							durationData.push(val1+val3);
 						}
+						//alert(durationData.length+","+val1+","+val3+","+Math.floor(val1/10)+","+Math.floor(val3/10));
+						var svg = document.getElementById("svgId")
+						svg.setAttribute("height",durationData.length+"0")
+						var rectIn = document.createElementNS("http://www.w3.org/2000/svg","rect")
+						rectIn.setAttribute("id","bar_in_"+durationData.length)
+						rectIn.setAttribute("x","0")
+						rectIn.setAttribute("y",(durationData.length-1)+"0")
+						rectIn.setAttribute("width",(val1=="-/-"?"0":Math.floor(val1/10)))
+						rectIn.setAttribute("height","10")
+						rectIn.setAttribute("style","fill:#6666FF;stroke:#6666FF;stroke-width:1")
+						svg.appendChild(rectIn)
+						var rectOut = document.createElementNS("http://www.w3.org/2000/svg","rect")
+						rectOut.setAttribute("id","bar_out_"+durationData.length)
+						rectOut.setAttribute("x",(val1=="-/-"?"0":Math.floor(val1/10)))
+						rectOut.setAttribute("y",(durationData.length-1)+"0")
+						rectOut.setAttribute("width",(val3=="-/-"?"0":Math.floor(val3/10)))
+						rectOut.setAttribute("height","10")
+						rectOut.setAttribute("style","fill:#FF66FF;stroke:#FF66FF;stroke-width:1")
+						svg.appendChild(rectOut)
 					}
 					document.getElementById("in_breath_data").textContent = "In-Breath Timing: "+JSON.stringify(inBreathData);
 					document.getElementById("out_breath_data").textContent = "Out-Breath Timing: "+JSON.stringify(outBreathData);
