@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- TODO: allow user to choose number of dots to keep track of, either have multiple parallel sets of arrow keys or allow hotkeys to pick which circle to control -->
+		<!-- TODO: what if the controls are non-independent, so that you are always moving at least two circles at once -->
+	</head>
+	<style>
+		* {
+			box-sizing: border-box;
+		}
+		/* Create two equal columns that floats next to each other */
+		.column {
+			float: left;
+			width: 50%;
+			padding: 10px;
+		}
+		/* Clear floats after the columns */
+		.row:after {
+			content: "";
+			display: table;
+			clear: both;
+		}
+	</style>
+	<body id='body' onkeyup="bodyClick(event)">
+		<div class="row">
+			<div class="column">
+				<p><a href="index.html">Return to games index</a></p>
+				<h1>Wandering Dots Game</h1>
+				<p>Use the arrow keys or buttons to move the circle, to keep it centered over the dot.</p>
+				<p><button id="toggleActive" type="button" style="font-size:50px">Push to Start</button></p>
+				<p id="score">Score: </p>
+			</div>
+			<div class="column">
+				<p>
+					<image id="leftArrow" src="images/button_left.PNG"></image>
+					<image id="upArrow" src="images/button_up.PNG"></image>
+					<image id="rightArrow" src="images/button_right.PNG"></image>
+					<image id="downArrow" src="images/button_down.PNG"></image>
+				</p>
+				<svg id="svgId" height="480" width="480">
+					<rect x="0" y="0" width="480" height="480" stroke="#CCCCFF" stroke-width="2" fill="#EEEEFF"/>
+					<circle id="circleId" cx="240" cy="240" r="30" stroke="#000000" stroke-width="2" fill="#DDDDDD"/>
+					<circle id="circleId--" cx="-100" cy="-100" r="30" stroke="#000000" stroke-width="2" fill="#DDDDDD"/>
+					<circle id="circleId-0" cx="-100" cy="-100" r="30" stroke="#000000" stroke-width="2" fill="#DDDDDD"/>
+					<circle id="circleId-+" cx="-100" cy="-100" r="30" stroke="#000000" stroke-width="2" fill="#DDDDDD"/>
+					<circle id="circleId0-" cx="-100" cy="-100" r="30" stroke="#000000" stroke-width="2" fill="#DDDDDD"/>
+					<circle id="circleId0+" cx="-100" cy="-100" r="30" stroke="#000000" stroke-width="2" fill="#DDDDDD"/>
+					<circle id="circleId+-" cx="-100" cy="-100" r="30" stroke="#000000" stroke-width="2" fill="#DDDDDD"/>
+					<circle id="circleId+0" cx="-100" cy="-100" r="30" stroke="#000000" stroke-width="2" fill="#DDDDDD"/>
+					<circle id="circleId++" cx="-100" cy="-100" r="30" stroke="#000000" stroke-width="2" fill="#DDDDDD"/>
+					<circle id="dotId" cx="240" cy="240" r="5" stroke="#000000" stroke-width="1" fill="#000000"/>
+					<circle id="dotId--" cx="-100" cy="-100" r="5" stroke="#000000" stroke-width="1" fill="#000000"/>
+					<circle id="dotId-0" cx="-100" cy="-100" r="5" stroke="#000000" stroke-width="1" fill="#000000"/>
+					<circle id="dotId-+" cx="-100" cy="-100" r="5" stroke="#000000" stroke-width="1" fill="#000000"/>
+					<circle id="dotId0-" cx="-100" cy="-100" r="5" stroke="#000000" stroke-width="1" fill="#000000"/>
+					<circle id="dotId0+" cx="-100" cy="-100" r="5" stroke="#000000" stroke-width="1" fill="#000000"/>
+					<circle id="dotId+-" cx="-100" cy="-100" r="5" stroke="#000000" stroke-width="1" fill="#000000"/>
+					<circle id="dotId+0" cx="-100" cy="-100" r="5" stroke="#000000" stroke-width="1" fill="#000000"/>
+					<circle id="dotId++" cx="-100" cy="-100" r="5" stroke="#000000" stroke-width="1" fill="#000000"/>
+					Sorry, your browser does not support inline SVG.
+				</svg>
+			</div>
+		</div>
+		<script src="NoSleep.min.js"></script>
+		<script type="text/javascript" src="wanderingdot.js"></script>
+		<script>
+			var score = 0
+			function bodyClick(event) {
+				var x = event.keyCode;
+				if (x == '37') {
+					arrowClick("L")
+				} else if (x == '39') {
+					arrowClick("R")
+				} else if (x == '38') {
+					arrowClick("U")
+				} else if (x == '40') {
+					arrowClick("D")
+				}
+			}
+			document.getElementById("leftArrow").addEventListener("click", function(){arrowClick("L")});
+			document.getElementById("upArrow").addEventListener("click", function(){arrowClick("U")});
+			document.getElementById("rightArrow").addEventListener("click", function(){arrowClick("R")});
+			document.getElementById("downArrow").addEventListener("click", function(){arrowClick("D")});
+			function arrowClick(optionChar) {
+				if (optionChar=="L") {
+					moveBy("circleId",-10,0)
+				} else if(optionChar=="R") {
+					moveBy("circleId",10,0)
+				} else if(optionChar=="U") {
+					moveBy("circleId",0,-10)
+				} else if(optionChar=="D") {
+					moveBy("circleId",0,10)
+				}
+			}
+			function getInt(objectId,attribute) {
+				return parseInt(document.getElementById(objectId).getAttribute(attribute))
+			}
+			function moveTo(objectId,X,Y) {
+				X = Math.floor(X)
+				Y = Math.floor(Y)
+				document.getElementById(objectId).setAttribute("cx",X)
+				document.getElementById(objectId).setAttribute("cy",Y)
+				document.getElementById(objectId+"--").setAttribute("cx",X-480)
+				document.getElementById(objectId+"--").setAttribute("cy",Y-480)
+				document.getElementById(objectId+"-0").setAttribute("cx",X-480)
+				document.getElementById(objectId+"-0").setAttribute("cy",Y)
+				document.getElementById(objectId+"-+").setAttribute("cx",X-480)
+				document.getElementById(objectId+"-+").setAttribute("cy",Y+480)
+				document.getElementById(objectId+"0-").setAttribute("cx",X)
+				document.getElementById(objectId+"0-").setAttribute("cy",Y-480)
+				document.getElementById(objectId+"0+").setAttribute("cx",X)
+				document.getElementById(objectId+"0+").setAttribute("cy",Y+480)
+				document.getElementById(objectId+"+-").setAttribute("cx",X+480)
+				document.getElementById(objectId+"+-").setAttribute("cy",Y-480)
+				document.getElementById(objectId+"+0").setAttribute("cx",X+480)
+				document.getElementById(objectId+"+0").setAttribute("cy",Y)
+				document.getElementById(objectId+"++").setAttribute("cx",X+480)
+				document.getElementById(objectId+"++").setAttribute("cy",Y+480)
+			}
+			function moveBy(objectId,dX,dY) {
+				var X = (getInt(objectId,"cx")+Math.floor(dX)+10*480)%480
+				var Y = (getInt(objectId,"cy")+Math.floor(dY)+10*480)%480
+				moveTo(objectId,X,Y)
+			}
+			function calculateScore() {
+				var radius = 30
+				var errorX = ((getInt("circleId","cx")-getInt("dotId","cx"))+240+10*480)%480-240
+				var errorY = ((getInt("circleId","cy")-getInt("dotId","cy"))+240+10*480)%480-240
+				var error = 1-Math.sqrt(errorX*errorX+errorY*errorY)/radius
+				if(error>0) error = 1
+				score = score*0.99+error*0.01
+				document.getElementById("score").textContent = "Score: "+Math.floor(score*100)
+			}
+			// TODO: show multiple copies of the circle when it is overlapping the edge of the board (and the dot) just create a function to keep track of it
+			function moveRandom() {
+				calculateScore()
+				var directions = ["L","R","U","D"]
+				var direction = directions[Math.floor(Math.random()*4)]
+				if (direction=="L") {
+					moveBy("dotId",-5,0)
+				} else if(direction=="R") {
+					moveBy("dotId",5,0)
+				} else if(direction=="U") {
+					moveBy("dotId",0,-5)
+				} else if(direction=="D") {
+					moveBy("dotId",0,5)
+				}
+				setTimeout(moveRandom,100)
+			}
+			var targetX = 240
+			var targetY = 240
+			function moveRandom2() {
+				calculateScore()
+				var errorX = ((targetX-getInt("dotId","cx"))+240+10*480)%480-240
+				var errorY = ((targetY-getInt("dotId","cy"))+240+10*480)%480-240
+				var error = Math.sqrt(errorX*errorX+errorY*errorY)
+				if(error>3) {
+					moveBy("dotId",(3*errorX)/error,(3*errorY)/error)
+				} else {
+					moveTo("dotId",targetX,targetY)
+					targetX = Math.floor(Math.random()*480)
+					targetY = Math.floor(Math.random()*480)
+				}
+				setTimeout(moveRandom2,100)
+			}
+			//setTimeout(moveRandom,100)
+			setTimeout(moveRandom2,100)
+		</script>
+	</body>
+</html>
