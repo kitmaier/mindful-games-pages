@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	</head>
+	<style>
+	</style>
+	<body id='body' onkeyup="bodyClick(event)">
+		<p><a href="index.html">Return to games index</a></p>
+		<h1>Violin Notes Trainer</h1>
+		<p>Below will flash up the name of a musical note, 
+		<br/>and a string on the violin will become "bold".
+		<br/>Type the number of the correct position 
+		<br/>on the string for that note.</p>
+		<p id="score">Score: </p>
+		<p id="note">Note: </p>
+		<p id="strings" style="font-family:monospace">&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7<br/>&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7<br/>&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7<br/>&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7</p>
+		<button onclick="cheatSheet()">Cheat sheet</button>
+		<p style="font-family:monospace"><span id="cheatSheetId" style="display:none">&nbsp;&nbsp;E&nbsp;&nbsp;&nbsp;&nbsp;F&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;G&nbsp;&nbsp;-&nbsp;A&nbsp;-&nbsp;B<br/>&nbsp;&nbsp;A&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;B&nbsp;&nbsp;C&nbsp;&nbsp;-&nbsp;D&nbsp;-&nbsp;E<br/>&nbsp;&nbsp;D&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;E&nbsp;&nbsp;F&nbsp;&nbsp;-&nbsp;G&nbsp;-&nbsp;A<br/>&nbsp;&nbsp;G&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;A&nbsp;&nbsp;-&nbsp;&nbsp;B&nbsp;C&nbsp;-&nbsp;D</span></p>
+		<script>
+			function highlightLine(line) {
+				if(line==0) {
+					document.getElementById("strings").innerHTML = "<b>&gt;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7</b><br/>&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7<br/>&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7<br/>&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7"
+				} else if(line==1) {
+					document.getElementById("strings").innerHTML = "&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7<br/><b>&gt;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7</b><br/>&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7<br/>&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7"
+				} else if(line==2) {
+					document.getElementById("strings").innerHTML = "&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7<br/>&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7<br/><b>&gt;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7</b><br/>&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7"
+				} else if(line==3) {
+					document.getElementById("strings").innerHTML = "&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7<br/>&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7<br/>&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7<br/><b>&gt;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;3&nbsp;&nbsp;4&nbsp;5&nbsp;6&nbsp;7</b>"
+				}
+			}
+			// TODO: try out using musical html entities like &#9837;
+			var notes = [	[["E"],["F"],["F#","Gb"],["G"],["G#","Ab"],["A"],["A#","Bb"],["B"]],
+							[["A"],["A#","Bb"],["B"],["C"],["C#","Db"],["D"],["D#","Eb"],["E"]],
+							[["D"],["D#","Eb"],["E"],["F"],["F#","Gb"],["G"],["G#","Ab"],["A"]],
+							[["G"],["G#","Ab"],["A"],["A#","Bb"],["B"],["C"],["C#","Db"],["D"]]
+						]
+			var line = 0
+			var position = 0
+			var detail = 0
+			var selection = "A"
+			var score = 1
+			function randomChoice() {
+				line = Math.floor(Math.random()*4)
+				position = Math.floor(Math.random()*8)
+				detail = Math.floor(Math.random()*2)
+				selection = notes[line][position]
+				//alert(line+","+position+","+detail+","+JSON.stringify(selection)+","+selection.length)
+				if(selection.length==1) {
+					selection = selection[0]
+				} else {
+					selection = selection[detail]
+				}
+				highlightLine(line)
+				document.getElementById("note").textContent = "Note: "+selection
+			}
+			randomChoice()
+			function bodyClick(event) {
+				var key = event.key
+				if(key==0||key==1||key==2||key==3||key==4||key==5||key==6||key==7) {
+					if(parseInt(key)==position) {
+						score = score*0.9+1*0.1
+						document.getElementById("score").textContent = "Score: "+Math.floor(score*100)+"% (Correct)"
+					} else {
+						score = score*0.9+0*0.1
+						document.getElementById("score").textContent = "Score: "+Math.floor(score*100)+"% (Wrong)"
+					}
+					randomChoice()
+				}
+			}
+			var cheatSheetStatus = "hidden"
+			function cheatSheet() {
+				if(cheatSheetStatus=="hidden") {
+					cheatSheetStatus = "visible"
+					document.getElementById("cheatSheetId").style.display = "inline"
+				} else {
+					cheatSheetStatus = "hidden"
+					document.getElementById("cheatSheetId").style.display = "none"
+				}
+			}
+			// TODO: store and display raw data
+			// TODO: score based on sliding window percent accuracy
+		</script>
+	</body>
+</html>
+<!--
+	Legend:
+
+	| - - -----
+	| - - -----
+	| - - -----
+	| - - -----
+
+	0 1 2 34567
+	0 1 2 34567
+	0 1 2 34567
+	0 1 2 34567
+
+	E F - G-A-B
+	A - B C-D-E
+	D - E F-G-A
+	G - A -BC-D
+-->
