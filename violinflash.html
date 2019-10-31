@@ -38,7 +38,8 @@
 			var position = 0
 			var detail = 0
 			var selection = "A"
-			var score = 1
+			var successCount = 0
+			var totalCount = 0
 			function randomChoice() {
 				line = Math.floor(Math.random()*4)
 				position = Math.floor(Math.random()*8)
@@ -57,12 +58,13 @@
 			function bodyClick(event) {
 				var key = event.key
 				if(key==0||key==1||key==2||key==3||key==4||key==5||key==6||key==7) {
+					totalCount += 1
 					if(parseInt(key)==position) {
-						score = score*0.9+1*0.1
-						document.getElementById("score").textContent = "Score: "+Math.floor(score*100)+"% (Correct)"
+						successCount += 1
+						document.getElementById("score").textContent = "Score: "+Math.floor(successCount*100.0/totalCount)+"% (Correct)"
 					} else {
 						score = score*0.9+0*0.1
-						document.getElementById("score").textContent = "Score: "+Math.floor(score*100)+"% (Wrong)"
+						document.getElementById("score").textContent = "Score: "+Math.floor(successCount*100.0/totalCount)+"% (Wrong)"
 					}
 					randomChoice()
 				}
@@ -78,7 +80,7 @@
 				}
 			}
 			// TODO: store and display raw data
-			// TODO: score based on sliding window percent accuracy
+			// TODO: create circle of fifths trainer and treble/bass clef trainer
 		</script>
 	</body>
 </html>
