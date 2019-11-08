@@ -1,0 +1,142 @@
+parent	name	sentence	notes
+body	chest-and-back	Focus your attention on the sensations in your chest and back. 	
+body	head-and-face	Focus your attention on the sensations in your head and face. 	
+body	left-arm	Focus your attention on the sensations in your left arm. 	
+body	left-foot	Focus your attention on the sensations in your left foot. 	
+body	left-hand	Focus your attention on the sensations in your left hand. 	
+body	left-leg	Focus your attention on the sensations in your left leg. 	
+body	neck-and-shoulders	Focus your attention on the sensations in your neck and shoulders. 	
+body	pelvis-and-belly	Focus your attention on the sensations in your pelvis and belly. 	
+body	right-arm	Focus your attention on the sensations in your right arm. 	
+body	right-foot	Focus your attention on the sensations in your right foot. 	
+body	right-hand	Focus your attention on the sensations in your right hand. 	
+body	right-leg	Focus your attention on the sensations in your right leg. 	
+face	chin	Focus your attention on the sensations in your chin. 	
+face	forehead	Focus your attention on the sensations in your forehead. 	
+face	jaw-muscles	Focus your attention on the sensations in your jaw and jaw muscles. 	
+face	left-cheek	Focus your attention on the sensations in your left cheek. 	
+face	left-eye	Focus your attention on the sensations in and around your left eye. 	
+face	lips	Focus your attention on the sensations in your lips. 	
+face	nose	Focus your attention on the sensations in your nose. 	
+face	right-cheek	Focus your attention on the sensations in your right cheek. 	
+face	right-eye	Focus your attention on the sensations in and around your right eye. 	
+face	teeth-gums	Focus your attention on the sensations in your teeth and gums. 	
+face	throat-sinuses	Focus your attention on the sensations in your throat and sinuses. 	
+face	tongue-roof	Focus your attention on the sensations in your tongue and the roof of your mouth. 	
+input	click-somewhere	Click somewhere on the picture of the body on the screen. 	
+left-hand	left-back-hand	Focus your attention on the sensations in the back of your left hand. 	
+left-hand	left-fingertips	Focus your attention on the sensations in your left finger tips. 	
+left-hand	left-hand-heel	Focus your attention on the sensations in the heel of your left hand. 	
+left-hand	left-index-finger	Focus your attention on the sensations in your left index finger. 	
+left-hand	left-knuckles	Focus your attention on the sensations in your left knuckles. 	
+left-hand	left-middle-finger	Focus your attention on the sensations in your left middle finger. 	
+left-hand	left-palm	Focus your attention on the sensations in the palm of your left hand. 	
+left-hand	left-pinky-finger	Focus your attention on the sensations in your left pinky finger. 	
+left-hand	left-ring-finger	Focus your attention on the sensations in your left ring finger. 	
+left-hand	left-thumb	Focus your attention on the sensations in your left thumb. 	
+left-hand	left-thumb-base	Focus your attention on the sensations in the base of your left thumb. 	
+left-hand	left-wrist	Focus your attention on the sensations in your left wrist. 	
+right-hand	right-back-hand	Focus your attention on the sensations in the back of your right hand. 	
+right-hand	right-fingertips	Focus your attention on the sensations in your right finger tips. 	
+right-hand	right-hand-heel	Focus your attention on the sensations in the heel of your right hand. 	
+right-hand	right-index-finger	Focus your attention on the sensations in your right index finger. 	
+right-hand	right-knuckles	Focus your attention on the sensations in your right knuckles. 	
+right-hand	right-middle-finger	Focus your attention on the sensations in your right middle finger. 	
+right-hand	right-palm	Focus your attention on the sensations in the palm of your right hand. 	
+right-hand	right-pinky-finger	Focus your attention on the sensations in your right pinky finger. 	
+right-hand	right-ring-finger	Focus your attention on the sensations in your right ring finger. 	
+right-hand	right-thumb	Focus your attention on the sensations in your right thumb. 	
+right-hand	right-thumb-base	Focus your attention on the sensations in the base of your right thumb. 	
+right-hand	right-wrist	Focus your attention on the sensations in your right wrist. 	
+shoulders	right-shoulder-joint	Focus your attention on the sensations around the joint of your right shoulder. 	
+shoulders	left-shoulder-joint	Focus your attention on the sensations around the joint of your left shoulder. 	
+shoulders	between-shoulders	Focus your attention on the sensations between your shoulderblades. 	
+shoulders	right-above-collar	Focus your attention on the sensations above your right collarbone. 	
+shoulders	left-above-collar	Focus your attention on the sensations above your left collarbone. 	
+shoulders	right-shoulder-muscles	Focus your attention on the sensations in the muscles of your right shoulder. 	
+shoulders	left-shoulder-muscles	Focus your attention on the sensations in the muscles of your left shoulder. 	
+shoulders	back-neck	Focus your attention on the sensations in the back of your neck. 	
+shoulders	right-ear	Focus your attention on the sensations in your right ear. 	
+shoulders	left-ear	Focus your attention on the sensations in your left ear. 	
+shoulders	top-head	Focus your attention on the sensations in the top of your head. 	
+shoulders	back-head	Focus your attention on the sensations in the back of your head. 	
+right-foot	right-big-toe	Focus your attention on the sensations in your right big toe. 	
+right-foot	right-second-toe	Focus your attention on the sensations in your right second toe. 	
+right-foot	right-middle-toe	Focus your attention on the sensations in your right middle toe. 	
+right-foot	right-fourth-toe	Focus your attention on the sensations in your right fourth toe. 	
+right-foot	right-little-toe	Focus your attention on the sensations in your right little toe. 	small? Pinky?
+right-foot	right-top-foot	Focus your attention on the sensations in the top of your right foot. 	
+right-foot	right-foot-arch	Focus your attention on the sensations in the arch of your right foot. 	
+right-foot	right-ankle	Focus your attention on the sensations in your right ankle. 	
+right-foot	right-heel	Focus your attention on the sensations in your right heel. 	
+right-foot	right-foot-ball	Focus your attention on the sensations in the balls of your right foot. 	
+right-foot	right-foot-bottom	Focus your attention on the sensations in the bottom of your right foot. 	
+right-foot	right-between-toes	Focus your attention on the sensations between the toes of your right foot. 	
+left-foot	left-big-toe	Focus your attention on the sensations in your left big toe. 	
+left-foot	left-second-toe	Focus your attention on the sensations in your left second toe. 	
+left-foot	left-middle-toe	Focus your attention on the sensations in your left middle toe. 	
+left-foot	left-fourth-toe	Focus your attention on the sensations in your left fourth toe. 	
+left-foot	left-little-toe	Focus your attention on the sensations in your left little toe. 	small? Pinky?
+left-foot	left-top-foot	Focus your attention on the sensations in the top of your left foot. 	
+left-foot	left-foot-arch	Focus your attention on the sensations in the arch of your left foot. 	
+left-foot	left-ankle	Focus your attention on the sensations in your left ankle. 	
+left-foot	left-heel	Focus your attention on the sensations in your left heel. 	
+left-foot	left-foot-ball	Focus your attention on the sensations in the balls of your left foot. 	
+left-foot	left-foot-bottom	Focus your attention on the sensations in the bottom of your left foot. 	
+left-foot	left-between-toes	Focus your attention on the sensations between the toes of your left foot. 	
+left-leg	left-calf	Focus your attention on the sensations in your left calf.	
+left-leg	left-shin	Focus your attention on the sensations in your left shin. 	
+left-leg	left-kneecap	Focus your attention on the sensations around your left kneecap. 	
+left-leg	left-knee-back	Focus your attention on the sensations in the back of your left knee. 	
+left-leg	left-quad	Focus your attention on the sensations in your left quadriceps. 	
+left-leg	left-ham	Focus your attention on the sensations in your left hamstring. 	
+left-leg	left-thigh-outer	Focus your attention on the sensations in your left outer thigh. 	
+left-leg	left-thigh-inner	Focus your attention on the sensations in your left inner thigh. 	
+left-leg	left-hip	Focus your attention on the sensations in your left hip. 	
+right-leg	right-calf	Focus your attention on the sensations in your right calf. 	
+right-leg	right-shin	Focus your attention on the sensations in your right shin. 	
+right-leg	right-kneecap	Focus your attention on the sensations around your right kneecap. 	
+right-leg	right-knee-back	Focus your attention on the sensations in the back of your right knee. 	
+right-leg	right-quad	Focus your attention on the sensations in your right quadriceps. 	
+right-leg	right-ham	Focus your attention on the sensations in your right hamstring. 	
+right-leg	right-thigh-outer	Focus your attention on the sensations in your right outer thigh. 	
+right-leg	right-thigh-inner	Focus your attention on the sensations in your right inner thigh. 	
+right-leg	right-hip	Focus your attention on the sensations in your right hip. 	
+left-arm	left-forearm-back	Focus your attention on the sensations in the back of your left forearm. 	
+left-arm	left-forearm-palm	Focus your attention on the sensations in the palm side of your left forearm. 	
+left-arm	left-elbow-outer	Focus your attention on the sensations around the tip of your left elbow. 	
+left-arm	left-elbow-inner	Focus your attention on the sensations on the inside of your left elbow. 	
+left-arm	left-triceps	Focus your attention on the sensations in your left triceps. 	
+left-arm	left-biceps	Focus your attention on the sensations in your left biceps. 	
+left-arm	left-deltoid	Focus your attention on the sensations in your left deltoid. 	
+left-arm	left-armpit	Focus your attention on the sensations in your left armpit. 	
+right-arm	right-forearm-back	Focus your attention on the sensations in the back of your right forearm. 	
+right-arm	right-forearm-palm	Focus your attention on the sensations in the palm side of your right forearm. 	
+right-arm	right-elbow-outer	Focus your attention on the sensations around the tip of your right elbow. 	
+right-arm	right-elbow-inner	Focus your attention on the sensations on the inside of your right elbow. 	
+right-arm	right-triceps	Focus your attention on the sensations in your right triceps. 	
+right-arm	right-biceps	Focus your attention on the sensations in your right biceps. 	
+right-arm	right-deltoid	Focus your attention on the sensations in your right deltoid. 	
+right-arm	right-armpit	Focus your attention on the sensations in your right armpit. 	
+upper-torso	left-shoulderblade	Focus your attention on the sensations around your left shoulderblade. 	
+upper-torso	right-shoulderblade	Focus your attention on the sensations around your right shoulderblade. 	
+upper-torso	middle-upper-back	Focus your attention on the sensations in the middle of your upper back. 	
+upper-torso	middle-back	Focus your attention on the sensations in the middle of your back. 	
+upper-torso	lower-left-upper-back	Focus your attention on the sensations in the lower left of your upper back. 	
+upper-torso	lower-right-upper-back	Focus your attention on the sensations in the lower right of your upper back. 	
+upper-torso	left-pec	Focus your attention on the sensations in your left pectoral muscles. 	
+upper-torso	right-pec	Focus your attention on the sensations in your right pectoral muscles. 	
+upper-torso	sternum	Focus your attention on the sensations in your sternum. 	
+upper-torso	left-ribs	Focus your attention on the sensations in the left side of your ribcage. 	
+upper-torso	right-ribs	Focus your attention on the sensations in the right side of your ribcage. 	
+lower-torso	belly-button	Focus your attention on the sensations around your belly button. 	
+lower-torso	left-side	Focus your attention on the sensations in your left side below your ribs. 	
+lower-torso	right-side	Focus your attention on the sensations in your right side below your ribs. 	
+lower-torso	lower-left-back	Focus your attention on the sensations in the left side of your lower back. 	
+lower-torso	lower-right-back	Focus your attention on the sensations in the right side of your lower back. 	
+lower-torso	tailbone	Focus your attention on the sensations around your tailbone. 	
+lower-torso	genitals	Focus your attention on the sensations in your genitals. 	
+lower-torso	left-buttock	Focus your attention on the sensations in your left buttock. 	
+lower-torso	right-buttock	Focus your attention on the sensations in your right buttock. 	
+lower-torso	below-belly	Focus your attention on the sensations below your belly button. 	
+lower-torso	anus-perineum	Focus your attention on the sensations in your anus and perineum. 	
