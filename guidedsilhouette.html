@@ -15,202 +15,242 @@
 		<p id='data'></p>
 		<script src="NoSleep.min.js"></script>
 		<script>
-			var data = []
-			var timerId = null
-			var noSleep = new NoSleep()
-			var sleepStatus = "asleep"
-			function toggleActive() {
-				if(sleepStatus=="asleep") {
-					sleepStatus = "awake"
-					recordEvent(["startGame"])
-					noSleep.enable()
-					document.getElementById("toggleActive").textContent = "Push to Stop"
-					brightenOnRandomSchedule()
-				} else {
-					sleepStatus = "asleep"
-					recordEvent(["stopGame"])
-					noSleep.disable()
-					document.getElementById("toggleActive").textContent = "Push to Start"
-					clearTimeout(timerId)
+			/** START GAME STATE SECTION **/
+				// Sleep state handling
+					var noSleep = new NoSleep()
+					var sleepStatus = "sleepAllowed"
+					function setSleepStatus(newSleepStatus) {
+						if(newSleepStatus=="sleepAllowed") {
+							noSleep.disable()
+							sleepStatus = "sleepAllowed"
+						} else if(newSleepStatus=="wakeLocked") {
+							noSleep.enable()
+							sleepStatus = "wakeLocked"
+						}
+					}
+				// State transition handling
+					var state = "inactive"
+					function toggleActive() {
+						if(state=="inactive"||state=="paused") {
+							changeStateTo("active")
+						} else if(state=="active") {
+							changeStateTo("inactive")
+						}
+					}
+					function stopGame() {
+						changeStateTo("inactive")
+					}
+					function changeStateTo(newState) {
+						// TODO: add locking/queueing to handle concurrent events (or maybe is not needed??? https://developer.mozilla.org/en-US/docs/Web/JavaScript/EventLoop)
+						clearTimeout(timerId)
+						darkenSilhouette()
+						stopAudio()
+						if(newState=="active") {
+							state = "active"
+							logEvent(["startGame"])
+							setSleepStatus("wakeLocked")
+							document.getElementById("toggleActive").textContent = "Push to Stop"
+							stepsUntilPause = Math.floor(Math.random()*20)+3
+							brightenOnRandomSchedule()
+						} else if(newState=="inactive") {
+							state = "inactive"
+							logEvent(["stopGame"])
+							setSleepStatus("sleepAllowed")
+							document.getElementById("toggleActive").textContent = "Push to Start"
+							displayBodyPartName("Stopped")
+						} else if(newState=="paused") {
+							state = "inactive"
+							logEvent(["pauseGame"])
+							setSleepStatus("wakeLocked")
+							document.getElementById("toggleActive").textContent = "Push to Unpause"
+							displayBodyPartName("Unpause")
+							timerId = setTimeout(stopGame, 2*60*1000)
+						}
+					}
+				// Random event handling
+					var timerId = null
+					var stepsUntilPause = 0
+					function brightenOnRandomSchedule() {
+						if(stepsUntilPause>0) {
+							stepsUntilPause -= 1
+							// TODO: allow timing parameters to be set by user
+							brightenRandomBodyPart()
+							var timeoutValue = 7+Math.floor(Math.random()*25)
+							timerId = setTimeout(brightenOnRandomSchedule, timeoutValue*1000)
+						} else {
+							changeStateTo("paused")
+						}
+						// TODO: prevent the same event from happening twice in a row
+						// TODO: break in with other random events sometimes, such as instructions, questions, and reminders
+					}
+				// Disabled
+					function clickPixel(event) {
+						// TODO: re-implement this method if it is needed, or remove stub
+					}
+			/** END GAME STATE SECTION **/
+			/** START AUDIO SECTION **/
+				// Initialize static data
+					var audioFiles = {}
+					setupAudio()
+					function setupAudio() {
+						audioFiles["Left Hand"] = new Audio("audio/left-hand.mp3")
+						audioFiles["Right Hand"] = new Audio("audio/right-hand.mp3")
+						audioFiles["Left Arm"] = new Audio("audio/left-arm.mp3")
+						audioFiles["Right Arm"] = new Audio("audio/right-arm.mp3")
+						audioFiles["Head & Face"] = new Audio("audio/head-and-face.mp3")
+						audioFiles["Neck & Shoulders"] = new Audio("audio/neck-and-shoulders.mp3")
+						audioFiles["Chest & Back"] = new Audio("audio/chest-and-back.mp3")
+						audioFiles["Pelvis & Belly"] = new Audio("audio/pelvis-and-belly.mp3")
+						audioFiles["Left Leg"] = new Audio("audio/left-leg.mp3")
+						audioFiles["Right Leg"] = new Audio("audio/right-leg.mp3")
+						audioFiles["Left Foot"] = new Audio("audio/left-foot.mp3")
+						audioFiles["Right Foot"] = new Audio("audio/right-foot.mp3")
+						audioFiles["Click Somewhere"] = new Audio("audio/click-somewhere.mp3")
+						audioFiles["Unpause"] = new Audio("audio/unpause.mp3")
+					}
+				// Manage events and states
+					var audioStatus = "disabled"
+					var activeRecording = null
+					function toggleAudio() {
+						if(audioStatus=="disabled") {
+							audioStatus = "enabled"
+							logEvent(["enableAudio"])
+							document.getElementById("toggleAudio").textContent = "Audio Enabled"
+						} else {
+							audioStatus = "disabled"
+							logEvent(["disableAudio"])
+							document.getElementById("toggleAudio").textContent = "Audio Disabled"
+							stopAudio()
+						}
+					}
+					function playAudio(bodyPart) {
+						if(audioStatus=="enabled") {
+							stopAudio()
+							var audioFile = audioFiles[bodyPart]
+							audioFile.play()
+							activeRecording = audioFile
+						}
+					}
+					function stopAudio() {
+						if(activeRecording!=null) {
+							activeRecording.pause();
+							activeRecording.currentTime = 0;
+							activeRecording = null
+						}
+					}
+			/** END AUDIO SECTION **/
+			/** START GRAPHICS SECTION **/
+				// Initialize static data
+					// TODO: make this graphic more detailed and better-looking
+					// TODO: create more detailed body parts, including front/back (eg chest vs back)
+					// TODO: create detailed graphics for specific body parts (eg hand)
+					var pixels = [[8,2],[9,2],[10,2],
+								  [8,3],[9,3],[10,3],
+								  [8,4],[9,4],[10,4],
+										[9,5],
+							[7,6],[8,6],[9,6],[10,6],[11,6],
+					  [6,7],[7,7],[8,7],[9,7],[10,7],[11,7],[12,7],
+				[5,8],[6,8],[7,8],[8,8],[9,8],[10,8],[11,8],[12,8],[13,8],
+		  [4,9],[5,9],      [7,9],[8,9],[9,9],[10,9],[11,9],       [13,9],[14,9],
+	[3,10],[4,10],        [7,10],[8,10],[9,10],[10,10],[11,10],          [14,10],[15,10],
+	[3,11],[4,11],        [7,11],[8,11],[9,11],[10,11],[11,11],          [14,11],[15,11],
+						  [7,12],[8,12],       [10,12],[11,12],
+						  [7,13],[8,13],       [10,13],[11,13],
+						  [7,14],[8,14],       [10,14],[11,14],
+						  [7,15],[8,15],       [10,15],[11,15],
+				   [6,16],[7,16],[8,16],       [10,16],[11,16],[12,16],
+				   [6,17],[7,17],[8,17],       [10,17],[11,17],[12,17]]
+					var pixelsLookup = {
+						"Left Hand":[[3,10],[4,10],[3,11],[4,11]],
+						"Right Hand":[[14,10],[15,10],[14,11],[15,11]],
+						"Left Arm":[[4,9],[5,9],[5,8],[6,8],[6,7]],
+						"Right Arm":[[12,7],[12,8],[13,8],[13,9],[14,9]],
+						"Head & Face":[[8,2],[9,2],[10,2],[8,3],[9,3],[10,3],[8,4],[9,4],[10,4]],
+						"Neck & Shoulders":[[9,5],[7,6],[8,6],[9,6],[10,6],[11,6]],
+						"Chest & Back":[[7,7],[8,7],[9,7],[10,7],[11,7],[7,8],[8,8],[9,8],[10,8],[11,8],[7,9],[8,9],[9,9],[10,9],[11,9]],
+						"Pelvis & Belly":[[7,10],[8,10],[9,10],[10,10],[11,10],[7,11],[8,11],[9,11],[10,11],[11,11]],
+						"Left Leg":[[7,12],[8,12],[7,13],[8,13],[7,14],[8,14],[7,15],[8,15]],
+						"Right Leg":[[10,12],[11,12],[10,13],[11,13],[10,14],[11,14],[10,15],[11,15]],
+						"Left Foot":[[6,16],[7,16],[8,16],[6,17],[7,17],[8,17]],
+						"Right Foot":[[10,16],[11,16],[12,16],[10,17],[11,17],[12,17]]
+					}
+					var pixelsReverseLookup = {}
+					createPixelsReverseLookup()
+					function createPixelsReverseLookup() {
+						for(var bodyPart in pixelsLookup) {
+							var pixelList = pixelsLookup[bodyPart]
+							for(var k=0; k<pixelList.length; k++) {
+								var pixelLoc = pixelList[k]
+								pixelsReverseLookup[pixelLoc] = bodyPart
+							}
+						}
+					}
+				// Initialize graphic elements
+					createPixels()
+					function createPixels() {
+						var svg = document.getElementById("svgId")
+						for(var x=0; x<20; x++) {
+							for(var y=0; y<20; y++) {
+								var rect = document.createElementNS("http://www.w3.org/2000/svg","rect")
+								rect.setAttribute("id","pixel_"+x+"_"+y)
+								rect.setAttribute("x",x+"0")
+								rect.setAttribute("y",y+"0")
+								rect.setAttribute("width","10")
+								rect.setAttribute("height","10")
+								rect.setAttribute("style","fill:white;stroke:white;stroke-width:1")
+								svg.appendChild(rect)
+							}
+						}
+					}
 					darkenSilhouette()
-					displayBodyPartName("Paused")
-					stopAudio()
-				}
-			}
-			var audioStatus = "disabled"
-			var activeRecording = null
-			function toggleAudio() {
-				if(audioStatus=="disabled") {
-					audioStatus = "enabled"
-					recordEvent(["enableAudio"])
-					document.getElementById("toggleAudio").textContent = "Audio Enabled"
-				} else {
-					audioStatus = "disabled"
-					recordEvent(["disableAudio"])
-					document.getElementById("toggleAudio").textContent = "Audio Disabled"
-				}
-			}
-			var audioFiles = {}
-			function setupAudio() {
-				audioFiles["Left Hand"] = new Audio("audio/left-hand.mp3")
-				audioFiles["Right Hand"] = new Audio("audio/right-hand.mp3")
-				audioFiles["Left Arm"] = new Audio("audio/left-arm.mp3")
-				audioFiles["Right Arm"] = new Audio("audio/right-arm.mp3")
-				audioFiles["Head & Face"] = new Audio("audio/head-and-face.mp3")
-				audioFiles["Neck & Shoulders"] = new Audio("audio/neck-and-shoulders.mp3")
-				audioFiles["Chest & Back"] = new Audio("audio/chest-and-back.mp3")
-				audioFiles["Pelvis & Belly"] = new Audio("audio/pelvis-and-belly.mp3")
-				audioFiles["Left Leg"] = new Audio("audio/left-leg.mp3")
-				audioFiles["Right Leg"] = new Audio("audio/right-leg.mp3")
-				audioFiles["Left Foot"] = new Audio("audio/left-foot.mp3")
-				audioFiles["Right Foot"] = new Audio("audio/right-foot.mp3")
-				audioFiles["Click Somewhere"] = new Audio("audio/click-somewhere.mp3")
-			}
-			setupAudio()
-			function playAudio(bodyPart) {
-				if(audioStatus=="enabled") {
-					stopAudio()
-					var audioFile = audioFiles[bodyPart]
-					audioFile.play()
-					activeRecording = audioFile
-				}
-			}
-			function stopAudio() {
-				if(activeRecording!=null) {
-					activeRecording.pause();
-					activeRecording.currentTime = 0;
-					activeRecording = null
-				}
-			}
-			function createPixels() {
-				var svg = document.getElementById("svgId")
-				for(var x=0; x<20; x++) {
-					for(var y=0; y<20; y++) {
-						var rect = document.createElementNS("http://www.w3.org/2000/svg","rect")
-						rect.setAttribute("id","pixel_"+x+"_"+y)
-						rect.setAttribute("x",x+"0")
-						rect.setAttribute("y",y+"0")
-						rect.setAttribute("width","10")
-						rect.setAttribute("height","10")
-						rect.setAttribute("style","fill:white;stroke:white;stroke-width:1")
-						svg.appendChild(rect)
+					function darkenSilhouette() {
+						setColorOnPixels("black",pixels)
 					}
-				}
-			}
-			createPixels()
-			var state = "randomized"
-			function clickPixel(event) {
-				// TODO: track how long it takes to respond
-				var x = Math.floor(event.offsetX/10)
-				var y = Math.floor(event.offsetY/10)
-				if(state!="awaiting_click") {
-					return
-				}
-				var bodyPart = pixelsReverseLookup[[x,y]]
-				if(bodyPart===undefined) {
-					return
-				}
-				brightenBodyPart(bodyPart)
-				state = "randomized"
-				var timeoutValue = 5+Math.floor(Math.random()*25)
-				timerId = setTimeout(brightenOnRandomSchedule, timeoutValue*1000)
-			}
-			function setColorOnPixels(color,pixels) {
-				try {
-					for(var k=0; k<pixels.length; k++) {
-						document.getElementById("pixel_"+pixels[k][0]+"_"+pixels[k][1]).setAttribute("style","fill:"+color+";stroke:"+color+";stroke-width:1")
+					function setColorOnPixels(color,pixels) {
+						try {
+							for(var k=0; k<pixels.length; k++) {
+								document.getElementById("pixel_"+pixels[k][0]+"_"+pixels[k][1]).setAttribute("style","fill:"+color+";stroke:"+color+";stroke-width:1")
+							}
+						} catch(error) {
+							alert(error.message)
+						}
 					}
-				} catch(error) {
-					alert(error.message)
-				}
-			}
-			function darkenSilhouette() {
-				var pixels = [[8,2],[9,2],[10,2],
-							  [8,3],[9,3],[10,3],
-							  [8,4],[9,4],[10,4],
-									[9,5],
-						[7,6],[8,6],[9,6],[10,6],[11,6],
-				  [6,7],[7,7],[8,7],[9,7],[10,7],[11,7],[12,7],
-			[5,8],[6,8],[7,8],[8,8],[9,8],[10,8],[11,8],[12,8],[13,8],
-	  [4,9],[5,9],      [7,9],[8,9],[9,9],[10,9],[11,9],       [13,9],[14,9],
-[3,10],[4,10],        [7,10],[8,10],[9,10],[10,10],[11,10],          [14,10],[15,10],
-[3,11],[4,11],        [7,11],[8,11],[9,11],[10,11],[11,11],          [14,11],[15,11],
-					  [7,12],[8,12],       [10,12],[11,12],
-					  [7,13],[8,13],       [10,13],[11,13],
-					  [7,14],[8,14],       [10,14],[11,14],
-					  [7,15],[8,15],       [10,15],[11,15],
-			   [6,16],[7,16],[8,16],       [10,16],[11,16],[12,16],
-			   [6,17],[7,17],[8,17],       [10,17],[11,17],[12,17]]
-				setColorOnPixels("black",pixels)
-				// TODO: make this graphic more detailed and better-looking
-			}
-			darkenSilhouette()
-			// TODO: create more detailed body parts, including front/back (eg chest vs back)
-			var pixelsLookup = {
-				"Left Hand":[[3,10],[4,10],[3,11],[4,11]],
-				"Right Hand":[[14,10],[15,10],[14,11],[15,11]],
-				"Left Arm":[[4,9],[5,9],[5,8],[6,8],[6,7]],
-				"Right Arm":[[12,7],[12,8],[13,8],[13,9],[14,9]],
-				"Head & Face":[[8,2],[9,2],[10,2],[8,3],[9,3],[10,3],[8,4],[9,4],[10,4]],
-				"Neck & Shoulders":[[9,5],[7,6],[8,6],[9,6],[10,6],[11,6]],
-				"Chest & Back":[[7,7],[8,7],[9,7],[10,7],[11,7],[7,8],[8,8],[9,8],[10,8],[11,8],[7,9],[8,9],[9,9],[10,9],[11,9]],
-				"Pelvis & Belly":[[7,10],[8,10],[9,10],[10,10],[11,10],[7,11],[8,11],[9,11],[10,11],[11,11]],
-				"Left Leg":[[7,12],[8,12],[7,13],[8,13],[7,14],[8,14],[7,15],[8,15]],
-				"Right Leg":[[10,12],[11,12],[10,13],[11,13],[10,14],[11,14],[10,15],[11,15]],
-				"Left Foot":[[6,16],[7,16],[8,16],[6,17],[7,17],[8,17]],
-				"Right Foot":[[10,16],[11,16],[12,16],[10,17],[11,17],[12,17]]
-			}
-			var pixelsReverseLookup = {}
-			function createPixelsReverseLookup() {
-				for(var bodyPart in pixelsLookup) {
-					var pixelList = pixelsLookup[bodyPart]
-					for(var k=0; k<pixelList.length; k++) {
-						var pixelLoc = pixelList[k]
-						pixelsReverseLookup[pixelLoc] = bodyPart
+				// Display active graphics
+					function brightenBodyPart(bodyPart) {
+						setColorOnPixels("yellow",pixelsLookup[bodyPart])
+						displayBodyPartName(bodyPart)
+						logEvent(["brightenBodyPart",bodyPart])
 					}
+					function brightenRandomBodyPart() {
+						darkenSilhouette()
+						var bodyParts = ["Left Hand","Right Hand","Left Arm","Right Arm",
+							"Head & Face","Neck & Shoulders","Chest & Back","Pelvis & Belly",
+							"Left Leg","Right Leg","Left Foot","Right Foot"]
+						var index = Math.floor(Math.random()*bodyParts.length)
+						brightenBodyPart(bodyParts[index])
+					}
+					function displayBodyPartName(bodyPart) {
+						if(bodyPart=="Click Somewhere") {
+							document.getElementById("bodypart").textContent = "Click somewhere on the body"
+							logEvent(["clickSomewhere"])
+						} else if(bodyPart=="Unpause") {
+							document.getElementById("bodypart").textContent = "The game is paused"
+						} else if(bodyPart=="Stopped") {
+							document.getElementById("bodypart").textContent = "The game is stopped"
+							return
+						} else {
+							document.getElementById("bodypart").textContent = "Focus on your "+bodyPart
+						}
+						playAudio(bodyPart)
+					}
+			/** END GRAPHICS SECTION **/
+			/** START LOG SECTION **/
+				var logData = []
+				function logEvent(record) {
+					logData.push([(new Date).getTime(),record])
+					document.getElementById("data").textContent = JSON.stringify(logData);
 				}
-			}
-			createPixelsReverseLookup()
-			function displayBodyPartName(bodyPart) {
-				if(bodyPart=="Click Somewhere") {
-					document.getElementById("bodypart").textContent = "Click somewhere on the body"
-					recordEvent(["clickSomewhere"])
-				} else if(bodyPart=="Paused") {
-					document.getElementById("bodypart").textContent = "The game is paused"
-					return
-				} else {
-					document.getElementById("bodypart").textContent = "Focus on your "+bodyPart
-				}
-				playAudio(bodyPart)
-			}
-			function brightenBodyPart(bodyPart) {
-				setColorOnPixels("yellow",pixelsLookup[bodyPart])
-				displayBodyPartName(bodyPart)
-				recordEvent(["brightenBodyPart",bodyPart])
-			}
-			function brightenRandomBodyPart() {
-				darkenSilhouette()
-				var index = Math.floor(Math.random()*12)
-				var bodyParts = ["Left Hand","Right Hand","Left Arm","Right Arm","Head & Face","Neck & Shoulders","Chest & Back","Pelvis & Belly","Left Leg","Right Leg","Left Foot","Right Foot"]
-				brightenBodyPart(bodyParts[index])
-			}
-			function brightenOnRandomSchedule() {
-				if(Math.random()*13>1) {
-					// TODO: allow timing parameters to be set by user
-					brightenRandomBodyPart()
-					var timeoutValue = 5+Math.floor(Math.random()*25)
-					timerId = setTimeout(brightenOnRandomSchedule, timeoutValue*1000)
-				} else {
-					darkenSilhouette()
-					displayBodyPartName("Click Somewhere")
-					state = "awaiting_click"
-				}
-				// TODO: break in with other random events sometimes, such as instructions, questions, and reminders
-			}
-			function recordEvent(record) {
-				data.push([(new Date).getTime(),record])
-				document.getElementById("data").textContent = JSON.stringify(data);
-			}
+			/** END LOG SECTION **/
 		</script>
 	</body>
 </html>

@@ -24,6 +24,7 @@ face	teeth-gums	Focus your attention on the sensations in your teeth and gums.
 face	throat-sinuses	Focus your attention on the sensations in your throat and sinuses. 	
 face	tongue-roof	Focus your attention on the sensations in your tongue and the roof of your mouth. 	
 input	click-somewhere	Click somewhere on the picture of the body on the screen. 	
+input	unpause	Click the unpause button to continue. 	
 left-hand	left-back-hand	Focus your attention on the sensations in the back of your left hand. 	
 left-hand	left-fingertips	Focus your attention on the sensations in your left finger tips. 	
 left-hand	left-hand-heel	Focus your attention on the sensations in the heel of your left hand. 	
