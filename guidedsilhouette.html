@@ -107,6 +107,18 @@
 						audioFiles["Right Foot"] = new Audio("audio/right-foot.mp3")
 						audioFiles["Click Somewhere"] = new Audio("audio/click-somewhere.mp3")
 						audioFiles["Unpause"] = new Audio("audio/unpause.mp3")
+						audioFiles["Chin"] = new Audio("audio/chin.mp3")
+						audioFiles["Forehead"] = new Audio("audio/forehead.mp3")
+						audioFiles["Jaw Muscles"] = new Audio("audio/jaw-muscles.mp3")
+						audioFiles["Left Cheek"] = new Audio("audio/left-cheek.mp3")
+						audioFiles["Right Cheek"] = new Audio("audio/right-cheek.mp3")
+						audioFiles["Left Eye"] = new Audio("audio/left-eye.mp3")
+						audioFiles["Right Eye"] = new Audio("audio/right-eye.mp3")
+						audioFiles["Lips"] = new Audio("audio/lips.mp3")
+						audioFiles["Nose"] = new Audio("audio/nose.mp3")
+						audioFiles["Teeth & Gums"] = new Audio("audio/teeth-gums.mp3")
+						audioFiles["Throat & Sinuses"] = new Audio("audio/throat-sinuses.mp3")
+						audioFiles["Tongue & Mouth"] = new Audio("audio/tongue-roof.mp3")
 					}
 				// Manage events and states
 					var audioStatus = "disabled"
@@ -172,7 +184,19 @@
 						"Left Leg":[[7,12],[8,12],[7,13],[8,13],[7,14],[8,14],[7,15],[8,15]],
 						"Right Leg":[[10,12],[11,12],[10,13],[11,13],[10,14],[11,14],[10,15],[11,15]],
 						"Left Foot":[[6,16],[7,16],[8,16],[6,17],[7,17],[8,17]],
-						"Right Foot":[[10,16],[11,16],[12,16],[10,17],[11,17],[12,17]]
+						"Right Foot":[[10,16],[11,16],[12,16],[10,17],[11,17],[12,17]],
+						"Chin":[], // TODO: create pictures for these new body parts
+						"Forehead":[],
+						"Jaw Muscles":[],
+						"Left Cheek":[],
+						"Right Cheek":[],
+						"Left Eye":[],
+						"Right Eye":[],
+						"Lips":[],
+						"Nose":[],
+						"Teeth & Gums":[],
+						"Throat & Sinuses":[],
+						"Tongue & Mouth":[]
 					}
 					var pixelsReverseLookup = {}
 					createPixelsReverseLookup()
@@ -225,7 +249,9 @@
 						darkenSilhouette()
 						var bodyParts = ["Left Hand","Right Hand","Left Arm","Right Arm",
 							"Head & Face","Neck & Shoulders","Chest & Back","Pelvis & Belly",
-							"Left Leg","Right Leg","Left Foot","Right Foot"]
+							"Left Leg","Right Leg","Left Foot","Right Foot","Chin","Forehead",
+							"Jaw Muscles","Left Cheek","Right Cheek","Left Eye","Right Eye",
+							"Lips","Nose","Teeth & Gums","Throat & Sinuses","Tongue & Mouth"]
 						var index = Math.floor(Math.random()*bodyParts.length)
 						brightenBodyPart(bodyParts[index])
 					}
