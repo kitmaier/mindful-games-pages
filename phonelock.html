@@ -54,6 +54,13 @@
 					}
 				}
 			}
+			function revealValues() {
+				for(var k=0; k<numbersData.length; k++) {
+					var coordinates = numbersData[k]
+					var span = document.getElementById("p_"+coordinates[0]+"_"+coordinates[1])
+					span.textContent = k+1
+				}
+			}
 			var numbersData = [[0,1],[2,3],[4,2]]
 			var reverseNumbersData = [[0,1,0,0,0],[0,0,0,0,0],[0,0,0,2,0],[0,0,0,0,0],[0,0,3,0,0]]
 			generateNumbers()
@@ -63,6 +70,8 @@
 				reverseNumbersData = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
 				nextNumber = 1
 				// TODO: make the length of the list a user-controlled value
+				// TODO: make the size of the board a user-controlled value
+				// TODO: option to put X's on the whole board instead of just the numbers
 				for(var k=0; k<5; k++) {
 					var r = Math.floor(Math.random()*5)
 					var c = Math.floor(Math.random()*5)
@@ -81,6 +90,7 @@
 			}
 			var nextNumber = 1
 			function handleClick(event) {
+				if(state=="reading") return;
 				var target = event.target
 				var targetId = event.target.id
 				var r = parseInt(targetId.substring(2,3))
@@ -92,14 +102,22 @@
 					} else {
 						// TODO: penalize wrong answer and stop game
 						// TODO: scoring and measure timing and store data
+						revealValues()
+						nextNumber = -1
+						setTimeout(startOver,3*1000)
 					}
 				}
 				if(nextNumber==numbersData.length+1) {
-					generateNumbers()
+					startOver()
 				}
+			}
+			function startOver() {
+				generateNumbers()
+				state = "reading"
 			}
 			var state = "reading"
 			function startGame() {
+				if(state=="guessing") return;
 				for(var k=0; k<numbersData.length; k++) {
 					var coordinates = numbersData[k]
 					var span = document.getElementById("p_"+coordinates[0]+"_"+coordinates[1])
