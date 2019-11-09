@@ -12,6 +12,8 @@
 		</svg> 
 		<p id="bodypart"></p>
 		<button id="toggleAudio" type="button" onclick="toggleAudio()">Audio Disabled</button>
+		<p>To customize what is included in the scan, <br/>you can modify the below options.</p>
+		<p id='options'></p>
 		<p id='data'></p>
 		<script src="NoSleep.min.js"></script>
 		<script>
@@ -239,6 +241,87 @@
 							alert(error.message)
 						}
 					}
+					// TODO: combine all the bodyparts lists into one data structure
+					// TODO: move these lists to the static data section
+					var bodyPartsList = ["Head & Face","Neck & Shoulders","Chest & Back","Left Arm",
+						"Right Arm","Left Hand","Right Hand","Pelvis & Belly",
+						"Left Leg","Right Leg","Left Foot","Right Foot"]
+					var facePartsList = ["Forehead","Jaw Muscles","Left Eye","Right Eye",
+						"Left Cheek","Right Cheek","Nose","Lips","Chin",
+						"Throat & Sinuses","Tongue & Mouth","Teeth & Gums"]
+					// TODO: make these functions more generic and loop over list of body regions
+					createOptions()
+					function createOptions() {
+						var paragraph = document.getElementById("options")
+						var bodySpan = document.createElement("span")
+						bodySpan.id = "bodyHeader"
+						bodySpan.innerHTML = "&nbsp;<input type='checkbox' id='bodyHeaderCheckbox' onClick='handleCheckboxEvent(event)'> Category: Body &nbsp;[Expand <input type='checkbox' id='bodyExpandCheckbox' onClick='handleCheckboxEvent(event)'>]<br/>"
+						paragraph.appendChild(bodySpan)
+						document.getElementById("bodyHeaderCheckbox").checked = true
+						for(var k=0; k<bodyPartsList.length; k++) {
+							var bodyPart = bodyPartsList[k]
+							var bodyPartSpan = document.createElement("span")
+							bodyPartSpan.id = bodyPart+" Span"
+							bodyPartSpan.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' id='"+bodyPart+" Checkbox' onClick='handleCheckboxEvent(event)'> "+bodyPart+"<br>"
+							bodyPartSpan.style.display = "none"
+							paragraph.appendChild(bodyPartSpan)
+							document.getElementById(bodyPart+" Checkbox").checked = true
+						}
+						var faceSpan = document.createElement("span")
+						faceSpan.id = "faceHeader"
+						faceSpan.innerHTML = "&nbsp;<input type='checkbox' id='faceHeaderCheckbox' onClick='handleCheckboxEvent(event)'> Category: Face &nbsp;[Expand <input type='checkbox' id='faceExpandCheckbox' onClick='handleCheckboxEvent(event)'>]<br/>"
+						paragraph.appendChild(faceSpan)
+						for(var k=0; k<facePartsList.length; k++) {
+							var facePart = facePartsList[k]
+							var facePartSpan = document.createElement("span")
+							facePartSpan.id = facePart+" Span"
+							facePartSpan.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' id='"+facePart+" Checkbox' onClick='handleCheckboxEvent(event)'> "+facePart+"<br>"
+							facePartSpan.style.display = "none"
+							paragraph.appendChild(facePartSpan)
+						}
+					}
+					function handleCheckboxEvent(event) {
+						var targetId = event.target.id
+						if(targetId=="bodyHeaderCheckbox") {
+							var checkboxValue = document.getElementById(targetId).checked
+							for(var k=0; k<bodyPartsList.length; k++) {
+								var bodyPartCheckbox = document.getElementById(bodyPartsList[k]+" Checkbox")
+								bodyPartCheckbox.checked = checkboxValue
+							}
+						}
+						if(targetId=="bodyExpandCheckbox") {
+							var checkboxValue = document.getElementById(targetId).checked
+							for(var k=0; k<bodyPartsList.length; k++) {
+								var bodyPartSpan = document.getElementById(bodyPartsList[k]+" Span")
+								if(checkboxValue) {
+									bodyPartSpan.style.display = "block"
+								} else {
+									bodyPartSpan.style.display = "none"
+								}
+							}
+						}
+						if(targetId=="faceHeaderCheckbox") {
+							var checkboxValue = document.getElementById(targetId).checked
+							for(var k=0; k<facePartsList.length; k++) {
+								var facePartCheckbox = document.getElementById(facePartsList[k]+" Checkbox")
+								facePartCheckbox.checked = checkboxValue
+							}
+						}
+						if(targetId=="faceExpandCheckbox") {
+							var checkboxValue = document.getElementById(targetId).checked
+							for(var k=0; k<facePartsList.length; k++) {
+								var facePartSpan = document.getElementById(facePartsList[k]+" Span")
+								if(checkboxValue) {
+									facePartSpan.style.display = "block"
+								} else {
+									facePartSpan.style.display = "none"
+								}
+							}
+						}
+					}
+					function isChecked(bodyPart) {
+						return document.getElementById(bodyPart+" Checkbox").checked
+					}
 				// Display active graphics
 					function brightenBodyPart(bodyPart) {
 						setColorOnPixels("yellow",pixelsLookup[bodyPart])
@@ -247,11 +330,24 @@
 					}
 					function brightenRandomBodyPart() {
 						darkenSilhouette()
-						var bodyParts = ["Left Hand","Right Hand","Left Arm","Right Arm",
-							"Head & Face","Neck & Shoulders","Chest & Back","Pelvis & Belly",
-							"Left Leg","Right Leg","Left Foot","Right Foot","Chin","Forehead",
-							"Jaw Muscles","Left Cheek","Right Cheek","Left Eye","Right Eye",
-							"Lips","Nose","Teeth & Gums","Throat & Sinuses","Tongue & Mouth"]
+						// TODO: implement optional body part clustering, where consecutive body parts will tend to be in the same region
+						var bodyParts = []
+						for(var k=0; k<bodyPartsList.length; k++) {
+							var bodyPart = bodyPartsList[k]
+							if(isChecked(bodyPart)) {
+								bodyParts.push(bodyPart)
+							}
+						}
+						for(var k=0; k<facePartsList.length; k++) {
+							var facePart = facePartsList[k]
+							if(isChecked(facePart)) {
+								bodyParts.push(facePart)
+							}
+						}
+						// TODO: how to handle if the selection list is empty?
+						if(bodyParts.length==0) {
+							bodyParts.push("Head & Face")
+						}
 						var index = Math.floor(Math.random()*bodyParts.length)
 						brightenBodyPart(bodyParts[index])
 					}
