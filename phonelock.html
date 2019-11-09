@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	</head>
+	<body id='body'>
+		<p><a href="index.html">Return to games index</a></p>
+		<h1>Cell Phone Lock Screen Game</h1>
+		<p>Press the button when you are ready to start, <br/>then click on the numbers in order.</p>
+		<button id="toggleActive" type="button" onclick="startGame()">Push to Start</button>
+		<p style="font-family:monospace;font-size:30px">
+			&nbsp;
+			<span id="p_0_0" onClick="handleClick(event)">X</span>
+			<span id="p_0_1" onClick="handleClick(event)">X</span>
+			<span id="p_0_2" onClick="handleClick(event)">X</span>
+			<span id="p_0_3" onClick="handleClick(event)">X</span>
+			<span id="p_0_4" onClick="handleClick(event)">X</span>
+			<br/>
+			&nbsp;
+			<span id="p_1_0" onClick="handleClick(event)">X</span>
+			<span id="p_1_1" onClick="handleClick(event)">X</span>
+			<span id="p_1_2" onClick="handleClick(event)">X</span>
+			<span id="p_1_3" onClick="handleClick(event)">X</span>
+			<span id="p_1_4" onClick="handleClick(event)">X</span>
+			<br/>
+			&nbsp;
+			<span id="p_2_0" onClick="handleClick(event)">X</span>
+			<span id="p_2_1" onClick="handleClick(event)">X</span>
+			<span id="p_2_2" onClick="handleClick(event)">X</span>
+			<span id="p_2_3" onClick="handleClick(event)">X</span>
+			<span id="p_2_4" onClick="handleClick(event)">X</span>
+			<br/>
+			&nbsp;
+			<span id="p_3_0" onClick="handleClick(event)">X</span>
+			<span id="p_3_1" onClick="handleClick(event)">X</span>
+			<span id="p_3_2" onClick="handleClick(event)">X</span>
+			<span id="p_3_3" onClick="handleClick(event)">X</span>
+			<span id="p_3_4" onClick="handleClick(event)">X</span>
+			<br/>
+			&nbsp;
+			<span id="p_4_0" onClick="handleClick(event)">X</span>
+			<span id="p_4_1" onClick="handleClick(event)">X</span>
+			<span id="p_4_2" onClick="handleClick(event)">X</span>
+			<span id="p_4_3" onClick="handleClick(event)">X</span>
+			<span id="p_4_4" onClick="handleClick(event)">X</span>
+		</p>
+		<script>
+			function clearValues() {
+				for(var r=0; r<5; r++) {
+					for(var c=0; c<5; c++) {
+						var span = document.getElementById("p_"+r+"_"+c)
+						span.textContent = "-"
+					}
+				}
+			}
+			var numbersData = [[0,1],[2,3],[4,2]]
+			var reverseNumbersData = [[0,1,0,0,0],[0,0,0,0,0],[0,0,0,2,0],[0,0,0,0,0],[0,0,3,0,0]]
+			generateNumbers()
+			function generateNumbers() {
+				clearValues()
+				numbersData = []
+				reverseNumbersData = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
+				nextNumber = 1
+				// TODO: make the length of the list a user-controlled value
+				for(var k=0; k<5; k++) {
+					var r = Math.floor(Math.random()*5)
+					var c = Math.floor(Math.random()*5)
+					while(reverseNumbersData[r][c]!=0) {
+						var r = Math.floor(Math.random()*5)
+						var c = Math.floor(Math.random()*5)
+					}
+					numbersData.push([r,c])
+					reverseNumbersData[r][c] = k+1
+				}
+				for(var k=0; k<numbersData.length; k++) {
+					var coordinates = numbersData[k]
+					var span = document.getElementById("p_"+coordinates[0]+"_"+coordinates[1])
+					span.textContent = k+1
+				}
+			}
+			var nextNumber = 1
+			function handleClick(event) {
+				var target = event.target
+				var targetId = event.target.id
+				var r = parseInt(targetId.substring(2,3))
+				var c = parseInt(targetId.substring(4,5))
+				if(target.textContent=="X") {
+					if(reverseNumbersData[r][c]==nextNumber) {
+						target.textContent = nextNumber
+						nextNumber += 1
+					} else {
+						// TODO: penalize wrong answer and stop game
+						// TODO: scoring and measure timing and store data
+					}
+				}
+				if(nextNumber==numbersData.length+1) {
+					generateNumbers()
+				}
+			}
+			var state = "reading"
+			function startGame() {
+				for(var k=0; k<numbersData.length; k++) {
+					var coordinates = numbersData[k]
+					var span = document.getElementById("p_"+coordinates[0]+"_"+coordinates[1])
+					span.textContent = "X"
+					state = "guessing"
+				}
+			}
+		</script>
+	</body>
+</html>
