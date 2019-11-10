@@ -21,7 +21,7 @@
 			clear: both;
 		}
 	</style>
-	<body id='body' onkeyup="bodyClick(event)">
+	<body id='body' onkeydown="bodyKeyDown(event)" onkeyup="bodyKeyUp(event)">
 		<div class="row">
 			<div class="column">
 				<p><a href="index.html">Return to games index</a></p>
@@ -62,34 +62,66 @@
 			</div>
 		</div>
 		<script src="NoSleep.min.js"></script>
-		<script type="text/javascript" src="wanderingdot.js"></script>
 		<script>
+			// TODO: be able to hold down one or two arrow keys to move circle smoothly
 			var score = 0
-			function bodyClick(event) {
+			function bodyKeyDown(event) {
 				var x = event.keyCode;
 				if (x == '37') {
-					arrowClick("L")
+					arrowEvent("L","keyDown")
 				} else if (x == '39') {
-					arrowClick("R")
+					arrowEvent("R","keyDown")
 				} else if (x == '38') {
-					arrowClick("U")
+					arrowEvent("U","keyDown")
 				} else if (x == '40') {
-					arrowClick("D")
+					arrowEvent("D","keyDown")
 				}
 			}
-			document.getElementById("leftArrow").addEventListener("click", function(){arrowClick("L")});
-			document.getElementById("upArrow").addEventListener("click", function(){arrowClick("U")});
-			document.getElementById("rightArrow").addEventListener("click", function(){arrowClick("R")});
-			document.getElementById("downArrow").addEventListener("click", function(){arrowClick("D")});
-			function arrowClick(optionChar) {
-				if (optionChar=="L") {
-					moveBy("circleId",-10,0)
-				} else if(optionChar=="R") {
-					moveBy("circleId",10,0)
-				} else if(optionChar=="U") {
-					moveBy("circleId",0,-10)
-				} else if(optionChar=="D") {
-					moveBy("circleId",0,10)
+			function bodyKeyUp(event) {
+				var x = event.keyCode;
+				if (x == '37') {
+					arrowEvent("L","keyUp")
+				} else if (x == '39') {
+					arrowEvent("R","keyUp")
+				} else if (x == '38') {
+					arrowEvent("U","keyUp")
+				} else if (x == '40') {
+					arrowEvent("D","keyUp")
+				}
+			}
+			document.getElementById("leftArrow").addEventListener("keyDown", function(){arrowEvent("L","keyDown")});
+			document.getElementById("upArrow").addEventListener("keyDown", function(){arrowEvent("U","keyDown")});
+			document.getElementById("rightArrow").addEventListener("keyDown", function(){arrowEvent("R","keyDown")});
+			document.getElementById("downArrow").addEventListener("keyDown", function(){arrowEvent("D","keyDown")});
+			document.getElementById("leftArrow").addEventListener("keyUp", function(){arrowEvent("L","keyUp")});
+			document.getElementById("upArrow").addEventListener("keyUp", function(){arrowEvent("U","keyUp")});
+			document.getElementById("rightArrow").addEventListener("keyUp", function(){arrowEvent("R","keyUp")});
+			document.getElementById("downArrow").addEventListener("keyUp", function(){arrowEvent("D","keyUp")});
+			var keyHeldL = false
+			var keyHeldU = false
+			var keyHeldR = false
+			var keyHeldD = false
+			function arrowEvent(optionChar,eventName) {
+				if(eventName=="keyDown") {
+					if (optionChar=="L") {
+						keyHeldL = true
+					} else if(optionChar=="R") {
+						keyHeldR = true
+					} else if(optionChar=="U") {
+						keyHeldU = true
+					} else if(optionChar=="D") {
+						keyHeldD = true
+					}
+				} else if(eventName=="keyUp") {
+					if (optionChar=="L") {
+						keyHeldL = false
+					} else if(optionChar=="R") {
+						keyHeldR = false
+					} else if(optionChar=="U") {
+						keyHeldU = false
+					} else if(optionChar=="D") {
+						keyHeldD = false
+					}
 				}
 			}
 			function getInt(objectId,attribute) {
@@ -151,6 +183,12 @@
 			var targetY = 240
 			function moveRandom2() {
 				calculateScore()
+				// move user-controlled circle
+				if(keyHeldL) moveBy("circleId",-5,0);
+				if(keyHeldR) moveBy("circleId",5,0);
+				if(keyHeldU) moveBy("circleId",0,-5);
+				if(keyHeldD) moveBy("circleId",0,5);
+				// move target dot
 				var errorX = ((targetX-getInt("dotId","cx"))+240+10*480)%480-240
 				var errorY = ((targetY-getInt("dotId","cy"))+240+10*480)%480-240
 				var error = Math.sqrt(errorX*errorX+errorY*errorY)
@@ -161,6 +199,7 @@
 					targetX = Math.floor(Math.random()*480)
 					targetY = Math.floor(Math.random()*480)
 				}
+				// wait for next frame
 				setTimeout(moveRandom2,100)
 			}
 			//setTimeout(moveRandom,100)
