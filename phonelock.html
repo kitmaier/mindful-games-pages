@@ -4,6 +4,11 @@
 		<title>Cell Phone Lock Screen Game</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 	</head>
+	<style>
+		.clickable:hover {
+			cursor: pointer;
+		}
+	</style>
 	<body id='body'>
 		<p><a href="index.html">Return to games index</a></p>
 		<h1>Cell Phone Lock Screen Game</h1>
@@ -71,6 +76,7 @@
 					for(var c=0; c<5; c++) {
 						var span = document.getElementById("p_"+r+"_"+c)
 						span.textContent = "-"
+						span.classList.remove("clickable")
 					}
 				}
 			}
@@ -79,6 +85,7 @@
 					var coordinates = numbersData[k]
 					var span = document.getElementById("p_"+coordinates[0]+"_"+coordinates[1])
 					span.textContent = k+1
+					span.classList.remove("clickable")
 				}
 			}
 			var numbersData = [[0,1],[2,3],[4,2]]
@@ -105,6 +112,7 @@
 					var coordinates = numbersData[k]
 					var span = document.getElementById("p_"+coordinates[0]+"_"+coordinates[1])
 					span.textContent = k+1
+					span.classList.remove("clickable")
 				}
 			}
 			var nextNumber = 1
@@ -117,6 +125,7 @@
 				if(target.textContent=="X") {
 					if(reverseNumbersData[r][c]==nextNumber) {
 						target.textContent = nextNumber
+						target.classList.remove("clickable")
 						nextNumber += 1
 					} else {
 						// TODO: penalize wrong answer and stop game
@@ -141,6 +150,7 @@
 					var coordinates = numbersData[k]
 					var span = document.getElementById("p_"+coordinates[0]+"_"+coordinates[1])
 					span.textContent = "X"
+					span.classList.add("clickable")
 					state = "guessing"
 				}
 			}
