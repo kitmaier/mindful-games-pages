@@ -8,6 +8,19 @@
 		<p><a href="index.html">Return to games index</a></p>
 		<h1>Cell Phone Lock Screen Game</h1>
 		<p>Press the button when you are ready to start, <br/>then click on the numbers in order.</p>
+		<p>
+			Difficulty: &nbsp;
+			<select id="selectMap">
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+			</select>
+		</p>
 		<button id="toggleActive" type="button" onclick="startGame()">Push to Start</button>
 		<p style="font-family:monospace;font-size:30px">
 			&nbsp;
@@ -46,6 +59,13 @@
 			<span id="p_4_4" onClick="handleClick(event)">X</span>
 		</p>
 		<script>
+			var difficultySelection = 4
+			document.getElementById("selectMap").value = difficultySelection
+			document.getElementById("selectMap").addEventListener("change", updateSelectMap);
+			function updateSelectMap() {
+				difficultySelection = document.getElementById("selectMap").value
+				startOver()
+			}
 			function clearValues() {
 				for(var r=0; r<5; r++) {
 					for(var c=0; c<5; c++) {
@@ -69,10 +89,9 @@
 				numbersData = []
 				reverseNumbersData = [[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]]
 				nextNumber = 1
-				// TODO: make the length of the list a user-controlled value
 				// TODO: make the size of the board a user-controlled value
 				// TODO: option to put X's on the whole board instead of just the numbers
-				for(var k=0; k<5; k++) {
+				for(var k=0; k<difficultySelection; k++) {
 					var r = Math.floor(Math.random()*5)
 					var c = Math.floor(Math.random()*5)
 					while(reverseNumbersData[r][c]!=0) {
