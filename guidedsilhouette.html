@@ -369,16 +369,16 @@
 			/** START LOG SECTION **/
 				var logData = []
 				// TODO: include IP address in parameter list
-				// TODO: include sequence counter to verify all events have been logged in the database
+				// TODO: display some kind of error message if http callback fails: Http.onreadystatechange = (e) => { console.log(Http.responseText) }
 				const url='https://yzb3dh02l8.execute-api.us-west-2.amazonaws.com/default/myFunction-3?game=guidedsilhouette';
 				function logEvent(record) {
 					var timestamp = (new Date).getTime()
 					logData.push([timestamp,record])
 					document.getElementById("data").textContent = JSON.stringify(logData);
 					var Http = new XMLHttpRequest();
-					Http.open("GET", url+"&timestamp="+timestamp+"&data="+encodeURIComponent(JSON.stringify(record)));
+					Http.open("GET", url+"&timestamp="+timestamp+"&sequence="+logData.length+"&data="+encodeURIComponent(JSON.stringify(record)));
 					Http.send();
-					// select from_unixtime(floor(ts/1000)-8*60*60), ts, eventName, valcol from (select SUBSTR(valcol,LOCATE('"timestamp":',valcol)+14,13) as ts, SUBSTR(valcol,LOCATE('startGame',valcol)+LOCATE('pauseGame',valcol),9) as eventName, valcol from testdb.table1 where valcol like '%"game": "guidedsilhouette"%' /*and (valcol like '%startGame%' or valcol like '%pauseGame%')*/) z order by ts;
+					// select sequence as seq, from_unixtime(floor(ts/1000)-8*60*60) as dt_ts, ts as epoch, eventName, valcol from (select SUBSTR(valcol,LOCATE('"timestamp":',valcol)+14,13) as ts, SUBSTR(valcol,LOCATE('startGame',valcol)+LOCATE('pauseGame',valcol),9) as eventName, SUBSTRING_INDEX(SUBSTR(valcol,LOCATE('sequence',valcol)+12,5),'"',1) as sequence, keycol, valcol from testdb.table1 where valcol like '%"game": "guidedsilhouette"%' /*and (valcol like '%startGame%' or valcol like '%pauseGame%')*/) z order by ts;
 				}
 			/** END LOG SECTION **/
 		</script>
