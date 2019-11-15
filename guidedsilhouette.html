@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	</head>
 	<body id='body'>
 		<p><a href="index.html">Return to games index</a></p>
@@ -18,14 +19,6 @@
 		<p id='options'></p>
 		<p id='data'></p>
 		<script src="NoSleep.min.js"></script>
-		<script type="application/javascript">
-			var ipAddress = "unknown"
-			function getIP(json) {
-				document.getElementById("ipaddress").textContent = "IP Address: "+json.ip
-				ipAddress = json.ip
-			}
-		</script>
-		<script type="application/javascript" src="http://ipinfo.io/?format=jsonp&callback=getIP"></script>
 		<script>
 			/** START GAME STATE SECTION **/
 				// Sleep state handling
@@ -377,6 +370,11 @@
 					}
 			/** END GRAPHICS SECTION **/
 			/** START LOG SECTION **/
+				var ipAddress = "unknown"
+				$.getJSON('https://ipinfo.io/json', function(data) {
+					document.getElementById("ipaddress").textContent = "IP Address: "+data.ip
+					ipAddress = data.ip
+				});
 				var logData = []
 				var sessionId = Math.random()
 				document.getElementById("session").textContent = "Session ID: "+sessionId
