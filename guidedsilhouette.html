@@ -13,13 +13,18 @@
 		</svg> 
 		<p id="bodypart"></p>
 		<button id="toggleAudio" type="button" onclick="toggleAudio()">Audio Disabled</button>
+		<button id="toggleAudioCapture" type="button" onclick="toggleAudioCapture()">Audio Capture Disabled</button>
 		<p>To customize what is included in the scan, <br/>you can modify the below options.</p>
 		<p id='ipaddress'></p>
 		<p id='session'></p>
 		<p id='options'></p>
+		<p id='audio'></p>
 		<p id='data'></p>
 		<script src="NoSleep.min.js"></script>
 		<script>
+			// TODO: do something about these two errors: 
+			//    guidedsilhouette.html:1 Access to XMLHttpRequest at 'https://yzb3dh02l8.execute-api.us-west-2.amazonaws.com/default/myFunction-3?game=guidedsilhouette&ip=104.1.54.246&session=0.0664505495303993&timestamp=1574037009780&sequence=1&data=%5B%22startGame%22%5D' from origin 'null' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+			//    guidedsilhouette.html:480 Cross-Origin Read Blocking (CORB) blocked cross-origin response https://yzb3dh02l8.execute-api.us-west-2.amazonaws.com/default/myFunction-3?game=guidedsilhouette&ip=104.1.54.246&session=0.0664505495303993&timestamp=1574037009780&sequence=1&data=%5B%22startGame%22%5D with MIME type application/json. See https://www.chromestatus.com/feature/5629709824032768 for more details.
 			/** START GAME STATE SECTION **/
 				// Sleep state handling
 					var noSleep = new NoSleep()
@@ -55,6 +60,7 @@
 							logEvent(["startGame"])
 							setSleepStatus("wakeLocked")
 							document.getElementById("toggleActive").textContent = "Push to Stop"
+							stopAudioCapture()
 							stepsUntilPause = Math.floor(Math.random()*20)+3
 							brightenOnRandomSchedule()
 						} else if(newState=="inactive") {
@@ -62,12 +68,14 @@
 							logEvent(["stopGame"])
 							setSleepStatus("sleepAllowed")
 							document.getElementById("toggleActive").textContent = "Push to Start"
+							stopAudioCapture()
 							displayBodyPartName("Stopped")
 						} else if(newState=="paused") {
 							state = "inactive"
 							logEvent(["pauseGame"])
 							setSleepStatus("wakeLocked")
 							document.getElementById("toggleActive").textContent = "Push to Unpause"
+							startAudioCapture()
 							displayBodyPartName("Unpause")
 							timerId = setTimeout(stopGame, 2*60*1000)
 						}
@@ -156,6 +164,91 @@
 						}
 					}
 			/** END AUDIO SECTION **/
+			/** START AUDIO CAPTURE SECTION **/
+				// initialize audio capture
+					var audioChunks = null;
+					var audioContext = null;
+					var audioDestination = null;
+					var mediaRecorder = null;
+					var audioCaptureState = "uninitialized"
+					function initializeAudioCapture() {
+						audioCaptureState = "disabled";
+						audioContext = new AudioContext();
+						if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+							navigator.mediaDevices.getUserMedia({audio:true}).then(
+								function(stream) {
+									start_microphone(stream);
+								},
+								function(error){
+									alert('Error capturing audio.');
+								}
+							)
+						} else {
+							alert('navigator.mediaDevices.getUserMedia not supported in this browser.');
+						}
+					}
+					function start_microphone(stream) {
+						var microphone_stream = audioContext.createMediaStreamSource(stream);
+						var gain_node = audioContext.createGain();
+						//gain_node.gain.value = 10;
+						microphone_stream.connect(gain_node);
+						audioDestination = audioContext.createMediaStreamDestination();
+						gain_node.connect(audioDestination);
+					}
+				// enable/disable audio capture
+					function toggleAudioCapture() {
+						if(audioCaptureState=="uninitialized") {
+							initializeAudioCapture();
+						}
+						if(audioCaptureState=="disabled") {
+							audioCaptureState = "enabled";
+							document.getElementById("toggleAudioCapture").textContent = "Audio Capture Enabled"
+						} else if(audioCaptureState=="enabled") {
+							audioCaptureState = "disabled";
+							document.getElementById("toggleAudioCapture").textContent = "Audio Capture Disabled"
+						} else if(audioCaptureState=="recording") {
+							stopAudioCapture();
+							audioCaptureState = "disabled";
+							document.getElementById("toggleAudioCapture").textContent = "Audio Capture Disabled"
+						}
+					}
+				// functions to start and stop audio capture
+					// TODO: should i keep the same variables or recreate them each time? is there any risk of a memory leak or other buildup over time?
+					// TODO: should i delay the start of recording until after the command has finished?
+					// TODO: give explicit instruction to user to speak during audio capture
+					// TODO: store recording into database as clob and provide way to retrieve/play
+					// TODO: process recording through speech-to-text and store text in database for later analysis
+					function startAudioCapture() {
+						if(audioCaptureState=="enabled") {
+							audioCaptureState = "recording"
+							// TODO: notify user while recording is active
+							audioChunks = [];
+							mediaRecorder = new MediaRecorder(audioDestination.stream);
+							mediaRecorder.ondataavailable = function(evt) {
+								audioChunks.push(evt.data);
+							};
+							mediaRecorder.onstop = function(evt) {
+								var blob = new Blob(audioChunks, { 'type' : 'audio/ogg; codecs=opus' });
+								var audioTag = document.getElementById("audio")
+								var sound = document.createElement('audio');
+								sound.controls = 'controls';
+								sound.src = URL.createObjectURL(blob);
+								var paragraph = document.createElement("p");
+								var text = document.createTextNode("Recording ("+(new Date())+"): ");
+								audioTag.appendChild(paragraph);
+								paragraph.appendChild(text);
+								paragraph.appendChild(sound);
+							};
+							mediaRecorder.start();
+						}
+					}
+					function stopAudioCapture() {
+						if(audioCaptureState=="recording") {
+							audioCaptureState = "enabled"
+							mediaRecorder.stop();
+						}
+					}
+			/** END AUDIO CAPTURE SECTION **/
 			/** START GRAPHICS SECTION **/
 				// Initialize static data
 					// TODO: make this graphic more detailed and better-looking
