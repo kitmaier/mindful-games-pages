@@ -25,6 +25,10 @@
 			// TODO: do something about these two errors: 
 			//    guidedsilhouette.html:1 Access to XMLHttpRequest at 'https://yzb3dh02l8.execute-api.us-west-2.amazonaws.com/default/myFunction-3?game=guidedsilhouette&ip=104.1.54.246&session=0.0664505495303993&timestamp=1574037009780&sequence=1&data=%5B%22startGame%22%5D' from origin 'null' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
 			//    guidedsilhouette.html:480 Cross-Origin Read Blocking (CORB) blocked cross-origin response https://yzb3dh02l8.execute-api.us-west-2.amazonaws.com/default/myFunction-3?game=guidedsilhouette&ip=104.1.54.246&session=0.0664505495303993&timestamp=1574037009780&sequence=1&data=%5B%22startGame%22%5D with MIME type application/json. See https://www.chromestatus.com/feature/5629709824032768 for more details.
+			// TODO: try auto-pushing the button to enable recording with an artifical button press https://stackoverflow.com/questions/21012580/is-it-possible-to-write-data-to-file-using-only-javascript
+			// TODO: provide download link for audio recordings https://stackoverflow.com/questions/21012580/is-it-possible-to-write-data-to-file-using-only-javascript
+			// TODO: search converted speech-to-text data for a keyword like "Stop" to indicate the chosen end of recording, so the user does not have to push a button
+			// TODO: trim out silence or non-speech sounds from recording before submitting for speech-to-text conversion
 			/** START GAME STATE SECTION **/
 				// Sleep state handling
 					var noSleep = new NoSleep()
@@ -102,6 +106,7 @@
 					}
 			/** END GAME STATE SECTION **/
 			/** START AUDIO SECTION **/
+				// TODO: try using build in HTML5 Speech Synthesis API (https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis)
 				// Initialize static data
 					var audioFiles = {}
 					setupAudio()
@@ -149,6 +154,7 @@
 						}
 					}
 					function playAudio(bodyPart) {
+						// This must be preceded by a gesture (button press)
 						if(audioStatus=="enabled") {
 							stopAudio()
 							var audioFile = audioFiles[bodyPart]
@@ -165,6 +171,7 @@
 					}
 			/** END AUDIO SECTION **/
 			/** START AUDIO CAPTURE SECTION **/
+				// TODO: expand speech-to-text capability https://codeburst.io/html5-speech-recognition-api-670846a50e92)
 				// initialize audio capture
 					var audioChunks = null;
 					var audioContext = null;
@@ -172,6 +179,7 @@
 					var mediaRecorder = null;
 					var audioCaptureState = "uninitialized"
 					function initializeAudioCapture() {
+						// This must be preceded by a gesture (button press)
 						audioCaptureState = "disabled";
 						audioContext = new AudioContext();
 						if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -229,14 +237,22 @@
 							};
 							mediaRecorder.onstop = function(evt) {
 								var blob = new Blob(audioChunks, { 'type' : 'audio/ogg; codecs=opus' });
+								var recordingDate = new Date();
+								var recordingTime = recordingDate.getTime();
 								var audioTag = document.getElementById("audio")
 								var sound = document.createElement('audio');
 								sound.controls = 'controls';
-								sound.src = URL.createObjectURL(blob);
+								var soundUrl = URL.createObjectURL(blob);
+								sound.src = soundUrl;
 								var paragraph = document.createElement("p");
 								var text = document.createTextNode("Recording ("+(new Date())+"): ");
 								audioTag.appendChild(paragraph);
-								paragraph.appendChild(text);
+								var anchor = document.createElement("a");
+								anchor.href = soundUrl;
+								anchor.download = "recording_"+recordingTime;
+								paragraph.appendChild(anchor);
+								var text = document.createTextNode("Recording ("+recordingDate+"): ");
+								anchor.appendChild(text);
 								paragraph.appendChild(sound);
 							};
 							mediaRecorder.start();
