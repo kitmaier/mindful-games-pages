@@ -349,6 +349,8 @@
 						var paragraph = document.getElementById(recordingId)
 						var text = document.createTextNode(transcript);
 						paragraph.appendChild(text);
+						// TODO: try to relate this event back to the pause/stop events that gave rise to it
+						logEvent({"eventName":"speechToText","eventId":recordingId,"eventText":transcript})
 					}
 			/** END SPEECH TO TEXT SECTION **/
 			/** START GRAPHICS SECTION **/
