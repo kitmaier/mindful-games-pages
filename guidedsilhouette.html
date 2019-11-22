@@ -21,6 +21,7 @@
 		<p id='audio'></p>
 		<p id='data'></p>
 		<script src="NoSleep.min.js"></script>
+		<script src="web_audio_recorder_js/WebAudioRecorder.js"></script>
 		<script>
 			// TODO: do something about these two errors: 
 			//    guidedsilhouette.html:1 Access to XMLHttpRequest at 'https://yzb3dh02l8.execute-api.us-west-2.amazonaws.com/default/myFunction-3?game=guidedsilhouette&ip=104.1.54.246&session=0.0664505495303993&timestamp=1574037009780&sequence=1&data=%5B%22startGame%22%5D' from origin 'null' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
@@ -171,12 +172,13 @@
 					}
 			/** END AUDIO SECTION **/
 			/** START AUDIO CAPTURE SECTION **/
+				// Using this library for audio capture https://www.npmjs.com/package/web-audio-recorder-js
+				// Must run chrome with this flag (--allow-file-access-from-files) to test locally
 				// TODO: expand speech-to-text capability https://codeburst.io/html5-speech-recognition-api-670846a50e92)
 				// initialize audio capture
-					var audioChunks = null;
+					var recorder = null;
 					var audioContext = null;
 					var audioDestination = null;
-					var mediaRecorder = null;
 					var audioCaptureState = "uninitialized"
 					function initializeAudioCapture() {
 						// This must be preceded by a gesture (button press)
@@ -200,8 +202,7 @@
 						var gain_node = audioContext.createGain();
 						//gain_node.gain.value = 10;
 						microphone_stream.connect(gain_node);
-						audioDestination = audioContext.createMediaStreamDestination();
-						gain_node.connect(audioDestination);
+						audioDestination = gain_node;
 					}
 				// enable/disable audio capture
 					function toggleAudioCapture() {
@@ -230,13 +231,26 @@
 						if(audioCaptureState=="enabled") {
 							audioCaptureState = "recording"
 							// TODO: notify user while recording is active
-							audioChunks = [];
-							mediaRecorder = new MediaRecorder(audioDestination.stream);
-							mediaRecorder.ondataavailable = function(evt) {
-								audioChunks.push(evt.data);
-							};
-							mediaRecorder.onstop = function(evt) {
-								var blob = new Blob(audioChunks, { 'type' : 'audio/ogg; codecs=opus' });
+							recorder = new WebAudioRecorder(audioDestination, {
+								workerDir: "web_audio_recorder_js/", // must end with slash
+								encoding: "wav",
+								numChannels:2, //2 is the default, mp3 encoding supports only 2
+								onEncoderLoading: function(recorder, encoding) {
+									// show "loading encoder..." display
+									console.log("Loading "+encoding+" encoder...");
+								},
+								onEncoderLoaded: function(recorder, encoding) {
+									// hide "loading encoder..." display
+									console.log(encoding+" encoder loaded");
+								}
+							});
+							recorder.setOptions({
+								timeLimit:120,
+								encodeAfterRecord:true,
+								ogg: {quality: 0.5},
+								mp3: {bitRate: 160}
+							});
+							recorder.onComplete = function(recorder, blob) { 
 								var recordingDate = new Date();
 								var recordingTime = recordingDate.getTime();
 								var audioTag = document.getElementById("audio")
@@ -254,14 +268,14 @@
 								var text = document.createTextNode("Recording ("+recordingDate+"): ");
 								anchor.appendChild(text);
 								paragraph.appendChild(sound);
-							};
-							mediaRecorder.start();
+							}
+							recorder.startRecording();
 						}
 					}
 					function stopAudioCapture() {
 						if(audioCaptureState=="recording") {
 							audioCaptureState = "enabled"
-							mediaRecorder.stop();
+							recorder.finishRecording()
 						}
 					}
 			/** END AUDIO CAPTURE SECTION **/
