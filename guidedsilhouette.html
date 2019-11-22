@@ -14,6 +14,7 @@
 		<p id="bodypart"></p>
 		<button id="toggleAudio" type="button" onclick="toggleAudio()">Audio Disabled</button>
 		<button id="toggleAudioCapture" type="button" onclick="toggleAudioCapture()">Audio Capture Disabled</button>
+		<button id="toggleTextConversion" type="button" onclick="toggleTextConversion()">Speech-to-Text Disabled</button>
 		<p>To customize what is included in the scan, <br/>you can modify the below options.</p>
 		<p id='ipaddress'></p>
 		<p id='session'></p>
@@ -234,7 +235,7 @@
 							recorder = new WebAudioRecorder(audioDestination, {
 								workerDir: "web_audio_recorder_js/", // must end with slash
 								encoding: "wav",
-								numChannels:2, //2 is the default, mp3 encoding supports only 2
+								numChannels:1, //2 is the default, mp3 encoding supports only 2
 								onEncoderLoading: function(recorder, encoding) {
 									// show "loading encoder..." display
 									console.log("Loading "+encoding+" encoder...");
@@ -253,6 +254,7 @@
 							recorder.onComplete = function(recorder, blob) { 
 								var recordingDate = new Date();
 								var recordingTime = recordingDate.getTime();
+								var recordingId = "recording_"+recordingTime;
 								var audioTag = document.getElementById("audio")
 								var sound = document.createElement('audio');
 								sound.controls = 'controls';
@@ -263,11 +265,13 @@
 								audioTag.appendChild(paragraph);
 								var anchor = document.createElement("a");
 								anchor.href = soundUrl;
-								anchor.download = "recording_"+recordingTime;
+								anchor.download = recordingId;
 								paragraph.appendChild(anchor);
 								var text = document.createTextNode("Recording ("+recordingDate+"): ");
 								anchor.appendChild(text);
 								paragraph.appendChild(sound);
+								paragraph.id = recordingId;
+								blobToTranscript(blob, recordingId);
 							}
 							recorder.startRecording();
 						}
@@ -279,6 +283,74 @@
 						}
 					}
 			/** END AUDIO CAPTURE SECTION **/
+			/** START SPEECH TO TEXT SECTION **/
+				// initialize state
+					var textConversionState = "disabled"
+				// enable/disable speech-to-text conversion
+					function toggleTextConversion() {
+						if(textConversionState=="disabled") {
+							textConversionState = "enabled"
+							document.getElementById("toggleTextConversion").textContent = "Speech-to-Text Enabled"
+						} else if(textConversionState=="enabled") {
+							textConversionState = "disabled"
+							document.getElementById("toggleTextConversion").textContent = "Speech-to-Text Disabled"
+						}
+					}
+				// conversion functions
+					function blobToTranscript(blob, recordingId) {
+						if(textConversionState=="enabled") {
+							blobToBase64(blob, convertSpeechToText, recordingId)
+						}
+					}
+					function blobToBase64(blob, convertSpeechToText, recordingId) {
+						var reader = new FileReader();
+						reader.onload = function() {
+							var dataUrl = reader.result;
+							var base64 = dataUrl.split(',')[1];
+							convertSpeechToText(base64, recordingId);
+						};
+						reader.readAsDataURL(blob);
+					};
+					function convertSpeechToText(base64, recordingId) {
+						var message = 	{
+											"config": {
+												"languageCode": "en-US",
+												"enableWordTimeOffsets": false,
+												"enableAutomaticPunctuation": true,
+												"model": "phone_call",
+												"useEnhanced": true,
+												"audio_channel_count": 1
+											},
+											"audio": {
+												"content": base64
+											}
+										};
+						var xmlhttp = new XMLHttpRequest();
+						// TODO: replace this publicly visible API key with a more secure solution
+						// TODO: figure out how to charge usage to the client's Google account instead of my own
+						var theUrl = "https://speech.googleapis.com/v1/speech:recognize?key=AIzaSyBgsX5jnnYjDPwtSuSlLrRsW50x3tFdmCA";
+						xmlhttp.onreadystatechange = function() {
+							if (xmlhttp.readyState === 4) {
+								console.log(xmlhttp.response)
+								// TODO: with my current subscription this will only work for up to one minute of audio (could notify the user, provide hard constraints on the recording, try to split recording up into pieces, push the recording to google cloud, try out the continuous transcription api, bump up the limit, provide meaningful error messages back to user)
+								var results = JSON.parse(xmlhttp.response)["results"]
+								var transcript = "Transcript:"
+								for(var k=0; k<results.length; k++) {
+									transcript += " " + results[k]["alternatives"][0]["transcript"]
+								}
+								displayTranscript(transcript, recordingId)
+							}
+						}
+						xmlhttp.open("POST", theUrl);
+						xmlhttp.setRequestHeader("Content-Type", "application/json");
+						xmlhttp.send(JSON.stringify(message));
+					}
+					function displayTranscript(transcript, recordingId) {
+						var paragraph = document.getElementById(recordingId)
+						var text = document.createTextNode(transcript);
+						paragraph.appendChild(text);
+					}
+			/** END SPEECH TO TEXT SECTION **/
 			/** START GRAPHICS SECTION **/
 				// Initialize static data
 					// TODO: make this graphic more detailed and better-looking
