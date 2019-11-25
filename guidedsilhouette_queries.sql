@@ -62,7 +62,7 @@ SET @session_id = "%0.7564837189602414%";
 SET @quot1 = 'initialValue';
 SET @quot2 = -100;
 SET @quot3 = 0;
-select floor((sum(duration_mm-4*count(*))/60) total_duration_body_scan_hh, 
+select floor((sum(duration_mm)-4*count(*))/60) total_duration_body_scan_hh, 
 	floor(sum(duration_mm)-4*count(*)-60*floor((sum(duration_mm)-4*count(*))/60)) total_duration_body_scan_mm from (
 select from_unixtime(floor(lag_curr_epoch/1000)-8*60*60) as dt_ts_start, from_unixtime(floor(lag_epoch/1000)-8*60*60) as dt_ts_stop, (lag_epoch-lag_curr_epoch)/(60*1000) duration_mm from (
 select sequence, lag_epoch, @quot3 lag_curr_epoch, @quot3:=curr_epoch from (
