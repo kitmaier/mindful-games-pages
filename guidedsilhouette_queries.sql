@@ -1,86 +1,116 @@
+
+/* create table in athena to support queries on s3 */
+
+CREATE EXTERNAL TABLE IF NOT EXISTS table1 (
+  game string,
+  ip string,
+  session string,
+  sequence string,
+  timestamp string,
+  data string
+) 
+ROW FORMAT serde 'org.apache.hive.hcatalog.data.JsonSerDe'
+LOCATION 's3://guidedsilhouette-eventlog/';
+
+
+
+/* create table in athena to support queries on s3 for a single session*/
+
+CREATE EXTERNAL TABLE IF NOT EXISTS table9765362326599145 (
+  game string,
+  ip string,
+  session string,
+  sequence string,
+  timestamp string,
+  data string
+) 
+ROW FORMAT serde 'org.apache.hive.hcatalog.data.JsonSerDe'
+LOCATION 's3://guidedsilhouette-eventlog/9765362326599145/';
+
+
+
 /* display start/pause/stop events in sequence order */
 
-select sequence as seq, 
+select 
 	from_unixtime(floor(epoch/1000)-8*60*60) as dt_ts, 
-	epoch, eventName, valcol 
-	from (
-		select SUBSTR(valcol,LOCATE('"timestamp":',valcol)+14,13) as epoch, 
-		SUBSTRING_INDEX(SUBSTR(valcol,LOCATE('startGame',valcol)+LOCATE('pauseGame',valcol)+LOCATE('stopGame',valcol),15),'\\',1) as eventName, 
-		SUBSTRING_INDEX(SUBSTR(valcol,LOCATE('sequence',valcol)+12,5),'"',1) as sequence, 
-		keycol, valcol 
-		from testdb.table1 
-		where valcol like '%"game": "guidedsilhouette"%' 
-			and (valcol like '%startGame%' or valcol like '%pauseGame%' or valcol like '%stopGame%')
-	) z where epoch > 1574063463662 order by epoch;
+	epoch, session, sequence, eventName, data 
+from (
+	select *,
+		cast(timestamp as bigint) epoch, 
+		regexp_extract(data,'start|pause|stop') eventName
+	from table1 
+	where regexp_like(data,'start|pause|stop')
+) 
+where epoch > 0 order by epoch;
 
 
 
 /* display start and end time of each session */
 
-select session_id, 
+select session, 
 	from_unixtime(floor(min_epoch/1000)-8*60*60) as min_dt_ts, 
 	from_unixtime(floor(max_epoch/1000)-8*60*60) as max_dt_ts, 
 	min_epoch,
 	max_epoch,
 	(max_epoch-min_epoch)/(60*1000) as duration_mm
-	from (
-		select session_id, max(epoch) max_epoch, min(epoch) min_epoch, min(keycol) min_keycol from (
-			select SUBSTR(valcol,LOCATE('"timestamp":',valcol)+14,13) as epoch, 
-			SUBSTRING_INDEX(SUBSTR(valcol,LOCATE('session',valcol)+11,20),'"',1) as session_id, 
-			keycol
-			from testdb.table1 
-			where valcol like '%"game": "guidedsilhouette"%' 
-		) z group by session_id
-	) zz
+from (
+	select session, max(epoch) max_epoch, min(epoch) min_epoch from (
+		select session, cast(timestamp as bigint) as epoch from table1 
+	) group by session
+)
 where max_epoch-min_epoch > 2*60*1000
-order by min_keycol;
+order by min_epoch desc;
 
 
 
 /* verify that no events have been dropped */
-/* TODO: switch to grouping by session_id to handle concurrent sessions */
 
 select * from (
-	select min(ts) as start_ts, 
-		session_id, 
-		1+max(keycol)-min(keycol) row_cnt, 
-		count(*) expected_row_cnt 
+	select min(epoch) as start_ts, 
+		session, 
+		1+max(seq)-min(seq) expected_row_cnt, 
+		count(*) row_cnt 
 	from (
-		select SUBSTRING_INDEX(SUBSTR(valcol,LOCATE('session',valcol)+11,30),'"',1) as session_id, 
-			SUBSTR(valcol,LOCATE('"timestamp":',valcol)+14,13) as ts, 
-			keycol, valcol 
-		from testdb.table1
-	) z group by session_id
-) zz where row_cnt != expected_row_cnt order by start_ts;
+		select session, cast(sequence as bigint) as seq, cast(timestamp as bigint) as epoch from table1
+	) group by session
+) where row_cnt != expected_row_cnt order by start_ts;
 
 
 
 /* query to generate body scan durations report */
 /* TODO: replace four-minute heuristic with half the time since prior start event */
+/* TODO: include sleep timings side-by-side with scan timings */
+/* TODO: include a count of events (start/scan/pause) in each segment of time */
 
-SET @session_id = "%0.7564837189602414%";
-SET @quot1 = 'initialValue';
-SET @quot2 = -100;
-SET @quot3 = 0;
 select floor((sum(duration_mm)-4*count(*))/60) total_duration_body_scan_hh, 
 	floor(sum(duration_mm)-4*count(*)-60*floor((sum(duration_mm)-4*count(*))/60)) total_duration_body_scan_mm from (
-select from_unixtime(floor(lag_curr_epoch/1000)-8*60*60) as dt_ts_start, from_unixtime(floor(lag_epoch/1000)-8*60*60) as dt_ts_stop, (lag_epoch-lag_curr_epoch)/(60*1000) duration_mm from (
-select sequence, lag_epoch, @quot3 lag_curr_epoch, @quot3:=curr_epoch from (
-select sequence, @quot1 lag_event_name, @quot1:=event_name curr_event_name, @quot2 lag_epoch, @quot2:=epoch curr_epoch from (
-	select SUBSTR(valcol,LOCATE('"timestamp":',valcol)+14,13) as epoch, 
-		SUBSTRING_INDEX(SUBSTR(valcol,LOCATE('startGame',valcol)+LOCATE('pauseGame',valcol)+LOCATE('stopGame',valcol),15),'\\',1) as event_name, 
-		cast(SUBSTRING_INDEX(SUBSTR(valcol,LOCATE('sequence',valcol)+12,5),'"',1) as SIGNED) as sequence
-	from testdb.table1 
-	where valcol like '%"game": "guidedsilhouette"%' 
-		and (valcol like '%startGame%' or valcol like '%pauseGame%' or valcol like '%stopGame%')
-		and valcol like @session_id
-	union all select 0, "begin", -1 from dual
-	union all select 9999999999999, "end", 1000000 from dual
-) base order by sequence ) base2 where lag_event_name in ('begin','stopGame') order by sequence) base3 where lag_epoch > 0 order by sequence) base4
-;
+select
+	from_unixtime(floor(lag_curr_epoch/1000)-8*60*60) as dt_ts_start, 
+	from_unixtime(floor(lag_epoch/1000)-8*60*60) as dt_ts_stop, 
+	(lag_epoch-lag_curr_epoch)/(60.0*1000) duration_mm
+from (
+select
+	seq, 
+	lag_epoch, 
+	lag(curr_epoch,1,-200) OVER (ORDER BY seq) as lag_curr_epoch
+from (
+select * from (
+select seq, 
+	lag(event_name,1,'initialValue') OVER (ORDER BY seq) as lag_event_name, event_name as curr_event_name, 
+	lag(epoch,1,-100) OVER (ORDER BY seq) as lag_epoch, epoch as curr_epoch
+from ( 
+	select 
+		cast(timestamp as bigint) as epoch,
+		regexp_extract(data,'start|pause|stop') as event_name, 
+		cast(sequence as bigint) as seq
+	from table9765362326599145
+	where regexp_like(data,'start|pause|stop')
+	union all select 0, 'begin', -1
+	union all select 9999999999999, 'end', 1000000
+) ) where lag_event_name in ('begin','stop') 
+) ) where lag_curr_epoch > 0 order by seq
+);
 
 
 
-/* get MYSQL version */
 
-SHOW VARIABLES LIKE "%version%";

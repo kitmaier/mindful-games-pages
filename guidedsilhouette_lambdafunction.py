@@ -1,26 +1,21 @@
 import json
-import pymysql
-
-# TODO: get rid of these plaintext passwords
-rds_host  = "database-2.cctstixwotos.us-west-2.rds.amazonaws.com"
-name = "admin"
-password = "Administrator1!"
-db_name = "testdb"
-
-conn = pymysql.connect(rds_host, user=name, passwd=password, db=db_name, connect_timeout=5)
+import boto3
+import io
 
 # CORS support should be enabled in the API Gateway as well (https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html)
 
 def lambda_handler(event, context):
-    # TODO implement
-    params = event.get("queryStringParameters",None)
+    # TODO: default value is a bit fragile, and missing values might impact downstream logic
+    params = event.get("queryStringParameters",{"session":"0.0","sequence":"0"})
+    jsonFileName = params["session"][2:]+"/"+params["sequence"]+".json"
+    jsonFile = io.BytesIO(json.dumps(params).encode('utf-8'))
+    bucketName = 'guidedsilhouette-eventlog'
+    aclObject = {'ACL': 'public-read'} # TODO: set up a better per-file ACL
+    s3client = boto3.client('s3')
+    s3client.upload_fileobj(jsonFile,bucketName,jsonFileName,ExtraArgs=aclObject)
+    # TODO: reply with count of objects in bucket for troubleshooting
     value = {"event":event,"version":3,"params":params}
-    with conn.cursor() as cur:
-        cur.execute('insert into table1(valcol) values(%s)',("params:"+json.dumps(params)))
-        conn.commit()
-        cur.execute("select count(*) cnt from table1")
-        for row in cur:
-            value["rowcount_data"] = row
+    # TODO: send better response
     return {
         'statusCode': 200,
         'body': json.dumps(value),
@@ -29,4 +24,3 @@ def lambda_handler(event, context):
             'Access-Control-Allow-Origin': '*' 
         }
     }
-
