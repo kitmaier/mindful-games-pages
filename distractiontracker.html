@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	</head>
+	<body id='body' onkeydown="myFunction(event)">
+		<p><a href="index.html">Return to games index</a></p>
+		<h1>Distraction Tracker</h1>
+		<p>Try to pay attention to your breath, and avoid getting caught up in distracting thoughts. When prompted, record your level of distraction.</p>
+		<svg id="svgId" height="10" width="1000">
+			Sorry, your browser does not support inline SVG.
+		</svg> 
+		<p id="radioButtons" style="display:block">
+			<input type="radio" name="distractionLevel" value="5"> 5 - I am completely consumed by thoughts that I cannot resist<br>
+			<input type="radio" name="distractionLevel" value="4"> 4 - It is very difficult to pay attention to my breathing<br>
+			<input type="radio" name="distractionLevel" value="3"> 3 - I can pay attention to my breathing but there are a lot of thoughts in the back of my mind<br>
+			<input type="radio" name="distractionLevel" value="2"> 2 - I can easily focus on my breathing but there are some thoughts in the back of my mind<br>
+			<input type="radio" name="distractionLevel" value="1"> 1 - I am experiencing occasional brief thoughts that I can let go of quickly<br>
+			<input type="radio" name="distractionLevel" value="0"> 0 - My mind remains empty of thoughts and distractions<br>
+			<br>
+			<button id="submit" type="button" onclick="submit()">Submit</button>
+		</p>
+		<p id='raw_data'></p>
+		<script>
+			var data = []
+			var startTime = null
+			var currentTime = null
+			var currentRating = null
+			var lastX
+			var lastY
+			var currentX
+			var currentY
+			function submit() {
+				try {
+					var selectedElement = document.querySelector('input[name="distractionLevel"]:checked')
+					if(selectedElement==null) return;
+					var selection = selectedElement.value
+					currentRating = parseInt(selection)
+					lastX = currentX
+					currentX = currentRating*50+30
+					currentTime = (new Date).getTime();
+					if(startTime==null) startTime = currentTime
+					lastY = currentY
+					currentY = Math.floor((currentTime-startTime)/(1.0*1000)+5)
+					data.push([currentTime,currentRating,currentY,currentX]);
+					var svg = document.getElementById("svgId")
+					svg.setAttribute("height",currentY+10)
+					var dot = document.createElementNS("http://www.w3.org/2000/svg","circle")
+					dot.setAttribute("cx",currentX)
+					dot.setAttribute("cy",currentY)
+					dot.setAttribute("r","3")
+					dot.setAttribute("style","fill:#000000;stroke:#000000;stroke-width:1")
+					svg.appendChild(dot)
+					if(lastX!=null) {
+						var line = document.createElementNS("http://www.w3.org/2000/svg","line")
+						line.setAttribute("x1",lastX)
+						line.setAttribute("y1",lastY)
+						line.setAttribute("x2",currentX)
+						line.setAttribute("y2",currentY)
+						line.setAttribute("style","fill:#000000;stroke:#000000;stroke-width:3")
+						svg.appendChild(line)
+					}
+					document.getElementById("raw_data").textContent = "Raw data: "+JSON.stringify(data);
+				} catch(error) {
+					alert(error.message)
+				}
+				hideRadioButtons()
+			}
+			function hideRadioButtons() {
+				document.getElementById("radioButtons").style.display = "none"
+				var buttons = document.getElementsByName('distractionLevel');
+				for(var i=0; i<buttons.length; i++) {
+					buttons[i].checked = false
+				}
+				var waitTime = Math.floor(Math.random()*20)+20
+				setTimeout(showRadioButtons,waitTime*1000)
+			}
+			function showRadioButtons() {
+				document.getElementById("radioButtons").style.display = "block"
+			}
+		</script>
+	</body>
+</html>
