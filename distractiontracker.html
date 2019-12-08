@@ -40,7 +40,7 @@
 					currentTime = (new Date).getTime();
 					if(startTime==null) startTime = currentTime
 					lastY = currentY
-					currentY = Math.floor((currentTime-startTime)/(1.0*1000)+5)
+					currentY = Math.floor((currentTime-startTime)/(5.0*1000)+5)
 					data.push([currentTime,currentRating,currentY,currentX]);
 					var svg = document.getElementById("svgId")
 					svg.setAttribute("height",currentY+10)
