@@ -6,7 +6,7 @@
 	<body id='body'>
 		<p><a href="index.html">Return to games index</a></p>
 		<h1>Echoic Memory Game</h1>
-		<p>-instructions-</p>
+		<p>Read the sentence, then hit the Start button. Try to remember the sentence while waiting for the progress bar. When the text box comes up, type in the sentence exactly as it was written and hit Submit.</p>
 		<p id="sentence"></p>
 		<p id="startPid">
 			<button id="startButton" onclick="startGame()">Start</button>
@@ -24,17 +24,9 @@
 		</p>
 		<p id="results"></p>
 		<script>
+			// TODO: keep track of accuracy and give feedback to user
 			// TODO: allow the user to select the difficulty (number of words per sentence)
 			// TODO: ping service or some other website to get each sentence
-			/* TODO: basic functionality
-						-create list of sentences
-						-display and tag random sentence
-						-allow user to kick off test by hitting start button, and blank out sentence
-						-display some kind of timer or countdown
-						-display input text box and submission button
-						display accuracy score and start over
-						display comparison of submitted answer and right answer
-			*/
 			// TODO: if out of past 30 sentences, user misses no more than 3, automatically add a word - if 3 or more missed in past 10, remove a word
 			var sentenceSelected = null
 			var nextSentence = null
