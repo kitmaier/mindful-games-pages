@@ -22,12 +22,15 @@
 			<input type="text" id="textBox" value="" onKeyUp="submissionClick(event)">
 			<button id="submitButton" onclick="receiveSubmission()">Submit</button>
 		</p>
+		<p id="score"></p>
 		<p id="results"></p>
 		<script>
 			// TODO: keep track of accuracy and give feedback to user
 			// TODO: allow the user to select the difficulty (number of words per sentence)
 			// TODO: ping service or some other website to get each sentence
 			// TODO: if out of past 30 sentences, user misses no more than 3, automatically add a word - if 3 or more missed in past 10, remove a word
+			var countTotal = 0
+			var countGood = 0
 			var sentenceSelected = null
 			var nextSentence = null
 			var sentences = [	"The cat sat on the mat.",
@@ -70,6 +73,7 @@
 			}
 			function showTimerBar() {
 				var duration = Math.floor(Math.random()*10)+5
+				if(isTest()) duration = 1;
 				document.getElementById("leftToRight").setAttribute("dur",duration+"s")
 				document.getElementById("leftToRight").beginElement()
 				document.getElementById("svgPid").style.display = "block"
@@ -102,6 +106,8 @@
 			function scoreSubmission(submission) {
 				// TODO: trim and canonicalize submission before comparison 
 				// TODO: replace paragraphs with line breaks and improve formatting
+				countTotal += 1
+				document.getElementById("results").innerHTML = ""
 				var paragraph1 = document.createElement("p");
 				var text1 = document.createTextNode(sentenceSelected);
 				paragraph1.appendChild(text1);
@@ -111,10 +117,16 @@
 				paragraph2.appendChild(text2);
 				document.getElementById("results").appendChild(paragraph2)
 				if(submission==sentenceSelected) {
+					countGood += 1
 					paragraph2.style.color = "#00FF00"
 				} else {
 					paragraph2.style.color = "#FF0000"
 				}
+				document.getElementById("score").textContent = "Accuracy: "+Math.floor(100.0*countGood/countTotal)+"%"
+			}
+			function isTest() {
+				var params = new URLSearchParams(window.location.search);
+				return params!=null && params.has('test') && params.get('test')=='true';
 			}
 		</script>
 	</body>
