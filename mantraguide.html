@@ -3,7 +3,7 @@
 	<head>
 	</head>
 	<!-- TODO: this onkeydown event responds repeatedly when button is held, find out how to disable that -->
-	<body id='body' onkeydown="myFunction(event)">
+	<body id='body'>
 		<p><a href="index.html">Return to games index</a></p>
 		<h1>Echoic Memory Game</h1>
 		<p>-instructions-</p>
@@ -35,18 +35,41 @@
 						display accuracy score and start over
 						display comparison of submitted answer and right answer
 			*/
-			var sentenceIndex = 0
-			// TODO: sentences with or without period? 
-			var sentences = [	"The cat sat on the mat",
-								"The rain in spain falls mainly on the plain",
-								"The itsy bitsy spider climbed up the water spout"
+			// TODO: if out of past 30 sentences, user misses no more than 3, automatically add a word - if 3 or more missed in past 10, remove a word
+			var sentenceSelected = null
+			var nextSentence = null
+			var sentences = [	"The cat sat on the mat.",
+								"The rain in Spain falls mainly on the plain.",
+								"The itsy bitsy spider climbed up the water spout."
 							]
 			pickSentence()
 			function pickSentence() {
-				sentenceIndex = Math.floor(Math.random()*sentences.length)
-				document.getElementById("sentence").textContent = sentences[sentenceIndex]
+				if(nextSentence==null) {
+					var sentenceIndex = Math.floor(Math.random()*sentences.length)
+					sentenceSelected = sentences[sentenceIndex]
+				} else {
+					sentenceSelected = nextSentence
+					nextSentence = null
+				}
+				document.getElementById("sentence").textContent = sentenceSelected
 				document.getElementById("sentence").style.display = "block"
 				document.getElementById("startPid").style.display = "block"
+				getNextSentenceFromService()
+			}
+			function getNextSentenceFromService() {
+				nextSentence = null
+				// TODO: allow user to enter numWords dynamically
+				var numWords = 8
+				// TODO: make this API non-public and put in some security measures
+				var url = "https://olcr7nlthe.execute-api.us-west-2.amazonaws.com/default/getSentence?words="+numWords
+				var xmlhttp = new XMLHttpRequest();
+				xmlhttp.onreadystatechange = function() {
+					if(xmlhttp.readyState === 4) {
+						nextSentence = xmlhttp.response
+					}
+				}
+				xmlhttp.open("GET",url);
+				xmlhttp.send();
 			}
 			function startGame() {
 				document.getElementById("startPid").style.display = "none"
@@ -80,6 +103,7 @@
 				document.getElementById("textboxPid").style.display = "none"
 				scoreSubmission(submission)
 				// TODO: validate/grade submission
+				// TODO: handle case of empty submission
 				// TODO: store/display event log data
 				pickSentence()
 			}
@@ -87,14 +111,14 @@
 				// TODO: trim and canonicalize submission before comparison 
 				// TODO: replace paragraphs with line breaks and improve formatting
 				var paragraph1 = document.createElement("p");
-				var text1 = document.createTextNode(sentences[sentenceIndex]);
+				var text1 = document.createTextNode(sentenceSelected);
 				paragraph1.appendChild(text1);
 				document.getElementById("results").appendChild(paragraph1)
 				var paragraph2 = document.createElement("p");
 				var text2 = document.createTextNode(submission);
 				paragraph2.appendChild(text2);
 				document.getElementById("results").appendChild(paragraph2)
-				if(submission==sentences[sentenceIndex]) {
+				if(submission==sentenceSelected) {
 					paragraph2.style.color = "#00FF00"
 				} else {
 					paragraph2.style.color = "#FF0000"
