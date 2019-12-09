@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Sequence Vigilance Test</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+	</head>
+    <script>
+		// TODO: display rolling window percentage correct (eg past 20 attempts)
+		var data = [];
+		var colors = ["#FF9999", "#99FF99", "#BBBBFF"];
+		var numColors = 3;
+		var colorIndex = -1;
+		var lastColorIndex = -1
+		var lastColors = "----"
+		var matched = false
+		var countTotal = 0
+		var countGood = 0
+		function changeColor() {
+			var col = document.getElementById("body");
+			colorIndex = Math.floor(Math.random()*(numColors-1));
+			if(colorIndex>=lastColorIndex) {
+				colorIndex++
+			}
+			lastColorIndex = colorIndex
+			col.style.backgroundColor = colors[colorIndex];
+			if(lastColors=="RGRB") {
+				if(matched) {
+					countTotal += 1
+					countGood += 1
+				} else {
+					countTotal += 1
+				}
+				matched = false
+				document.getElementById("accuracy").textContent = "Accuracy: "+Math.floor(countGood*100.0/countTotal)+"% ("+countGood+"/"+countTotal+")"
+			} else {
+				if(matched) {
+					countTotal += 1
+					matched = false
+					document.getElementById("accuracy").textContent = "Accuracy: "+Math.floor(countGood*100.0/countTotal)+"% ("+countGood+"/"+countTotal+")"
+				}
+			}
+			lastColors = (lastColors+"RGB".charAt(colorIndex)).substring(1,5)
+			setTimeout(changeColor,1*1000)
+		}
+		function start() {
+			if(colorIndex==-1) {
+				changeColor()
+			}
+		}
+		function match() {
+			matched = true
+		}
+	</script>
+	<style>
+		html {
+			touch-action: manipulation;
+			max-width: 850px;
+		}
+	</style>
+	<body id='body'>
+		<p><a href="index.html">Return to games index</a></p>
+		<h1>Sequence Vigilance Test</h1>
+		<p>Below is a sequence of colors. Hit the Match button every time you see that sequence of colors. Hit the Start button when you are ready.</p>
+		<p id="colors">RED GREEN RED BLUE</p>
+		<button id="startButton" type="button" onclick="start()">Start</button>
+		<button id="matchButton" type="button" onclick="match()">Match</button>
+		<p id="accuracy"></p>
+		<p id='data'></p>
+    </body>
+</html>
