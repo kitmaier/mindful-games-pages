@@ -23,24 +23,27 @@
 			}
 			lastColorIndex = colorIndex
 			col.style.backgroundColor = colors[colorIndex];
-			if(lastColors=="RGRB") {
-				if(matched) {
-					countTotal += 1
-					countGood += 1
-				} else {
-					countTotal += 1
-				}
-				matched = false
-				document.getElementById("accuracy").textContent = "Accuracy: "+Math.floor(countGood*100.0/countTotal)+"% ("+countGood+"/"+countTotal+")"
-			} else {
-				if(matched) {
-					countTotal += 1
-					matched = false
-					document.getElementById("accuracy").textContent = "Accuracy: "+Math.floor(countGood*100.0/countTotal)+"% ("+countGood+"/"+countTotal+")"
-				}
-			}
+			scoreMatch()
 			lastColors = (lastColors+"RGB".charAt(colorIndex)).substring(1,5)
 			setTimeout(changeColor,1*1000)
+		}
+		function scoreMatch() {
+			var isValid = false
+			if(lastColors=="RGRB"||lastColors=="GBGR") {
+				isValid = true
+			}
+			if(isValid&&matched) {
+				countTotal += 1
+				countGood += 1
+			} else if(isValid&&!matched) {
+				countTotal += 1
+			} else if(matched&&!isValid) {
+				countTotal += 1
+			} else {
+				return
+			}
+			matched = false
+			document.getElementById("accuracy").textContent = "Accuracy: "+Math.floor(countGood*100.0/countTotal)+"% ("+countGood+"/"+countTotal+")"
 		}
 		function start() {
 			if(colorIndex==-1) {
@@ -60,8 +63,9 @@
 	<body id='body'>
 		<p><a href="index.html">Return to games index</a></p>
 		<h1>Sequence Vigilance Test</h1>
-		<p>Below is a sequence of colors. Hit the Match button every time you see that sequence of colors. Hit the Start button when you are ready.</p>
+		<p>Below are two sequences of colors. Hit the Match button every time you see either sequence of colors. Hit the Start button when you are ready.</p>
 		<p id="colors">RED GREEN RED BLUE</p>
+		<p id="colors">GREEN BLUE GREEN RED</p>
 		<button id="startButton" type="button" onclick="start()">Start</button>
 		<button id="matchButton" type="button" onclick="match()">Match</button>
 		<p id="accuracy"></p>
