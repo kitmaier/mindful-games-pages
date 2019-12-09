@@ -83,34 +83,33 @@ select * from (
 /* TODO: include a count of events (start/scan/pause) in each segment of time */
 
 select floor((sum(duration_mm)-4*count(*))/60) total_duration_body_scan_hh, 
-	floor(sum(duration_mm)-4*count(*)-60*floor((sum(duration_mm)-4*count(*))/60)) total_duration_body_scan_mm from (
-select
-	from_unixtime(floor(lag_curr_epoch/1000)-8*60*60) as dt_ts_start, 
-	from_unixtime(floor(lag_epoch/1000)-8*60*60) as dt_ts_stop, 
-	(lag_epoch-lag_curr_epoch)/(60.0*1000) duration_mm
+	floor(sum(duration_mm)-4*count(*)-60*floor((sum(duration_mm)-4*count(*))/60)) total_duration_body_scan_mm,
+	floor((sum(stopped_mm)+4*count(*))/60) total_duration_body_scan_hh, 
+	floor(sum(stopped_mm)+4*count(*)-60*floor((sum(stopped_mm)+4*count(*))/60)) total_duration_stopped_mm
 from (
-select
-	seq, 
-	lag_epoch, 
-	lag(curr_epoch,1,-200) OVER (ORDER BY seq) as lag_curr_epoch
+select from_unixtime(floor(lag_curr_epoch/1000)-8*60*60) as dt_ts_start, 
+		from_unixtime(floor(lag_epoch/1000)-8*60*60) as dt_ts_stop, 
+		round((lag_epoch-lag_curr_epoch)/(60.0*1000),2) duration_mm,
+		round((curr_epoch-lag_epoch)/(60.0*1000),2) stopped_mm
+from (
+select seq, lag_epoch, 
+		lag(curr_epoch,1,-200) OVER (ORDER BY seq) as lag_curr_epoch,
+		case when curr_epoch=9999999999999 then lag_epoch else curr_epoch end as curr_epoch
 from (
 select * from (
 select seq, 
-	lag(event_name,1,'initialValue') OVER (ORDER BY seq) as lag_event_name, event_name as curr_event_name, 
-	lag(epoch,1,-100) OVER (ORDER BY seq) as lag_epoch, epoch as curr_epoch
-from ( 
-	select 
+		lag(event_name,1,'initialValue') OVER (ORDER BY seq) as lag_event_name, event_name as curr_event_name, 
+		lag(epoch,1,-100) OVER (ORDER BY seq) as lag_epoch, epoch as curr_epoch
+from ( select 
 		cast(timestamp as bigint) as epoch,
 		regexp_extract(data,'start|pause|stop') as event_name, 
 		cast(sequence as bigint) as seq
-	from table9765362326599145
+	from table11621708259720331
 	where regexp_like(data,'start|pause|stop')
 	union all select 0, 'begin', -1
 	union all select 9999999999999, 'end', 1000000
 ) ) where lag_event_name in ('begin','stop') 
 ) ) where lag_curr_epoch > 0 order by seq
 );
-
-
 
 
