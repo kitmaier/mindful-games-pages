@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
 	<head>
-	<!-- TODO: start/stop wakelock -->
-	<!-- TODO: store results to database or local file -->
-	<!-- TODO: add extra columns like duration of quiet time, and summary metrics like average quiet time between notes -->
-	<!-- TODO: specify better formatting for the table -->
-	<!-- TODO: add a final note for the end of the session? allow submitting the last note to end the session? -->
-	<!-- TODO: handle crossing date boundary during a record -->
+		<!-- TODO: start/stop wakelock -->
+		<!-- TODO: store results to database or local file -->
+		<!-- TODO: add extra columns like duration of quiet time, and summary metrics like average quiet time between notes -->
+		<!-- TODO: specify better formatting for the table -->
+		<!-- TODO: add a final note for the end of the session? allow submitting the last note to end the session? -->
+		<!-- TODO: handle crossing date boundary during a record -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	</head>
 	<body id='body'>
 		<p><a href="index.html">Return to games index</a></p>
@@ -36,6 +37,8 @@
 		<button id="submitNoteButton" onclick="receiveSubmission()" style="display:none;font-size:50px">Submit Note</button>
 		<button id="stopButton" onclick="endSession()" style="display:none;font-size:50px">End Session</button>
 		</p>
+		<p id='ipaddress'></p>
+		<p id="session"></p>
 		<script>
 			function pad(num,width) {
 				return ("0".repeat(width)+num).slice(-width)
@@ -103,7 +106,36 @@
 				startQuietTime = endNoteTime
 				startNoteTime = 0
 				endNoteTime = 0
+				logEvent("recorddate="+recordDateString+"&startquiet="+startQuietString+"&startnote="+startNoteString+"&endnote="+endNoteString+"&notetext="+noteText)
 			}
+			/** START LOG SECTION **/
+				var ipAddress = "unknown"
+				// TODO: how scalable is this request? are there any fees for increased usage?
+				$.getJSON('https://ipinfo.io/json', function(data) {
+					document.getElementById("ipaddress").textContent = "IP Address: "+data.ip
+					ipAddress = data.ip
+				});
+				var logData = []
+				var sessionId = Math.random()
+				// TODO: it's confusing to use the word session in two different ways on this page
+				document.getElementById("session").textContent = "Browser Session ID: "+sessionId
+				// TODO: include some way of filtering out log data from test runs
+				// TODO: display some kind of error message if http callback fails: Http.onreadystatechange = (e) => { console.log(Http.responseText) }
+				const url='https://bdgscnb0y2.execute-api.us-west-2.amazonaws.com/default/storeBrainLoggerNote?game=brainlogger';
+				function logEvent(record) {
+					var timestamp = (new Date).getTime()
+					logData.push([timestamp,record])
+					//document.getElementById("data").textContent = JSON.stringify(logData);
+					var Http = new XMLHttpRequest();
+					Http.onreadystatechange = function() {
+						if (Http.readyState === 4) {
+							console.log(JSON.parse(Http.response))
+						}
+					}
+					Http.open("GET", url+"&ip="+ipAddress+"&session="+sessionId+"&timestamp="+timestamp+"&sequence="+logData.length+"&"+record);
+					Http.send();
+				}
+			/** END LOG SECTION **/
 		</script>
 	</body>
 </html>
