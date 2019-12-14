@@ -18,15 +18,47 @@
 		<p>Instantaneous clicks per minute: <span id="dbpm">0</span> bpm</p>
 		<p>Average clicks per minute: <span id="bpm">0</span> bpm</p>
 		<p>Number of clicks: <span id="clickCount">0</span></p>
+		<p>Distribution of results:</p>
+		<!-- TODO: add numbers/axes to this graph -->
+		<svg id="svgId" height="220" width="500">
+			<rect id="b0" x="0" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FF0000"/>
+			<rect id="b1" x="20" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FF0000"/>
+			<rect id="b2" x="40" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FF0000"/>
+			<rect id="b3" x="60" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FF0000"/>
+			<rect id="b4" x="80" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FF0000"/>
+			<rect id="b5" x="100" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FF0000"/>
+			<rect id="b6" x="120" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FFFF00"/>
+			<rect id="b7" x="140" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FFFF00"/>
+			<rect id="b8" x="160" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FFFF00"/>
+			<rect id="b9" x="180" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FFFF00"/>
+			<rect id="b10" x="200" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#00FF00"/>
+			<rect id="b11" x="220" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FFFF00"/>
+			<rect id="b12" x="240" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FFFF00"/>
+			<rect id="b13" x="260" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FFFF00"/>
+			<rect id="b14" x="280" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FFFF00"/>
+			<rect id="b15" x="300" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FF0000"/>
+			<rect id="b16" x="320" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FF0000"/>
+			<rect id="b17" x="340" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FF0000"/>
+			<rect id="b18" x="360" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FF0000"/>
+			<rect id="b19" x="380" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FF0000"/>
+			<rect id="b20" x="400" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FF0000"/>
+			<rect id="b--" x="440" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#000000"/>
+			<rect id="b21" x="480" y="0" width="20" height="200" stroke="#000000" stroke-width="1" fill="#FF0000"/>
+			Sorry, your browser does not support inline SVG.
+		</svg> 
 		<script>
 			var cadences = ["0.5","1","2","3","4","5","6","10","12","15"]
-			// TODO: this looks weird when it says "1 secones"
+			// TODO: this looks weird when it says "1 seconds"
 			document.getElementById("num").innerHTML = cadences[Math.floor(Math.random()*cadences.length)]
 			var firstTime = (new Date).getTime()
 			var lastTime = firstTime
 			var clickCount = 0
 			var sumDuration = 0
 			var sumDurationSquares = 0
+			var buckets = {}
+			for(var i=0; i<=21; i++) {
+				buckets[i] = 0
+			}
 			function buttonClick() {
 				try {
 					var nowTime = (new Date).getTime()
@@ -46,8 +78,26 @@
 						var stdDev = Math.sqrt(variance)
 						document.getElementById("stddev").innerHTML = stdDev.toFixed(3)
 					}
+					updateHistogram(duration)
 				} catch(error) {
 					alert(error.message)
+				}
+			}
+			function updateHistogram(duration) {
+				var bucket = Math.floor(duration+0.5)
+				if(bucket>20) {
+					bucket = 21
+				}
+				buckets[bucket] = buckets[bucket]+1
+				var maxSize = 0
+				for(var i=0; i<=21; i++) {
+					maxSize = Math.max(maxSize,buckets[i])
+				}
+				for(var i=0; i<=21; i++) {
+					var height = Math.floor(buckets[i]*200.0/maxSize)
+					var bar = document.getElementById("b"+i)
+					bar.setAttribute("height",height)
+					bar.setAttribute("y",200-height)
 				}
 			}
 		</script>
