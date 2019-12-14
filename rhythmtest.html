@@ -14,16 +14,20 @@
 		<p><image id="pushButton" src="images/button_push.PNG" onclick="buttonClick()"/></p>
 		<p>Time between last two clicks: <span id="duration">0</span> s</p>
 		<p>Average time between clicks: <span id="speed">0</span> s</p>
+		<p>Standard deviation of time between clicks: <span id="stddev">0</span> s</p>
 		<p>Instantaneous clicks per minute: <span id="dbpm">0</span> bpm</p>
 		<p>Average clicks per minute: <span id="bpm">0</span> bpm</p>
 		<p>Number of clicks: <span id="clickCount">0</span></p>
 		<script>
 			var cadences = ["0.5","1","2","3","4","5","6","10","12","15"]
+			// TODO: this looks weird when it says "1 secones"
 			document.getElementById("num").innerHTML = cadences[Math.floor(Math.random()*cadences.length)]
 			var firstTime = (new Date).getTime()
 			var lastTime = firstTime
 			var clickCount = 0
-			function buttonClick(duration,sections) {
+			var sumDuration = 0
+			var sumDurationSquares = 0
+			function buttonClick() {
 				try {
 					var nowTime = (new Date).getTime()
 					var duration = ((nowTime-lastTime)*0.001)
@@ -31,9 +35,17 @@
 					document.getElementById("duration").innerHTML = duration.toFixed(3)
 					document.getElementById("dbpm").innerHTML = (60.0/duration).toFixed(3)
 					clickCount = clickCount + 1
+					sumDuration += duration
+					sumDurationSquares += duration*duration
 					document.getElementById("clickCount").innerHTML = clickCount
 					document.getElementById("speed").innerHTML = ((nowTime-firstTime)*0.001/clickCount).toFixed(3)
 					document.getElementById("bpm").innerHTML = (60.0/((nowTime-firstTime)*0.001/clickCount)).toFixed(3)
+					if(clickCount>1) {
+						// https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
+						var variance = (sumDurationSquares*clickCount-sumDuration*sumDuration)/(clickCount*(clickCount-1))
+						var stdDev = Math.sqrt(variance)
+						document.getElementById("stddev").innerHTML = stdDev.toFixed(3)
+					}
 				} catch(error) {
 					alert(error.message)
 				}
