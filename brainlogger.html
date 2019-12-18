@@ -116,12 +116,12 @@
 					ipAddress = data.ip
 				});
 				var logData = []
-				var sessionId = Math.random()
+				var sessionId = Math.random().toString().substring(2)
 				// TODO: it's confusing to use the word session in two different ways on this page
 				document.getElementById("session").textContent = "Browser Session ID: "+sessionId
 				// TODO: include some way of filtering out log data from test runs
 				// TODO: display some kind of error message if http callback fails: Http.onreadystatechange = (e) => { console.log(Http.responseText) }
-				const url='https://bdgscnb0y2.execute-api.us-west-2.amazonaws.com/default/storeBrainLoggerNote?game=brainlogger';
+				const url='https://s2vsnmmmmg.execute-api.us-west-2.amazonaws.com/default/storeGenericLogMessage?appname=brainlogger';
 				function logEvent(record) {
 					var timestamp = (new Date).getTime()
 					logData.push([timestamp,record])
@@ -132,7 +132,13 @@
 							console.log(JSON.parse(Http.response))
 						}
 					}
-					Http.open("GET", url+"&ip="+ipAddress+"&session="+sessionId+"&timestamp="+timestamp+"&sequence="+logData.length+"&"+record);
+					Http.open("GET", url+"&logfiledir="+sessionId
+										+"&logfilename="+logData.length
+										+"&ip="+ipAddress
+										+"&session="+sessionId
+										+"&timestamp="+timestamp
+										+"&sequence="+logData.length
+										+"&"+record);
 					Http.send();
 				}
 			/** END LOG SECTION **/

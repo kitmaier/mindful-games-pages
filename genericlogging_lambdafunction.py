@@ -8,17 +8,13 @@ import random
 def lambda_handler(event, context):
     # TODO: verify price of pushing data to S3 in this way, and consider more efficient ways to implement this
     # TODO: default value is a bit fragile, and missing values might impact downstream logic
-    params = event.get("queryStringParameters",{"session":"0.0","sequence":"0"})
-    # TODO: have the browser include the session-start-date as a parameter to help partitioning
-    jsonFileName = "brainlogger/"+params["session"][2:]+"/"+params["sequence"]+".json"
+    params = event.get("queryStringParameters",{"appname":"testloggerapp","logfiledir":"testdir","logfilename":"testfile"})
+    jsonFileName = "generic-logging/"+params["appname"]+"/"+params["logfiledir"]+"/"+params["logfilename"]+".json"
     jsonFile = io.BytesIO(json.dumps(params).encode('utf-8'))
     bucketName = 'generic-use'
-    aclObject = {'ACL': 'public-read'} # TODO: set up a better per-file ACL
     s3client = boto3.client('s3')
-    s3client.upload_fileobj(jsonFile,bucketName,jsonFileName,ExtraArgs=aclObject)
-    # TODO: reply with count of objects in bucket for troubleshooting
-    value = {"event":event,"version":3,"params":params}
-    # TODO: send better response
+    s3client.upload_fileobj(jsonFile,bucketName,jsonFileName)
+    value = {"loglocation":jsonFileName,"logdata":params}
     return {
         'statusCode': 200,
         'body': json.dumps(value),
@@ -27,6 +23,9 @@ def lambda_handler(event, context):
             'Access-Control-Allow-Origin': '*' 
         }
     }
+
+# TODO: replace the below with an AWS CLI or Python BOTO3 script to create the needed resources
+# (https://bitbucket.org/awsdevguru/awsdevassoc/src/master/05._IAM/)
 
 # Notes on how to set up this function:
 # In S3 create a bucket and folder in the Oregon region with the chosen names and public access
