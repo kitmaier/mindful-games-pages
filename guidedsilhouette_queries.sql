@@ -1,31 +1,37 @@
 
 /* create table in athena to support queries on s3 */
 
-CREATE EXTERNAL TABLE IF NOT EXISTS table1 (
-  game string,
+CREATE EXTERNAL TABLE IF NOT EXISTS guidedsilhouettetable (
+  appname string,
   ip string,
   session string,
   sequence string,
   timestamp string,
-  data string
+  event string,
+  eventId string,
+  eventText string,
+  bodyPart string
 ) 
 ROW FORMAT serde 'org.apache.hive.hcatalog.data.JsonSerDe'
-LOCATION 's3://guidedsilhouette-eventlog/';
+LOCATION 's3://generic-use/generic-logging/guidedsilhouette/';
 
 
 
 /* create table in athena to support queries on s3 for a single session*/
 
 CREATE EXTERNAL TABLE IF NOT EXISTS table9765362326599145 (
-  game string,
+  appname string,
   ip string,
   session string,
   sequence string,
   timestamp string,
-  data string
+  event string,
+  eventId string,
+  eventText string,
+  bodyPart string
 ) 
 ROW FORMAT serde 'org.apache.hive.hcatalog.data.JsonSerDe'
-LOCATION 's3://guidedsilhouette-eventlog/9765362326599145/';
+LOCATION 's3://generic-use/generic-logging/guidedsilhouette/9765362326599145/';
 
 
 
@@ -33,13 +39,13 @@ LOCATION 's3://guidedsilhouette-eventlog/9765362326599145/';
 
 select 
 	from_unixtime(floor(epoch/1000)-8*60*60) as dt_ts, 
-	epoch, session, sequence, eventName, data 
+	epoch, session, sequence, eventName
 from (
 	select *,
 		cast(timestamp as bigint) epoch, 
-		regexp_extract(data,'start|pause|stop') eventName
-	from table1 
-	where regexp_like(data,'start|pause|stop')
+		regexp_extract(event,'start|pause|stop') eventName
+	from guidedsilhouettetable 
+	where regexp_like(event,'start|pause|stop')
 ) 
 where epoch > 0 order by epoch;
 
@@ -55,7 +61,7 @@ select session,
 	(max_epoch-min_epoch)/(60*1000) as duration_mm
 from (
 	select session, max(epoch) max_epoch, min(epoch) min_epoch from (
-		select session, cast(timestamp as bigint) as epoch from table1 
+		select session, cast(timestamp as bigint) as epoch from guidedsilhouettetable 
 	) group by session
 )
 where max_epoch-min_epoch > 2*60*1000
@@ -71,7 +77,7 @@ select * from (
 		1+max(seq)-min(seq) expected_row_cnt, 
 		count(*) row_cnt 
 	from (
-		select session, cast(sequence as bigint) as seq, cast(timestamp as bigint) as epoch from table1
+		select session, cast(sequence as bigint) as seq, cast(timestamp as bigint) as epoch from guidedsilhouettetable
 	) group by session
 ) where row_cnt != expected_row_cnt order by start_ts;
 
@@ -102,10 +108,10 @@ select seq,
 		lag(epoch,1,-100) OVER (ORDER BY seq) as lag_epoch, epoch as curr_epoch
 from ( select 
 		cast(timestamp as bigint) as epoch,
-		regexp_extract(data,'start|pause|stop') as event_name, 
+		regexp_extract(event,'start|pause|stop') as event_name, 
 		cast(sequence as bigint) as seq
-	from table11621708259720331
-	where regexp_like(data,'start|pause|stop')
+	from table9914691484719138
+	where regexp_like(event,'start|pause|stop')
 	union all select 0, 'begin', -1
 	union all select 9999999999999, 'end', 1000000
 ) ) where lag_event_name in ('begin','stop') 

@@ -16,11 +16,9 @@
 		<button id="toggleAudioCapture" type="button" onclick="toggleAudioCapture()">Audio Capture Disabled</button>
 		<button id="toggleTextConversion" type="button" onclick="toggleTextConversion()">Speech-to-Text Disabled</button>
 		<p>To customize what is included in the scan, <br/>you can modify the below options.</p>
-		<p id='ipaddress'></p>
-		<p id='session'></p>
 		<p id='options'></p>
 		<p id='audio'></p>
-		<p id='data'></p>
+		<script type="text/javascript" src="genericlogging_clientfunction.js"></script>
 		<script src="NoSleep.min.js"></script>
 		<script src="web_audio_recorder_js/WebAudioRecorder.js"></script>
 		<script>
@@ -63,7 +61,7 @@
 						stopAudio()
 						if(newState=="active") {
 							state = "active"
-							logEvent(["startGame"])
+							logEvent("guidedsilhouette",["event=startGame"])
 							setSleepStatus("wakeLocked")
 							document.getElementById("toggleActive").textContent = "Push to Stop"
 							stopAudioCapture()
@@ -71,14 +69,14 @@
 							brightenOnRandomSchedule()
 						} else if(newState=="inactive") {
 							state = "inactive"
-							logEvent(["stopGame"])
+							logEvent("guidedsilhouette",["event=stopGame"])
 							setSleepStatus("sleepAllowed")
 							document.getElementById("toggleActive").textContent = "Push to Start"
 							stopAudioCapture()
 							displayBodyPartName("Stopped")
 						} else if(newState=="paused") {
 							state = "inactive"
-							logEvent(["pauseGame"])
+							logEvent("guidedsilhouette",["event=pauseGame"])
 							setSleepStatus("wakeLocked")
 							document.getElementById("toggleActive").textContent = "Push to Unpause"
 							startAudioCapture()
@@ -146,11 +144,11 @@
 					function toggleAudio() {
 						if(audioStatus=="disabled") {
 							audioStatus = "enabled"
-							logEvent(["enableAudio"])
+							logEvent("guidedsilhouette",["event=enableAudio"])
 							document.getElementById("toggleAudio").textContent = "Audio Enabled"
 						} else {
 							audioStatus = "disabled"
-							logEvent(["disableAudio"])
+							logEvent("guidedsilhouette",["event=disableAudio"])
 							document.getElementById("toggleAudio").textContent = "Audio Disabled"
 							stopAudio()
 						}
@@ -350,7 +348,7 @@
 						var text = document.createTextNode(transcript);
 						paragraph.appendChild(text);
 						// TODO: try to relate this event back to the pause/stop events that gave rise to it
-						logEvent({"eventName":"speechToText","eventId":recordingId,"eventText":transcript})
+						logEvent("guidedsilhouette",["event=speechToText","eventId="+recordingId,"eventText="+transcript])
 					}
 			/** END SPEECH TO TEXT SECTION **/
 			/** START GRAPHICS SECTION **/
@@ -526,7 +524,7 @@
 					function brightenBodyPart(bodyPart) {
 						setColorOnPixels("yellow",pixelsLookup[bodyPart])
 						displayBodyPartName(bodyPart)
-						logEvent(["brightenBodyPart",bodyPart])
+						logEvent("guidedsilhouette",["event=brightenBodyPart","bodyPart="+bodyPart])
 					}
 					function brightenRandomBodyPart() {
 						darkenSilhouette()
@@ -554,7 +552,7 @@
 					function displayBodyPartName(bodyPart) {
 						if(bodyPart=="Click Somewhere") {
 							document.getElementById("bodypart").textContent = "Click somewhere on the body"
-							logEvent(["clickSomewhere"])
+							logEvent("guidedsilhouette",["event=clickSomewhere"])
 						} else if(bodyPart=="Unpause") {
 							document.getElementById("bodypart").textContent = "The game is paused"
 						} else if(bodyPart=="Stopped") {
@@ -566,28 +564,6 @@
 						playAudio(bodyPart)
 					}
 			/** END GRAPHICS SECTION **/
-			/** START LOG SECTION **/
-				var ipAddress = "unknown"
-				$.getJSON('https://ipinfo.io/json', function(data) {
-					document.getElementById("ipaddress").textContent = "IP Address: "+data.ip
-					ipAddress = data.ip
-				});
-				var logData = []
-				var sessionId = Math.random()
-				document.getElementById("session").textContent = "Session ID: "+sessionId
-				// TODO: include some way of filtering out log data from test runs
-				// TODO: display some kind of error message if http callback fails: Http.onreadystatechange = (e) => { console.log(Http.responseText) }
-				const url='https://yzb3dh02l8.execute-api.us-west-2.amazonaws.com/default/myFunction-3?game=guidedsilhouette';
-				function logEvent(record) {
-					var timestamp = (new Date).getTime()
-					logData.push([timestamp,record])
-					document.getElementById("data").textContent = JSON.stringify(logData);
-					var Http = new XMLHttpRequest();
-					Http.open("GET", url+"&ip="+ipAddress+"&session="+sessionId+"&timestamp="+timestamp+"&sequence="+logData.length+"&data="+encodeURIComponent(JSON.stringify(record)));
-					Http.send();
-					// select sequence as seq, from_unixtime(floor(ts/1000)-8*60*60) as dt_ts, ts as epoch, eventName, valcol from (select SUBSTR(valcol,LOCATE('"timestamp":',valcol)+14,13) as ts, SUBSTR(valcol,LOCATE('startGame',valcol)+LOCATE('pauseGame',valcol),9) as eventName, SUBSTRING_INDEX(SUBSTR(valcol,LOCATE('sequence',valcol)+12,5),'"',1) as sequence, keycol, valcol from testdb.table1 where valcol like '%"game": "guidedsilhouette"%' /*and (valcol like '%startGame%' or valcol like '%pauseGame%')*/) z order by ts;
-				}
-			/** END LOG SECTION **/
 		</script>
 	</body>
 </html>
