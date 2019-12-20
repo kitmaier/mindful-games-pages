@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	</head>
+	<body id='body'>
+		<p><a href="index.html">Return to Mindful Games index</a></p>
+		<h1>Contact Us</h1>
+		<p>Thanks for visiting! Please leave a note below if you see anything that needs to be improved, or if you would like to get in touch.</p>
+		<table>
+			<tr><th align="left">First Name: </th><th align="left"><input type="text" id="nameInput" value=""></th></tr>
+			<tr><th align="left">Email: </th><th align="left"><input type="textInput" id="emailInput" value=""></th></tr>
+			<tr><th align="left">Comments: </th><th align="left"><textarea id="commentsTextArea" style="font-size:30px" rows="5" cols="40"></textarea></th></tr>
+		</table>
+		<p>Sign up for mailing list: <input type="checkbox" id="mailingListCheckbox"></p>
+		<button id="submitButton" onclick="submit()" style="font-size:50px">Submit</button>
+		<p id="response"></p>
+		<!-- TODO: this data should be passed to the backend with a POST request rather than URL parameters -->
+		<!-- TODO: send an email notification to the user to confirm that their comment has been received -->
+		<script type="text/javascript" src="genericlogging_clientfunction.js"></script>
+		<script>
+			function submit() {
+				var firstName = document.getElementById("nameInput").value
+				var email = document.getElementById("emailInput").value
+				var comment = document.getElementById("commentsTextArea").value
+				var mailoptin = document.getElementById("mailingListCheckbox").checked
+				logEvent("contact-us",
+							["firstname="+firstName,
+							"email="+email,
+							"comment="+comment,
+							"mailoptin="+mailoptin]
+				)
+				// TODO: how to make this conditional on the success of the HTTP logging request? 
+				document.getElementById("response").textContent = "Thank you for sharing, you should receive an email confirmation soon."
+			}
+		</script>
+	</body>
+</html>
