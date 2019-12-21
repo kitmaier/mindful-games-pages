@@ -13,32 +13,32 @@ console.log("logging session id: "+log_session_id)
 var log_data = []
 // TODO: include some way of filtering out log data from test runs
 // TODO: display some kind of error message if http callback fails: Http.onreadystatechange = (e) => { console.log(Http.responseText) }
-const log_url='https://s2vsnmmmmg.execute-api.us-west-2.amazonaws.com/default/storeGenericLogMessage?';
+const log_url='https://s2vsnmmmmg.execute-api.us-west-2.amazonaws.com/default/storeGenericLogMessage';
 function logEvent(log_app_name,record) {
-	for(var k=0; k<record.length; k++) {
-		// TODO: there has to be a simpler and more robust way to do this
-		var parts = record[k].split("=")
-		record[k] = encodeURIComponent(parts[0])+"="+encodeURIComponent(parts[1])
-	}
 	var timestamp = (new Date).getTime()
 	log_data.push([timestamp,record])
-	//document.getElementById("data").textContent = JSON.stringify(log_data);
+	var requestBody = {
+		"appname": log_app_name,
+		"logfiledir": log_session_id,
+		"logfilename": ""+log_data.length,
+		"ip": ipAddress,
+		"session": log_session_id,
+		"timestamp": ""+timestamp,
+		"sequence": ""+log_data.length
+	}
+	for(var k=0; k<record.length; k++) {
+		// TODO: switch to having input be a map instead of a list of strings
+		var parts = record[k].split("=")
+		requestBody[parts[0]] = parts[1]
+	}
 	var Http = new XMLHttpRequest();
 	Http.onreadystatechange = function() {
 		if (Http.readyState === 4) {
 			console.log("Log response:",JSON.parse(Http.response))
 		}
 	}
-	var request_url = log_url
-				+"appname="+log_app_name
-				+"&logfiledir="+log_session_id
-				+"&logfilename="+log_data.length
-				+"&ip="+ipAddress
-				+"&session="+log_session_id
-				+"&timestamp="+timestamp
-				+"&sequence="+log_data.length
-				+"&"+record.join("&");
-	console.log("Log request: " + request_url)
-	Http.open("GET", request_url);
-	Http.send();
+	console.log("Log request:",requestBody)
+	Http.open("POST", log_url, true);
+	Http.setRequestHeader('Content-Type', 'application/json');
+	Http.send(JSON.stringify(requestBody));
 }
