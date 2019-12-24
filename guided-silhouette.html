@@ -139,6 +139,19 @@
 						audioFiles["Teeth & Gums"] = new Audio("audio/teeth-gums.mp3")
 						audioFiles["Throat & Sinuses"] = new Audio("audio/throat-sinuses.mp3")
 						audioFiles["Tongue & Mouth"] = new Audio("audio/tongue-roof.mp3")
+						audioFiles["Digestion"] = new Audio("audio/digestion.mp3")
+						audioFiles["Heart & Pulse"] = new Audio("audio/heart-pulse.mp3")
+						audioFiles["Lungs & Breath"] = new Audio("audio/lungs-breath.mp3")
+						audioFiles["Eye Direction"] = new Audio("audio/direction-eyes.mp3")
+						audioFiles["On Mind"] = new Audio("audio/on-mind.mp3")
+						audioFiles["Gravity"] = new Audio("audio/gravity.mp3")
+						audioFiles["Cloth"] = new Audio("audio/cloth.mp3")
+						audioFiles["Heat & Cold"] = new Audio("audio/heat.mp3")
+						audioFiles["Tesion & Relaxation"] = new Audio("audio/tension.mp3")
+						audioFiles["Sounds"] = new Audio("audio/sounds.mp3")
+						audioFiles["Inner Voice"] = new Audio("audio/inner-voice.mp3")
+						audioFiles["Fast Scan"] = new Audio("audio/fast-scan.mp3")
+						audioFiles["Mood"] = new Audio("audio/mood.mp3")
 					}
 				// Manage events and states
 					var audioStatus = "disabled"
@@ -398,7 +411,20 @@
 						"Nose":[],
 						"Teeth & Gums":[],
 						"Throat & Sinuses":[],
-						"Tongue & Mouth":[]
+						"Tongue & Mouth":[],
+						"Digestion":[], 
+						"Heart & Pulse":[],
+						"Lungs & Breath":[],
+						"Eye Direction":[],
+						"On Mind":[], // TODO: what to do with scan items that cannot be highlighted on a diagram?
+						"Gravity":[],
+						"Cloth":[],
+						"Heat & Cold":[],
+						"Tesion & Relaxation":[],
+						"Sounds":[],
+						"Inner Voice":[],
+						"Fast Scan":[],
+						"Mood":[]
 					}
 					var pixelsReverseLookup = {}
 					createPixelsReverseLookup()
@@ -449,6 +475,9 @@
 					var facePartsList = ["Forehead","Jaw Muscles","Left Eye","Right Eye",
 						"Left Cheek","Right Cheek","Nose","Lips","Chin",
 						"Throat & Sinuses","Tongue & Mouth","Teeth & Gums"]
+					var systemPartsList = ["Digestion", "Heart & Pulse", "Lungs & Breath", 
+						"Eye Direction", "On Mind", "Gravity", "Cloth", "Heat & Cold", 
+						"Tesion & Relaxation", "Sounds", "Inner Voice", "Fast Scan", "Mood"]
 					// TODO: make these functions more generic and loop over list of body regions
 					createOptions()
 					function createOptions() {
@@ -478,6 +507,18 @@
 							facePartSpan.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' id='"+facePart+" Checkbox' onClick='handleCheckboxEvent(event)'> "+facePart+"<br>"
 							facePartSpan.style.display = "none"
 							paragraph.appendChild(facePartSpan)
+						}
+						var systemSpan = document.createElement("span")
+						systemSpan.id = "systemHeader"
+						systemSpan.innerHTML = "&nbsp;<input type='checkbox' id='systemHeaderCheckbox' onClick='handleCheckboxEvent(event)'> Category: Systems &nbsp;[Expand <input type='checkbox' id='systemExpandCheckbox' onClick='handleCheckboxEvent(event)'>]<br/>"
+						paragraph.appendChild(systemSpan)
+						for(var k=0; k<systemPartsList.length; k++) {
+							var systemPart = systemPartsList[k]
+							var systemPartSpan = document.createElement("span")
+							systemPartSpan.id = systemPart+" Span"
+							systemPartSpan.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' id='"+systemPart+" Checkbox' onClick='handleCheckboxEvent(event)'> "+systemPart+"<br>"
+							systemPartSpan.style.display = "none"
+							paragraph.appendChild(systemPartSpan)
 						}
 					}
 					function handleCheckboxEvent(event) {
@@ -518,6 +559,24 @@
 								}
 							}
 						}
+						if(targetId=="systemHeaderCheckbox") {
+							var checkboxValue = document.getElementById(targetId).checked
+							for(var k=0; k<systemPartsList.length; k++) {
+								var systemPartCheckbox = document.getElementById(systemPartsList[k]+" Checkbox")
+								systemPartCheckbox.checked = checkboxValue
+							}
+						}
+						if(targetId=="systemExpandCheckbox") {
+							var checkboxValue = document.getElementById(targetId).checked
+							for(var k=0; k<systemPartsList.length; k++) {
+								var systemPartSpan = document.getElementById(systemPartsList[k]+" Span")
+								if(checkboxValue) {
+									systemPartSpan.style.display = "block"
+								} else {
+									systemPartSpan.style.display = "none"
+								}
+							}
+						}
 					}
 					function isChecked(bodyPart) {
 						return document.getElementById(bodyPart+" Checkbox").checked
@@ -542,6 +601,12 @@
 							var facePart = facePartsList[k]
 							if(isChecked(facePart)) {
 								bodyParts.push(facePart)
+							}
+						}
+						for(var k=0; k<systemPartsList.length; k++) {
+							var systemPart = systemPartsList[k]
+							if(isChecked(systemPart)) {
+								bodyParts.push(systemPart)
 							}
 						}
 						// TODO: how to handle if the selection list is empty?

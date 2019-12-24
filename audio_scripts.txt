@@ -11,6 +11,19 @@ body	right-arm	Focus your attention on the sensations in your right arm.
 body	right-foot	Focus your attention on the sensations in your right foot. 	
 body	right-hand	Focus your attention on the sensations in your right hand. 	
 body	right-leg	Focus your attention on the sensations in your right leg. 	
+system	digestion	Focus your attention on your digestion and the sensations in your gut. 	
+system	heart-pulse	Focus your attention on the feeling of your heartbeat in your chest and the rest of your body. 	
+system	lungs-breath	Focus your attention on the feeling of your breath in your chest and the rest of your body. 	
+system	direction-eyes	Notice in what direction your eyes are focusing. 	
+system	on-mind	Notice what thoughts are in your mind. 	
+system	gravity	Focus your attention on the feeling of gravity pushing you into the surface below you. 	
+system	cloth	Focus your attention on the feeling of cloth against your skin. 	
+system	heat	Notice whether your body feels warm or cold. 	
+system	tension	Notice whether your body feels tense, or restless, or relaxed. 	
+system	sounds	Focus your attention on the sounds around you. 	
+system	inner-voice	Pay attention to your inner voice and what it is saying. 	
+system	fast-scan	Scan your attention over your whole body, from your feet to your head and back. 	
+system	mood	Notice what mood you are in, and what emotions you are feeling. 	
 face	chin	Focus your attention on the sensations in your chin. 	
 face	forehead	Focus your attention on the sensations in your forehead. 	
 face	jaw-muscles	Focus your attention on the sensations in your jaw and jaw muscles. 	
@@ -24,7 +37,7 @@ face	teeth-gums	Focus your attention on the sensations in your teeth and gums.
 face	throat-sinuses	Focus your attention on the sensations in your throat and sinuses. 	
 face	tongue-roof	Focus your attention on the sensations in your tongue and the roof of your mouth. 	
 input	click-somewhere	Click somewhere on the picture of the body on the screen. 	
-input	unpause	Click the unpause button to continue. 	
+input	unpause	Click the un-pause button to continue. 	
 left-hand	left-back-hand	Focus your attention on the sensations in the back of your left hand. 	
 left-hand	left-fingertips	Focus your attention on the sensations in your left finger tips. 	
 left-hand	left-hand-heel	Focus your attention on the sensations in the heel of your left hand. 	
