@@ -11,7 +11,7 @@
 		<p>Direct your attention to sensations <br/>in the lightened part of the body below, <br/>looking at it as though it was in a mirror.</p>
 		<p><button id="toggleActive" type="button" onclick="toggleActive()">Push to Start</button></p>
 		<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-			<path id="bodyPathId" d="M 95 170 C 95 190, 95 190, 90 190 L 60 190 C 50 190, 50 170, 60 170 C 80 170, 80 150, 80 130 L 80 110 C 80 80, 80 80, 60 110 C 60 130, 40 130, 40 110 C 30 110, 30 100, 40 100 C 60 80, 60 60, 80 60 C 100 60, 90 50, 80 40 C 75 35, 75 25, 80 20 C 90 10, 110 10, 120 20 C 125 25, 125 35, 120 40 C 110 50, 100 60, 120 60 C 140 60, 140 80, 160 100 C 170 100, 170 110, 160 110 C 160 130, 140 130, 140 110 C 120 80, 120 80, 120 110 L 120 130 C 120 150, 120 170, 140 170 C 150 170, 150 190, 140 190 L 110 190 C 105 190, 105 190, 105 170 C 100 110, 100 110, 95 170 Z" stroke="black" fill="#3333AA"/>
+			<path id="bodyPathId" d="M 95 170 C 95 190, 95 190, 90 190 L 60 190 C 50 190, 50 170, 60 170 C 80 170, 80 150, 80 130 L 80 110 C 80 80, 80 80, 60 110 C 60 130, 40 130, 40 110 C 30 110, 30 100, 40 100 C 60 80, 60 60, 80 60 C 100 60, 90 50, 80 40 C 75 35, 75 25, 80 20 C 90 10, 110 10, 120 20 C 125 25, 125 35, 120 40 C 110 50, 100 60, 120 60 C 140 60, 140 80, 160 100 C 170 100, 170 110, 160 110 C 160 130, 140 130, 140 110 C 120 80, 120 80, 120 110 L 120 130 C 120 150, 120 170, 140 170 C 150 170, 150 190, 140 190 L 110 190 C 105 190, 105 190, 105 170 C 100 110, 100 110, 95 170 Z" stroke="black" fill="#3333AA" visibility="visible"/>
 			<path id="leftFootPathId" d="M 95 170 C 95 190, 95 190, 90 190 L 60 190 C 50 190, 50 170, 60 170 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
 			<path id="leftLegPathId" d="M 60 170 C 80 170, 80 150, 80 130 L 98.42 132.2 C 97.55 139.4, 96.5 152, 95 170 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
 			<path id="pelvisPathId" d="M 80 110 L 80 130 L 98.42 132.2 C 99.61 122.6, 100.4 122.6, 101.6 132.2 L 120 130 L 120 110 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
@@ -24,6 +24,25 @@
 			<path id="chestPathId" d="M 122.5 87.5 C 120 87.5, 120 95, 120 110 L 80 110 C 80 95, 80 87.5, 77.5 87.5 L 80 60 C 90 70, 110 70, 120 60 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
 			<path id="headPathId" d="M 80 40 C 75 35, 75 25, 80 20 C 90 10, 110 10, 120 20 C 125 25, 125 35, 120 40 C 110 50, 90 50, 80 40 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
 			<path id="neckPathId" d="M 120 40 C 110 50, 90 50, 80 40 C 90 50, 100 60, 80 60 C 90 70, 110 70, 120 60 C 100 60, 110 50, 120 40 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<path id="facePart1PathId" d="M 50 30 C 70 10, 130 10, 150 30 C 180 70, 160 140, 150 150 C 120 190, 80 190, 50 150 C 40 140, 20 70, 50 30 Z" stroke="black" fill="#3333AA" visibility="hidden"/>
+			<ellipse id="nosePathId" cx="100" cy="100" rx="10" ry="10" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<ellipse id="leftEyePathId" cx="75" cy="75" rx="15" ry="8" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<ellipse id="rightEyePathId" cx="125" cy="75" rx="15" ry="8" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<path id="lipsPathId" d="M 75 130 C 85 128, 115 128, 125 130 C 115 145, 85 145, 75 130 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<ellipse id="chinPathId" cx="100" cy="170" rx="20" ry="10" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<ellipse id="leftCheekPathId" cx="55" cy="115" rx="15" ry="20" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<ellipse id="rightCheekPathId" cx="145" cy="115" rx="15" ry="20" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<ellipse id="leftJawPathId" cx="45" cy="80" rx="8" ry="12" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<ellipse id="rightJawPathId" cx="155" cy="80" rx="8" ry="12" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<ellipse id="foreheadPathId" cx="100" cy="50" rx="30" ry="15" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<ellipse id="facePart2PathId" cx="75" cy="75" rx="10" ry="5" stroke="white" fill="transparent" visibility="hidden"/>
+			<ellipse id="facePart3PathId" cx="75" cy="75" rx="3" ry="4" stroke="white" fill="white" visibility="hidden"/>
+			<ellipse id="facePart4PathId" cx="125" cy="75" rx="10" ry="5" stroke="white" fill="transparent" visibility="hidden"/>
+			<ellipse id="facePart5PathId" cx="125" cy="75" rx="3" ry="4" stroke="white" fill="white" visibility="hidden"/>
+			<ellipse id="facePart6PathId" cx="100" cy="100" rx="10" ry="10" stroke="white" fill="transparent" visibility="hidden"/>
+			<path id="facePart7PathId" d="M 75 130 C 85 128, 115 128, 125 130" stroke="white" fill="transparent" visibility="hidden"/>
+			<path id="facePart8PathId" d="M 75 130 C 85 136, 115 136, 125 130" stroke="white" fill="transparent" visibility="hidden"/>
+			<path id="facePart9PathId" d="M 75 130 C 85 145, 115 145, 125 130" stroke="white" fill="transparent" visibility="hidden"/>
 		</svg>
 		<p id="bodypart"></p>
 		<button id="toggleAudio" type="button" onclick="toggleAudio()">Audio Disabled</button>
@@ -389,45 +408,49 @@
 					// TODO: create detailed graphics for specific body parts (eg hand)
 					var pathIdList = ["body", "leftFoot", "leftLeg", "pelvis", "rightLeg",
 										"rightFoot", "leftHand", "rightHand", "rightArm",
-										"leftArm", "chest", "head", "neck"]
+										"leftArm", "chest", "head", "neck", "nose", "leftEye",
+										"rightEye", "lips", "chin", "leftCheek", "rightCheek",
+										"leftJaw", "rightJaw", "forehead", "facePart1", "facePart2",
+										"facePart3", "facePart4", "facePart5", "facePart6",
+										"facePart7", "facePart8", "facePart9"]
 					var pathIdLookup = {
-						"Left Hand": "leftHand",
-						"Right Hand": "rightHand",
-						"Left Arm": "leftArm",
-						"Right Arm": "rightArm",
-						"Head & Face": "head",
-						"Neck & Shoulders": "neck",
-						"Chest & Back": "chest",
-						"Pelvis & Belly": "pelvis",
-						"Left Leg": "leftLeg",
-						"Right Leg": "rightLeg",
-						"Left Foot": "leftFoot",
-						"Right Foot": "rightFoot",
-						"Chin": "body", // TODO: create pictures for these new body parts
-						"Forehead": "body",
-						"Jaw Muscles": "body",
-						"Left Cheek": "body",
-						"Right Cheek": "body",
-						"Left Eye": "body",
-						"Right Eye": "body",
-						"Lips": "body",
-						"Nose": "body",
-						"Teeth & Gums": "body",
-						"Throat & Sinuses": "body",
-						"Tongue & Mouth": "body",
-						"Digestion": "body",
-						"Heart & Pulse": "body",
-						"Lungs & Breath": "body",
-						"Eye Direction": "body",
-						"On Mind": "body", // TODO: what to do with scan items that cannot be highlighted on a diagram?
-						"Gravity": "body",
-						"Cloth": "body",
-						"Heat & Cold": "body",
-						"Tesion & Relaxation": "body",
-						"Sounds": "body",
-						"Inner Voice": "body",
-						"Fast Scan": "body",
-						"Mood": "body"
+						"Left Hand": ["body","leftHand"],
+						"Right Hand": ["body","rightHand"],
+						"Left Arm": ["body","leftArm"],
+						"Right Arm": ["body","rightArm"],
+						"Head & Face": ["body","head"],
+						"Neck & Shoulders": ["body","neck"],
+						"Chest & Back": ["body","chest"],
+						"Pelvis & Belly": ["body","pelvis"],
+						"Left Leg": ["body","leftLeg"],
+						"Right Leg": ["body","rightLeg"],
+						"Left Foot": ["body","leftFoot"],
+						"Right Foot": ["body","rightFoot"],
+						"Chin": ["chin","facePart1","facePart2","facePart3","facePart4","facePart5","facePart6","facePart7","facePart8","facePart9"],
+						"Forehead": ["forehead","facePart1","facePart2","facePart3","facePart4","facePart5","facePart6","facePart7","facePart8","facePart9"],
+						"Jaw Muscles": ["leftJaw","rightJaw","facePart1","facePart2","facePart3","facePart4","facePart5","facePart6","facePart7","facePart8","facePart9"],
+						"Left Cheek": ["leftCheek","facePart1","facePart2","facePart3","facePart4","facePart5","facePart6","facePart7","facePart8","facePart9"],
+						"Right Cheek": ["rightCheek","facePart1","facePart2","facePart3","facePart4","facePart5","facePart6","facePart7","facePart8","facePart9"],
+						"Left Eye": ["leftEye","facePart1","facePart2","facePart3","facePart4","facePart5","facePart6","facePart7","facePart8","facePart9"],
+						"Right Eye": ["rightEye","facePart1","facePart2","facePart3","facePart4","facePart5","facePart6","facePart7","facePart8","facePart9"],
+						"Lips": ["lips","facePart1","facePart2","facePart3","facePart4","facePart5","facePart6","facePart7","facePart8","facePart9"],
+						"Nose": ["nose","facePart1","facePart2","facePart3","facePart4","facePart5","facePart6","facePart7","facePart8","facePart9"],
+						"Teeth & Gums": ["facePart1","facePart2","facePart3","facePart4","facePart5","facePart6","facePart7","facePart8","facePart9"], // TODO: create pictures for these new body parts
+						"Throat & Sinuses": ["facePart1","facePart2","facePart3","facePart4","facePart5","facePart6","facePart7","facePart8","facePart9"],
+						"Tongue & Mouth": ["facePart1","facePart2","facePart3","facePart4","facePart5","facePart6","facePart7","facePart8","facePart9"],
+						"Digestion": ["body"],
+						"Heart & Pulse": ["body"],
+						"Lungs & Breath": ["body"],
+						"Eye Direction": ["body"],
+						"On Mind": ["body"], // TODO: what to do with scan items that cannot be highlighted on a diagram?
+						"Gravity": ["body"],
+						"Cloth": ["body"],
+						"Heat & Cold": ["body"],
+						"Tesion & Relaxation": ["body"],
+						"Sounds": ["body"],
+						"Inner Voice": ["body"],
+						"Fast Scan": ["body"],
+						"Mood": ["body"]
 					}
 					var bodyPartCategoryList = ["Body","Face","Systems"]
 					var bodyPartCategoryListAbbreviated = ["body","face","system"]
@@ -456,10 +479,15 @@
 						}
 						for(var k=0; k<pathIdList.length; k++) {
 							var pathIdPrefix = pathIdList[k]
+							// TODO: this "includes" function is probably not all that scalable, and may not be portable
 							if(!visiblePartList.includes(pathIdPrefix)) {
 								document.getElementById(pathIdPrefix+"PathId").style.visibility = "hidden"
 							}
 						}
+					}
+					function brightenBodyPartElements(bodyPart) {
+						var pathPrefixList = pathIdLookup[bodyPart]
+						setVisible(pathPrefixList)
 					}
 					createOptions()
 					function createOptions() {
@@ -520,8 +548,7 @@
 					}
 				// Display active graphics
 					function brightenBodyPart(bodyPart) {
-						var pathPrefix = pathIdLookup[bodyPart]
-						setVisible(["body",pathPrefix])
+						brightenBodyPartElements(bodyPart)
 						displayBodyPartName(bodyPart)
 						logEvent("guidedsilhouette",["event=brightenBodyPart","bodyPart="+bodyPart])
 					}
