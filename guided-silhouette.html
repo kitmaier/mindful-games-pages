@@ -445,6 +445,21 @@
 							}
 						}
 					}
+					var bodyPartCategoryList = ["Body","Face","Systems"]
+					var bodyPartCategoryListAbbreviated = ["body","face","system"]
+					var bodyPartCategoryLookup = {
+						"Body": ["Head & Face","Neck & Shoulders","Chest & Back",
+								"Left Arm","Right Arm","Left Hand","Right Hand",
+								"Pelvis & Belly","Left Leg","Right Leg","Left Foot",
+								"Right Foot"],
+						"Face": ["Forehead","Jaw Muscles","Left Eye","Right Eye",
+								"Left Cheek","Right Cheek","Nose","Lips","Chin",
+								"Throat & Sinuses","Tongue & Mouth","Teeth & Gums"],
+						"Systems": ["Digestion","Heart & Pulse","Lungs & Breath",
+								"Eye Direction","On Mind","Gravity","Cloth",
+								"Heat & Cold","Tesion & Relaxation","Sounds",
+								"Inner Voice","Fast Scan","Mood"]
+					}
 				// Initialize graphic elements
 					createPixels()
 					function createPixels() {
@@ -475,113 +490,56 @@
 							alert(error.message)
 						}
 					}
-					// TODO: combine all the bodyparts lists into one data structure
-					// TODO: move these lists to the static data section
-					var bodyPartsList = ["Head & Face","Neck & Shoulders","Chest & Back","Left Arm",
-						"Right Arm","Left Hand","Right Hand","Pelvis & Belly",
-						"Left Leg","Right Leg","Left Foot","Right Foot"]
-					var facePartsList = ["Forehead","Jaw Muscles","Left Eye","Right Eye",
-						"Left Cheek","Right Cheek","Nose","Lips","Chin",
-						"Throat & Sinuses","Tongue & Mouth","Teeth & Gums"]
-					var systemPartsList = ["Digestion", "Heart & Pulse", "Lungs & Breath", 
-						"Eye Direction", "On Mind", "Gravity", "Cloth", "Heat & Cold", 
-						"Tesion & Relaxation", "Sounds", "Inner Voice", "Fast Scan", "Mood"]
-					// TODO: make these functions more generic and loop over list of body regions
 					createOptions()
 					function createOptions() {
 						var paragraph = document.getElementById("options")
-						var bodySpan = document.createElement("span")
-						bodySpan.id = "bodyHeader"
-						bodySpan.innerHTML = "&nbsp;<input type='checkbox' id='bodyHeaderCheckbox' onClick='handleCheckboxEvent(event)'> Category: Body &nbsp;[Expand <input type='checkbox' id='bodyExpandCheckbox' onClick='handleCheckboxEvent(event)'>]<br/>"
-						paragraph.appendChild(bodySpan)
-						document.getElementById("bodyHeaderCheckbox").checked = true
-						for(var k=0; k<bodyPartsList.length; k++) {
-							var bodyPart = bodyPartsList[k]
-							var bodyPartSpan = document.createElement("span")
-							bodyPartSpan.id = bodyPart+" Span"
-							bodyPartSpan.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' id='"+bodyPart+" Checkbox' onClick='handleCheckboxEvent(event)'> "+bodyPart+"<br>"
-							bodyPartSpan.style.display = "none"
-							paragraph.appendChild(bodyPartSpan)
-							document.getElementById(bodyPart+" Checkbox").checked = true
-						}
-						var faceSpan = document.createElement("span")
-						faceSpan.id = "faceHeader"
-						faceSpan.innerHTML = "&nbsp;<input type='checkbox' id='faceHeaderCheckbox' onClick='handleCheckboxEvent(event)'> Category: Face &nbsp;[Expand <input type='checkbox' id='faceExpandCheckbox' onClick='handleCheckboxEvent(event)'>]<br/>"
-						paragraph.appendChild(faceSpan)
-						for(var k=0; k<facePartsList.length; k++) {
-							var facePart = facePartsList[k]
-							var facePartSpan = document.createElement("span")
-							facePartSpan.id = facePart+" Span"
-							facePartSpan.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' id='"+facePart+" Checkbox' onClick='handleCheckboxEvent(event)'> "+facePart+"<br>"
-							facePartSpan.style.display = "none"
-							paragraph.appendChild(facePartSpan)
-						}
-						var systemSpan = document.createElement("span")
-						systemSpan.id = "systemHeader"
-						systemSpan.innerHTML = "&nbsp;<input type='checkbox' id='systemHeaderCheckbox' onClick='handleCheckboxEvent(event)'> Category: Systems &nbsp;[Expand <input type='checkbox' id='systemExpandCheckbox' onClick='handleCheckboxEvent(event)'>]<br/>"
-						paragraph.appendChild(systemSpan)
-						for(var k=0; k<systemPartsList.length; k++) {
-							var systemPart = systemPartsList[k]
-							var systemPartSpan = document.createElement("span")
-							systemPartSpan.id = systemPart+" Span"
-							systemPartSpan.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' id='"+systemPart+" Checkbox' onClick='handleCheckboxEvent(event)'> "+systemPart+"<br>"
-							systemPartSpan.style.display = "none"
-							paragraph.appendChild(systemPartSpan)
+						for(var k=0; k<bodyPartCategoryList.length; k++) {
+							var bodyPartCategory = bodyPartCategoryList[k]
+							var shortCatName = bodyPartCategoryListAbbreviated[k]
+							var bodySpan = document.createElement("span")
+							bodySpan.id = shortCatName+"Header"
+							bodySpan.innerHTML = "&nbsp;<input type='checkbox' id='"+shortCatName+"HeaderCheckbox' onClick='handleCheckboxEvent(event)'> Category: "+bodyPartCategory+" &nbsp;[Expand <input type='checkbox' id='"+shortCatName+"ExpandCheckbox' onClick='handleCheckboxEvent(event)'>]<br/>"
+							paragraph.appendChild(bodySpan)
+							if(shortCatName=="body") {
+								document.getElementById(shortCatName+"HeaderCheckbox").checked = true
+							}
+							var bodyPartsList = bodyPartCategoryLookup[bodyPartCategory]
+							for(var j=0; j<bodyPartsList.length; j++) {
+								var bodyPart = bodyPartsList[j]
+								var bodyPartSpan = document.createElement("span")
+								// TODO: these id's should not have spaces in them
+								bodyPartSpan.id = bodyPart+" Span"
+								bodyPartSpan.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' id='"+bodyPart+" Checkbox' onClick='handleCheckboxEvent(event)'> "+bodyPart+"<br>"
+								bodyPartSpan.style.display = "none"
+								paragraph.appendChild(bodyPartSpan)
+								if(shortCatName=="body") {
+									document.getElementById(bodyPart+" Checkbox").checked = true
+								}
+							}
 						}
 					}
 					function handleCheckboxEvent(event) {
 						var targetId = event.target.id
-						if(targetId=="bodyHeaderCheckbox") {
-							var checkboxValue = document.getElementById(targetId).checked
-							for(var k=0; k<bodyPartsList.length; k++) {
-								var bodyPartCheckbox = document.getElementById(bodyPartsList[k]+" Checkbox")
-								bodyPartCheckbox.checked = checkboxValue
-							}
-						}
-						if(targetId=="bodyExpandCheckbox") {
-							var checkboxValue = document.getElementById(targetId).checked
-							for(var k=0; k<bodyPartsList.length; k++) {
-								var bodyPartSpan = document.getElementById(bodyPartsList[k]+" Span")
-								if(checkboxValue) {
-									bodyPartSpan.style.display = "block"
-								} else {
-									bodyPartSpan.style.display = "none"
+						for(var k=0; k<bodyPartCategoryList.length; k++) {
+							var bodyPartCategory = bodyPartCategoryList[k]
+							var shortCatName = bodyPartCategoryListAbbreviated[k]
+							var bodyPartsList = bodyPartCategoryLookup[bodyPartCategory]
+							if(targetId==shortCatName+"HeaderCheckbox") {
+								var checkboxValue = document.getElementById(targetId).checked
+								for(var j=0; j<bodyPartsList.length; j++) {
+									var bodyPartCheckbox = document.getElementById(bodyPartsList[j]+" Checkbox")
+									bodyPartCheckbox.checked = checkboxValue
 								}
 							}
-						}
-						if(targetId=="faceHeaderCheckbox") {
-							var checkboxValue = document.getElementById(targetId).checked
-							for(var k=0; k<facePartsList.length; k++) {
-								var facePartCheckbox = document.getElementById(facePartsList[k]+" Checkbox")
-								facePartCheckbox.checked = checkboxValue
-							}
-						}
-						if(targetId=="faceExpandCheckbox") {
-							var checkboxValue = document.getElementById(targetId).checked
-							for(var k=0; k<facePartsList.length; k++) {
-								var facePartSpan = document.getElementById(facePartsList[k]+" Span")
-								if(checkboxValue) {
-									facePartSpan.style.display = "block"
-								} else {
-									facePartSpan.style.display = "none"
-								}
-							}
-						}
-						if(targetId=="systemHeaderCheckbox") {
-							var checkboxValue = document.getElementById(targetId).checked
-							for(var k=0; k<systemPartsList.length; k++) {
-								var systemPartCheckbox = document.getElementById(systemPartsList[k]+" Checkbox")
-								systemPartCheckbox.checked = checkboxValue
-							}
-						}
-						if(targetId=="systemExpandCheckbox") {
-							var checkboxValue = document.getElementById(targetId).checked
-							for(var k=0; k<systemPartsList.length; k++) {
-								var systemPartSpan = document.getElementById(systemPartsList[k]+" Span")
-								if(checkboxValue) {
-									systemPartSpan.style.display = "block"
-								} else {
-									systemPartSpan.style.display = "none"
+							if(targetId==shortCatName+"ExpandCheckbox") {
+								var checkboxValue = document.getElementById(targetId).checked
+								for(var j=0; j<bodyPartsList.length; j++) {
+									var bodyPartSpan = document.getElementById(bodyPartsList[j]+" Span")
+									if(checkboxValue) {
+										bodyPartSpan.style.display = "block"
+									} else {
+										bodyPartSpan.style.display = "none"
+									}
 								}
 							}
 						}
@@ -599,22 +557,14 @@
 						darkenSilhouette()
 						// TODO: implement optional body part clustering, where consecutive body parts will tend to be in the same region
 						var bodyParts = []
-						for(var k=0; k<bodyPartsList.length; k++) {
-							var bodyPart = bodyPartsList[k]
-							if(isChecked(bodyPart)) {
-								bodyParts.push(bodyPart)
-							}
-						}
-						for(var k=0; k<facePartsList.length; k++) {
-							var facePart = facePartsList[k]
-							if(isChecked(facePart)) {
-								bodyParts.push(facePart)
-							}
-						}
-						for(var k=0; k<systemPartsList.length; k++) {
-							var systemPart = systemPartsList[k]
-							if(isChecked(systemPart)) {
-								bodyParts.push(systemPart)
+						for(var k=0; k<bodyPartCategoryList.length; k++) {
+							var bodyPartCategory = bodyPartCategoryList[k]
+							var bodyPartsList = bodyPartCategoryLookup[bodyPartCategory]
+							for(var j=0; j<bodyPartsList.length; j++) {
+								var bodyPart = bodyPartsList[j]
+								if(isChecked(bodyPart)) {
+									bodyParts.push(bodyPart)
+								}
 							}
 						}
 						// TODO: how to handle if the selection list is empty?
