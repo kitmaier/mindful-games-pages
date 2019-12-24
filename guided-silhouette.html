@@ -10,9 +10,21 @@
 		<h1>Guided Body Scan Meditation</h1>
 		<p>Direct your attention to sensations <br/>in the lightened part of the body below, <br/>looking at it as though it was in a mirror.</p>
 		<p><button id="toggleActive" type="button" onclick="toggleActive()">Push to Start</button></p>
-		<svg id="svgId" height="200" width="200" onClick="clickPixel(event)">
-			Sorry, your browser does not support inline SVG.
-		</svg> 
+		<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+			<path id="bodyPathId" d="M 95 170 C 95 190, 95 190, 90 190 L 60 190 C 50 190, 50 170, 60 170 C 80 170, 80 150, 80 130 L 80 110 C 80 80, 80 80, 60 110 C 60 130, 40 130, 40 110 C 30 110, 30 100, 40 100 C 60 80, 60 60, 80 60 C 100 60, 90 50, 80 40 C 75 35, 75 25, 80 20 C 90 10, 110 10, 120 20 C 125 25, 125 35, 120 40 C 110 50, 100 60, 120 60 C 140 60, 140 80, 160 100 C 170 100, 170 110, 160 110 C 160 130, 140 130, 140 110 C 120 80, 120 80, 120 110 L 120 130 C 120 150, 120 170, 140 170 C 150 170, 150 190, 140 190 L 110 190 C 105 190, 105 190, 105 170 C 100 110, 100 110, 95 170 Z" stroke="black" fill="#3333AA"/>
+			<path id="leftFootPathId" d="M 95 170 C 95 190, 95 190, 90 190 L 60 190 C 50 190, 50 170, 60 170 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<path id="leftLegPathId" d="M 60 170 C 80 170, 80 150, 80 130 L 98.42 132.2 C 97.55 139.4, 96.5 152, 95 170 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<path id="pelvisPathId" d="M 80 110 L 80 130 L 98.42 132.2 C 99.61 122.6, 100.4 122.6, 101.6 132.2 L 120 130 L 120 110 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<path id="rightLegPathId" d="M 101.6 132.2 C 102.5 139.4, 103.5 152, 105 170 L 140 170 C 120 170 120 150 120 130 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<path id="rightFootPathId" d="M 105 170 C 105 190, 105 190, 110 190 L 140 190 C 150 190, 150 170, 140 170 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<path id="leftHandPathId" d="M 40 100 C 30 100, 30 110, 40 110 C 40 130, 60 130, 60 110 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<path id="rightHandPathId" d="M 160 100 C 170 100, 170 110, 160 110 C 160 130, 140 130, 140 110 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<path id="rightArmPathId" d="M 160 100 L 140 110 C 130 95, 125 87.5, 122.5 87.5 L 120 60 C 140 60, 140 80, 160 100 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<path id="leftArmPathId" d="M 40 100 L 60 110 C 70 95, 75 87.5, 77.5 87.5 L 80 60 C 60 60, 60 80, 40 100 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<path id="chestPathId" d="M 122.5 87.5 C 120 87.5, 120 95, 120 110 L 80 110 C 80 95, 80 87.5, 77.5 87.5 L 80 60 C 90 70, 110 70, 120 60 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<path id="headPathId" d="M 80 40 C 75 35, 75 25, 80 20 C 90 10, 110 10, 120 20 C 125 25, 125 35, 120 40 C 110 50, 90 50, 80 40 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<path id="neckPathId" d="M 120 40 C 110 50, 90 50, 80 40 C 90 50, 100 60, 80 60 C 90 70, 110 70, 120 60 C 100 60, 110 50, 120 40 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+		</svg>
 		<p id="bodypart"></p>
 		<button id="toggleAudio" type="button" onclick="toggleAudio()">Audio Disabled</button>
 		<button id="toggleAudioCapture" type="button" onclick="toggleAudioCapture()">Audio Capture Disabled</button>
@@ -109,10 +121,6 @@
 					function isSpeedTest() {
 						var params = new URLSearchParams(window.location.search);
 						return params!=null && params.has('test') && params.get('test')=='speed';
-					}
-				// Disabled
-					function clickPixel(event) {
-						// TODO: re-implement this method if it is needed, or remove stub
 					}
 			/** END GAME STATE SECTION **/
 			/** START AUDIO SECTION **/
@@ -379,71 +387,47 @@
 					// TODO: make this graphic more detailed and better-looking
 					// TODO: create more detailed body parts, including front/back (eg chest vs back)
 					// TODO: create detailed graphics for specific body parts (eg hand)
-					var pixels = [[8,2],[9,2],[10,2],
-								  [8,3],[9,3],[10,3],
-								  [8,4],[9,4],[10,4],
-										[9,5],
-							[7,6],[8,6],[9,6],[10,6],[11,6],
-					  [6,7],[7,7],[8,7],[9,7],[10,7],[11,7],[12,7],
-				[5,8],[6,8],[7,8],[8,8],[9,8],[10,8],[11,8],[12,8],[13,8],
-		  [4,9],[5,9],      [7,9],[8,9],[9,9],[10,9],[11,9],       [13,9],[14,9],
-	[3,10],[4,10],        [7,10],[8,10],[9,10],[10,10],[11,10],          [14,10],[15,10],
-	[3,11],[4,11],        [7,11],[8,11],[9,11],[10,11],[11,11],          [14,11],[15,11],
-						  [7,12],[8,12],       [10,12],[11,12],
-						  [7,13],[8,13],       [10,13],[11,13],
-						  [7,14],[8,14],       [10,14],[11,14],
-						  [7,15],[8,15],       [10,15],[11,15],
-				   [6,16],[7,16],[8,16],       [10,16],[11,16],[12,16],
-				   [6,17],[7,17],[8,17],       [10,17],[11,17],[12,17]]
-					var pixelsLookup = {
-						"Left Hand":[[3,10],[4,10],[3,11],[4,11]],
-						"Right Hand":[[14,10],[15,10],[14,11],[15,11]],
-						"Left Arm":[[4,9],[5,9],[5,8],[6,8],[6,7]],
-						"Right Arm":[[12,7],[12,8],[13,8],[13,9],[14,9]],
-						"Head & Face":[[8,2],[9,2],[10,2],[8,3],[9,3],[10,3],[8,4],[9,4],[10,4]],
-						"Neck & Shoulders":[[9,5],[7,6],[8,6],[9,6],[10,6],[11,6]],
-						"Chest & Back":[[7,7],[8,7],[9,7],[10,7],[11,7],[7,8],[8,8],[9,8],[10,8],[11,8],[7,9],[8,9],[9,9],[10,9],[11,9]],
-						"Pelvis & Belly":[[7,10],[8,10],[9,10],[10,10],[11,10],[7,11],[8,11],[9,11],[10,11],[11,11]],
-						"Left Leg":[[7,12],[8,12],[7,13],[8,13],[7,14],[8,14],[7,15],[8,15]],
-						"Right Leg":[[10,12],[11,12],[10,13],[11,13],[10,14],[11,14],[10,15],[11,15]],
-						"Left Foot":[[6,16],[7,16],[8,16],[6,17],[7,17],[8,17]],
-						"Right Foot":[[10,16],[11,16],[12,16],[10,17],[11,17],[12,17]],
-						"Chin":[], // TODO: create pictures for these new body parts
-						"Forehead":[],
-						"Jaw Muscles":[],
-						"Left Cheek":[],
-						"Right Cheek":[],
-						"Left Eye":[],
-						"Right Eye":[],
-						"Lips":[],
-						"Nose":[],
-						"Teeth & Gums":[],
-						"Throat & Sinuses":[],
-						"Tongue & Mouth":[],
-						"Digestion":[], 
-						"Heart & Pulse":[],
-						"Lungs & Breath":[],
-						"Eye Direction":[],
-						"On Mind":[], // TODO: what to do with scan items that cannot be highlighted on a diagram?
-						"Gravity":[],
-						"Cloth":[],
-						"Heat & Cold":[],
-						"Tesion & Relaxation":[],
-						"Sounds":[],
-						"Inner Voice":[],
-						"Fast Scan":[],
-						"Mood":[]
-					}
-					var pixelsReverseLookup = {}
-					createPixelsReverseLookup()
-					function createPixelsReverseLookup() {
-						for(var bodyPart in pixelsLookup) {
-							var pixelList = pixelsLookup[bodyPart]
-							for(var k=0; k<pixelList.length; k++) {
-								var pixelLoc = pixelList[k]
-								pixelsReverseLookup[pixelLoc] = bodyPart
-							}
-						}
+					var pathIdList = ["body", "leftFoot", "leftLeg", "pelvis", "rightLeg",
+										"rightFoot", "leftHand", "rightHand", "rightArm",
+										"leftArm", "chest", "head", "neck"]
+					var pathIdLookup = {
+						"Left Hand": "leftHand",
+						"Right Hand": "rightHand",
+						"Left Arm": "leftArm",
+						"Right Arm": "rightArm",
+						"Head & Face": "head",
+						"Neck & Shoulders": "neck",
+						"Chest & Back": "chest",
+						"Pelvis & Belly": "pelvis",
+						"Left Leg": "leftLeg",
+						"Right Leg": "rightLeg",
+						"Left Foot": "leftFoot",
+						"Right Foot": "rightFoot",
+						"Chin": "body", // TODO: create pictures for these new body parts
+						"Forehead": "body",
+						"Jaw Muscles": "body",
+						"Left Cheek": "body",
+						"Right Cheek": "body",
+						"Left Eye": "body",
+						"Right Eye": "body",
+						"Lips": "body",
+						"Nose": "body",
+						"Teeth & Gums": "body",
+						"Throat & Sinuses": "body",
+						"Tongue & Mouth": "body",
+						"Digestion": "body",
+						"Heart & Pulse": "body",
+						"Lungs & Breath": "body",
+						"Eye Direction": "body",
+						"On Mind": "body", // TODO: what to do with scan items that cannot be highlighted on a diagram?
+						"Gravity": "body",
+						"Cloth": "body",
+						"Heat & Cold": "body",
+						"Tesion & Relaxation": "body",
+						"Sounds": "body",
+						"Inner Voice": "body",
+						"Fast Scan": "body",
+						"Mood": "body"
 					}
 					var bodyPartCategoryList = ["Body","Face","Systems"]
 					var bodyPartCategoryListAbbreviated = ["body","face","system"]
@@ -461,33 +445,20 @@
 								"Inner Voice","Fast Scan","Mood"]
 					}
 				// Initialize graphic elements
-					createPixels()
-					function createPixels() {
-						var svg = document.getElementById("svgId")
-						for(var x=0; x<20; x++) {
-							for(var y=0; y<20; y++) {
-								var rect = document.createElementNS("http://www.w3.org/2000/svg","rect")
-								rect.setAttribute("id","pixel_"+x+"_"+y)
-								rect.setAttribute("x",x+"0")
-								rect.setAttribute("y",y+"0")
-								rect.setAttribute("width","10")
-								rect.setAttribute("height","10")
-								rect.setAttribute("style","fill:white;stroke:white;stroke-width:1")
-								svg.appendChild(rect)
-							}
-						}
-					}
 					darkenSilhouette()
 					function darkenSilhouette() {
-						setColorOnPixels("black",pixels)
+						setVisible(["body"])
 					}
-					function setColorOnPixels(color,pixels) {
-						try {
-							for(var k=0; k<pixels.length; k++) {
-								document.getElementById("pixel_"+pixels[k][0]+"_"+pixels[k][1]).setAttribute("style","fill:"+color+";stroke:"+color+";stroke-width:1")
+					function setVisible(visiblePartList) {
+						for(var k=0; k<visiblePartList.length; k++) {
+							var visiblePart = visiblePartList[k]
+							document.getElementById(visiblePart+"PathId").style.visibility = "visible"
+						}
+						for(var k=0; k<pathIdList.length; k++) {
+							var pathIdPrefix = pathIdList[k]
+							if(!visiblePartList.includes(pathIdPrefix)) {
+								document.getElementById(pathIdPrefix+"PathId").style.visibility = "hidden"
 							}
-						} catch(error) {
-							alert(error.message)
 						}
 					}
 					createOptions()
@@ -549,7 +520,8 @@
 					}
 				// Display active graphics
 					function brightenBodyPart(bodyPart) {
-						setColorOnPixels("yellow",pixelsLookup[bodyPart])
+						var pathPrefix = pathIdLookup[bodyPart]
+						setVisible(["body",pathPrefix])
 						displayBodyPartName(bodyPart)
 						logEvent("guidedsilhouette",["event=brightenBodyPart","bodyPart="+bodyPart])
 					}
