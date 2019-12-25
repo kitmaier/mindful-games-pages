@@ -567,6 +567,7 @@
 						displayBodyPartName(bodyPart)
 						logEvent("guidedsilhouette",["event=brightenBodyPart","bodyPart="+bodyPart])
 					}
+					var lastBodyPart = ""
 					function brightenRandomBodyPart() {
 						darkenSilhouette()
 						// TODO: implement optional body part clustering, where consecutive body parts will tend to be in the same region
@@ -576,17 +577,23 @@
 							var bodyPartsList = bodyPartCategoryLookup[bodyPartCategory]
 							for(var j=0; j<bodyPartsList.length; j++) {
 								var bodyPart = bodyPartsList[j]
-								if(isChecked(bodyPart)) {
+								if(bodyPart!=lastBodyPart&&isChecked(bodyPart)) {
 									bodyParts.push(bodyPart)
 								}
 							}
 						}
-						// TODO: how to handle if the selection list is empty?
+						// TODO: how best to handle if the selection list is empty?
+						if(bodyParts.length==0&&lastBodyPart!=""&&isChecked(lastBodyPart)) {
+							bodyParts.push(lastBodyPart)
+						}
 						if(bodyParts.length==0) {
 							bodyParts.push("Head & Face")
 						}
 						var index = Math.floor(Math.random()*bodyParts.length)
-						brightenBodyPart(bodyParts[index])
+						var newBodyPart = bodyParts[index]
+						console.log(lastBodyPart+","+newBodyPart+","+bodyParts.length)
+						lastBodyPart = newBodyPart
+						brightenBodyPart(newBodyPart)
 					}
 					function displayBodyPartName(bodyPart) {
 						if(bodyPart=="Click Somewhere") {
