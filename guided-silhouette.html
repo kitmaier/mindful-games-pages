@@ -45,6 +45,16 @@
 			<path id="facePart8PathId" d="M 75 130 C 85 136, 115 136, 125 130" stroke="white" fill="transparent" visibility="hidden"/>
 			<path id="facePart9PathId" d="M 75 130 C 85 145, 115 145, 125 130" stroke="white" fill="transparent" visibility="hidden"/>
 			<path id="facePart1OutlinePathId" d="M 50 30 C 70 10, 130 10, 150 30 C 180 70, 160 140, 150 150 C 120 190, 80 190, 50 150 C 40 140, 20 70, 50 30 Z" stroke="black" fill="transparent" visibility="hidden"/>
+			<path id="sideFacePathId" d="M 90 180 C 90 160, 90 160, 60 160 C 40 160, 60 130, 50 120 C 35 110, 35 110, 50 90 C 60 80, 40 60, 60 40 C 80 20, 140 20, 160 40 C 170 50, 170 90, 160 100 C 140 130, 150 150, 160 180 Z" stroke="transparent" fill="#3333AA" visibility="hidden"/>
+			<path id="lowerTeethPathId" d="M 60 150 L 90 150 L 90 140 L 60 140 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<path id="lowerTeethOutlinePathId" d="M 60 150 L 90 150 L 90 140 L 60 140 Z" stroke="white" fill="transparent" visibility="hidden"/>
+			<path id="upperTeethPathId" d="M 60 130 L 90 130 L 90 120 L 60 120 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<path id="upperTeethOutlinePathId" d="M 60 130 L 90 130 L 90 120 L 60 120 Z" stroke="white" fill="transparent" visibility="hidden"/>
+			<path id="tonguePathId" d="M 60 130 C 53 130, 53 140, 60 140 L 90 140 C 100 140, 100 150, 100 160 L 110 160 C 110 140, 110 130, 90 130 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<path id="tongueOutlinePathId" d="M 60 130 C 53 130, 53 140, 60 140 L 90 140 C 100 140, 100 150, 100 160 L 110 160 C 110 140, 110 130, 90 130 Z" stroke="white" fill="transparent" visibility="hidden"/>
+			<path id="sinusPathId" d="M 110 160 C 110 130, 110 110, 100 110 L 50 110 C 40 110, 50 90, 70 90 L 100 90 C 130 90, 130 130, 130 160 L 130 170 L 110 170 Z" stroke="transparent" fill="#FFFF00" visibility="hidden"/>
+			<path id="sinusOutlinePathId" d="M 110 160 C 110 130, 110 110, 100 110 L 50 110 C 40 110, 50 90, 70 90 L 100 90 C 130 90, 130 130, 130 160 L 130 170 L 110 170 Z" stroke="white" fill="transparent" visibility="hidden"/>
+			<path id="sideFaceOutlinePathId" d="M 90 180 C 90 160, 90 160, 60 160 C 40 160, 60 130, 50 120 C 35 110, 35 110, 50 90 C 60 80, 40 60, 60 40 C 80 20, 140 20, 160 40 C 170 50, 170 90, 160 100 C 140 130, 150 150, 160 180 Z" stroke="black" fill="transparent" visibility="hidden"/>
 		</svg>
 		<p id="bodypart"></p>
 		<button id="toggleAudio" type="button" onclick="toggleAudio()">Audio Disabled</button>
@@ -414,7 +424,9 @@
 										"rightEye", "lips", "chin", "leftCheek", "rightCheek",
 										"leftJaw", "rightJaw", "forehead", "facePart1", "facePart1Outline", "facePart2",
 										"facePart3", "facePart4", "facePart5", "facePart6",
-										"facePart7", "facePart8", "facePart9"]
+										"facePart7", "facePart8", "facePart9", "sideFace",
+										"lowerTeeth", "lowerTeethOutline", "upperTeeth", "upperTeethOutline",
+										"tongue", "tongueOutline", "sinus", "sinusOutline", "sideFaceOutline"]
 					var pathIdLookup = {
 						"Left Hand": ["body","bodyOutline","leftHand"],
 						"Right Hand": ["body","bodyOutline","rightHand"],
@@ -437,9 +449,9 @@
 						"Right Eye": ["rightEye","facePart1","facePart1Outline","facePart2","facePart3","facePart4","facePart5","facePart6","facePart7","facePart8","facePart9"],
 						"Lips": ["lips","facePart1","facePart1Outline","facePart2","facePart3","facePart4","facePart5","facePart6","facePart7","facePart8","facePart9"],
 						"Nose": ["nose","facePart1","facePart1Outline","facePart2","facePart3","facePart4","facePart5","facePart6","facePart7","facePart8","facePart9"],
-						"Teeth & Gums": ["facePart1","facePart1Outline","facePart2","facePart3","facePart4","facePart5","facePart6","facePart7","facePart8","facePart9"], // TODO: create pictures for these new body parts
-						"Throat & Sinuses": ["facePart1","facePart1Outline","facePart2","facePart3","facePart4","facePart5","facePart6","facePart7","facePart8","facePart9"],
-						"Tongue & Mouth": ["facePart1","facePart1Outline","facePart2","facePart3","facePart4","facePart5","facePart6","facePart7","facePart8","facePart9"],
+						"Teeth & Gums": ["sideFace","lowerTeeth","lowerTeethOutline","upperTeeth","upperTeethOutline","tongueOutline","sinusOutline","sideFaceOutline"],
+						"Throat & Sinuses": ["sideFace","lowerTeethOutline","upperTeethOutline","tongueOutline","sinus","sinusOutline","sideFaceOutline"],
+						"Tongue & Mouth": ["sideFace","lowerTeethOutline","upperTeethOutline","tongue","tongueOutline","sinusOutline","sideFaceOutline"],
 						"Digestion": ["body","bodyOutline"],
 						"Heart & Pulse": ["body","bodyOutline"],
 						"Lungs & Breath": ["body","bodyOutline"],
