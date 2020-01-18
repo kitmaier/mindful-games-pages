@@ -122,6 +122,11 @@
 		<button id="toggleAudio" type="button" onclick="toggleAudio()">Audio Disabled</button>
 		<button id="toggleAudioCapture" type="button" onclick="toggleAudioCapture()">Audio Capture Disabled</button>
 		<button id="toggleTextConversion" type="button" onclick="toggleTextConversion()">Speech-to-Text Disabled</button>
+		<p>
+		Volume: <span id="volume">100</span>&nbsp;
+		<button id="volumeUp" type="button" onclick="volumeUp()">Volume Up</button>
+		<button id="volumeDown" type="button" onclick="volumeDown()">Volume Down</button>
+		</p>
 		<p>To customize what is included in the scan, <br/>you can modify the below options.</p>
 		<p id='options'></p>
 		<p id='audio'></p>
@@ -295,6 +300,7 @@
 				// Manage events and states
 					var audioStatus = "disabled"
 					var activeRecording = null
+					var audioVolume = 1
 					function toggleAudio() {
 						if(audioStatus=="disabled") {
 							audioStatus = "enabled"
@@ -312,6 +318,7 @@
 						if(audioStatus=="enabled") {
 							stopAudio()
 							var audioFile = audioFiles[bodyPart]
+							audioFile.volume = audioVolume
 							audioFile.play()
 							activeRecording = audioFile
 						}
@@ -323,6 +330,20 @@
 							activeRecording = null
 						}
 					}
+					function volumeUp() {
+						if(audioVolume>=0.95) return;
+						audioVolume += 0.1;
+						document.getElementById("volume").textContent = Math.floor(audioVolume*100)
+						if(activeRecording==null) return;
+						activeRecording.volume = audioVolume
+					}
+					function volumeDown() {
+						if(audioVolume<=0.05) return;
+						audioVolume -= 0.1;
+						document.getElementById("volume").textContent = Math.floor(audioVolume*100)
+						if(activeRecording==null) return;
+						activeRecording.volume = audioVolume
+					}
 			/** END AUDIO SECTION **/
 			/** START AUDIO CAPTURE SECTION **/
 				// Using this library for audio capture https://www.npmjs.com/package/web-audio-recorder-js
@@ -332,6 +353,7 @@
 					var recorder = null;
 					var audioContext = null;
 					var audioDestination = null;
+					var gain_node = null;
 					var audioCaptureState = "uninitialized"
 					function initializeAudioCapture() {
 						// This must be preceded by a gesture (button press)
@@ -352,8 +374,8 @@
 					}
 					function start_microphone(stream) {
 						var microphone_stream = audioContext.createMediaStreamSource(stream);
-						var gain_node = audioContext.createGain();
-						//gain_node.gain.value = 10;
+						gain_node = audioContext.createGain();
+						//gain_node.gain.value = 1;
 						microphone_stream.connect(gain_node);
 						audioDestination = gain_node;
 					}
